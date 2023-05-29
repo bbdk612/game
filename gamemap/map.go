@@ -21,9 +21,9 @@ type GameMap struct {
 func (GM *GameMap) CheckDirection(direction string) (int, bool) {
 	chunk, ok := GM.roadsTo[GM.currentChunk][direction]
 	if ok {
-		return -1, true
+		return chunk, true
 	} else {
-		return chunk, false
+		return -1, false
 	}
 }
 

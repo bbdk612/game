@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-  "log"
 	"github.com/hajimehoshi/ebiten/v2"
+	"log"
 	// "github.com/hajimehoshi/ebiten/v2/ebitenutil"
 
 	"github.com/bbdk612/game/gamemap"
@@ -14,26 +14,38 @@ type Game struct {
 }
 
 func (G *Game) Update() error {
-  if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-    chunk, ok := G.Map.CheckDirection("left")
-    if ok {
-      G.Map.ChangeCurrentChunk(chunk)
-    }
-  } else if ebiten.IsKeyPressed(ebiten.KeyRight) {
-    chunk, ok := G.Map.CheckDirection("right")
-    if ok {
-      G.Map.ChangeCurrentChunk(chunk)
-    }
-  }
+	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+		chunk, ok := G.Map.CheckDirection("left")
+		if ok {
+			G.Map.ChangeCurrentChunk(chunk)
+		}
+	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
+		chunk, ok := G.Map.CheckDirection("right")
+		if ok {
+			G.Map.ChangeCurrentChunk(chunk)
+		}
+	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
+		chunk, ok := G.Map.CheckDirection("top")
+		if ok {
+			G.Map.ChangeCurrentChunk(chunk)
+		}
+	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
+		chunk, ok := G.Map.CheckDirection("down")
+		if ok {
+			G.Map.ChangeCurrentChunk(chunk)
+		}
+	}
 
-  return nil } func (g *Game) Draw(screen *ebiten.Image) {
+	return nil
+}
+
+func (g *Game) Draw(screen *ebiten.Image) {
 	xCount := (g.Map.SreenWidth / g.Map.TileSize)
 
 	currentChunk := g.Map.GetCurrentChunk()
 
 	for tileCoordinate, tileNumber := range currentChunk {
 		options := &ebiten.DrawImageOptions{}
-    fmt.Println("coordinates:", float64((tileCoordinate%xCount)*g.Map.TileSize), float64((tileCoordinate/xCount)*g.Map.TileSize))
 		options.GeoM.Translate(float64((tileCoordinate%xCount)*g.Map.TileSize), float64((tileCoordinate/xCount)*g.Map.TileSize))
 
 		screen.DrawImage(g.Map.GetTile(tileNumber), options)
@@ -83,36 +95,58 @@ func main() {
 			4, 4, 4, 4, 4, 4, 4, 4, 1, 2, 1, 4, 4, 4, 4, 4,
 			4, 4, 4, 4, 4, 4, 4, 4, 1, 2, 1, 4, 4, 4, 4, 4,
 		},
+		{
+			4, 4, 4, 4, 4, 4, 4, 4, 1, 2, 1, 4, 4, 4, 4, 4,
+			4, 4, 4, 4, 4, 4, 4, 4, 1, 2, 1, 4, 4, 4, 4, 4,
+			4, 4, 4, 4, 4, 4, 1, 1, 1, 2, 1, 1, 1, 1, 4, 4,
+			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
+			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
+			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
+			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
+			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
+			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
+			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
+			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
+			4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4,
+			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+		},
 	}
-  
-  for i := range chunks {
-    for j := range chunks[i] {
-      chunks[i][j]--
-    } 
-  }
-  
-  roadsTo := []map[string]int{
-    {
-      "right": 1, 
-    },
-    {
-      "left": 0,
-    },
-  }
 
-  M, err := gamemap.NewGameMap(chunks, 0, roadsTo, 256, 256)
-  if err != nil {
-    fmt.Println(err)
-  }
+	for i := range chunks {
+		for j := range chunks[i] {
+			chunks[i][j]--
+		}
+	}
 
-  g := &Game{
-    Map: M,
-  }
+	roadsTo := []map[string]int{
+		{
+			"right": 1,
+		},
+		{
+			"left": 0,
+			"down": 2,
+		},
+		{
+			"top": 1,
+		},
+	}
 
-  ebiten.SetWindowSize(256 * 3, 256 * 3)
-  ebiten.SetWindowTitle("test of Gamemap")
+	M, err := gamemap.NewGameMap(chunks, 0, roadsTo, 256, 256)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-  if err := ebiten.RunGame(g); err != nil {
-    log.Fatal(err)
-  }
+	g := &Game{
+		Map: M,
+	}
+
+	ebiten.SetWindowSize(256*3, 256*3)
+	ebiten.SetWindowTitle("test of Gamemap")
+
+	if err := ebiten.RunGame(g); err != nil {
+		log.Fatal(err)
+	}
 }

@@ -1,3 +1,3 @@
-module github.com/game/gamemap
+module github.com/bbdk612/game/gamemap
 
 go 1.20

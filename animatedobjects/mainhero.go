@@ -14,11 +14,19 @@ type MainHero struct {
 	Image  *ebiten.Image
 }
 
-func (mh *MainHero) calculateTilenumber(tilesize int) {
+func (mh *MainHero) calculateTilecoordinate(tilesize int) {
+	//calculate tilecoordiante on screen
 	mh.tilecoordinate = (mh.x / tilesize) + mh.y
 }
 
+func (mh *MainHero) GetCoordinates() (int, int) {
+	return mh.x, mh.y
+}
 
+func (mh *MainHero) SetCoordinates(x, y int) {
+	mh.x = x
+	mh.y = y
+}
 
 func InitMainHero(tilecoordinate int, tilesize int, xCount int) (*MainHero, error) {
 	var x int = (tilecoordinate % xCount) / tilesize

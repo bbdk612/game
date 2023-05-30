@@ -13,17 +13,17 @@ type GameMap struct {
 	chunks                  [][]int
 	roadsTo                 []map[string]int
 	currentChunk            int
-	tilesize                int
-	sreenWidth, sreenHeight int
+	TileSize                int
+	SreenWidth, SreenHeight int
 	tileset                 *ebiten.Image
 }
 
 func (GM *GameMap) CheckDirection(direction string) (int, bool) {
 	chunk, ok := GM.roadsTo[GM.currentChunk][direction]
 	if ok {
-		return -1, true
+		return chunk, true
 	} else {
-		return chunk, false
+		return -1, false
 	}
 }
 
@@ -41,12 +41,12 @@ func (GM *GameMap) ChangeCurrentChunk(chunk int) error {
 
 func (GM *GameMap) GetTile(tileNumber int) (*ebiten.Image) {
   w := GM.tileset.Bounds().Dx()
-  tileXCount := w / GM.tilesize
+  tileXCount := w / GM.TileSize
   
-  tileStartX := (tileNumber % tileXCount) * GM.tilesize
-  tileStartY := (tileNumber / tileXCount) * GM.tilesize
+  tileStartX := (tileNumber % tileXCount) * GM.TileSize
+  tileStartY := (tileNumber / tileXCount) * GM.TileSize
 
-  return GM.tileset.SubImage(image.Rect(tileStartX, tileStartY, tileStartX+GM.tilesize, tileStartY+GM.tilesize)).(*ebiten.Image)
+  return GM.tileset.SubImage(image.Rect(tileStartX, tileStartY, tileStartX+GM.TileSize, tileStartY+GM.TileSize)).(*ebiten.Image)
 }
 
 func NewGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sreenWidth int, sreenHeight int) (*GameMap, error) {
@@ -66,9 +66,9 @@ func NewGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sree
 	GM := &GameMap{
 		chunks:       chunks,
 		roadsTo:      roadsTo,
-		sreenWidth:   sreenWidth,
-		sreenHeight:  sreenHeight,
-		tilesize:     16,
+		SreenWidth:   sreenWidth,
+		SreenHeight:  sreenHeight,
+		TileSize:     16,
 		currentChunk: currentChunk,
 		tileset:      tilesImage,
 	}

@@ -1,4 +1,4 @@
-package animatedobject
+package animatedobjects
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"

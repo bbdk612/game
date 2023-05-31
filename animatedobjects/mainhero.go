@@ -26,6 +26,7 @@ func (mh *MainHero) GetCoordinates() (int, int) {
 func (mh *MainHero) SetCoordinates(x, y int) {
 	mh.x = x
 	mh.y = y
+	mh.calculateTilecoordinate()
 }
 
 func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {

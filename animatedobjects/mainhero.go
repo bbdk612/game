@@ -1,6 +1,8 @@
 package animatedobjects
 
 import (
+	"fmt"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/solarlune/goaseprite"
@@ -32,14 +34,15 @@ func (mh *MainHero) SetCoordinates(x, y int) {
 func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 	switch direction {
 		case "left":
-			if chunk[mh.tilecoordinate + 1] == 2 {
+			if chunk[mh.tilecoordinate - 1] == 2 {
 				return true
 			}
 
 			return false
 
 		case "right":
-			if chunk[mh.tilecoordinate - 1] == 2 {
+			fmt.Println(chunk[mh.tilecoordinate + 16])
+			if chunk[mh.tilecoordinate + 1] == 2 {
 				return true
 			}
 
@@ -53,6 +56,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 			return false
 
 		case "down":
+			fmt.Println(chunk[mh.tilecoordinate + 16])
 			if chunk[mh.tilecoordinate + 16] == 2 {
 				return true
 			}

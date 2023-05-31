@@ -65,8 +65,8 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 }
 
 func InitMainHero(tilecoordinate int, tilesize int, xCount int) (*MainHero, error) {
-	var x int = (tilecoordinate % xCount) / tilesize
-	var y int = (tilecoordinate / xCount) / tilesize
+	var x int = (tilecoordinate % xCount) * tilesize
+	var y int = (tilecoordinate / xCount) * tilesize
 	mainhero := &MainHero{
 		Sprite: goaseprite.Open("./assets/mainhero.json"),
 		tilecoordinate: tilecoordinate,

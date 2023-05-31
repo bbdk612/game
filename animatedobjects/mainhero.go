@@ -55,7 +55,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 		case "top":
 			fmt.Println(mh.tilecoordinate)
 			fmt.Println(chunk[mh.tilecoordinate-16])
-			if chunk[mh.tilecoordinate - 16] == 1 {
+			if chunk[mh.tilecoordinate - 15] == 1 {
 				return true
 			}
 
@@ -64,7 +64,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 		case "down":
 			fmt.Println("currentTile", chunk[mh.tilecoordinate])
 			fmt.Println("nextTile", chunk[mh.tilecoordinate+16])
-			if chunk[mh.tilecoordinate + 16] == 1 {
+			if chunk[mh.tilecoordinate + 15] == 1 {
 				return true
 			}
 

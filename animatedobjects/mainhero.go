@@ -28,6 +28,10 @@ func (mh *MainHero) SetCoordinates(x, y int) {
 	mh.y = y
 }
 
+func (mh *MainHero) GetTileCoordinate() (int) {
+	return mh.tilecoordinate
+}
+
 func InitMainHero(tilecoordinate int, tilesize int, xCount int) (*MainHero, error) {
 	var x int = (tilecoordinate % xCount) / tilesize
 	var y int = (tilecoordinate / xCount) / tilesize

@@ -50,7 +50,7 @@ func (GM *GameMap) GetTile(tileNumber int) (*ebiten.Image) {
 }
 
 func NewGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sreenWidth int, sreenHeight int) (*GameMap, error) {
-	tilesetFile, err := os.Open("tileset.png")
+	tilesetFile, err := os.Open("./assets/tileset.png")
 	if err != nil {
 		return nil, err
 	}

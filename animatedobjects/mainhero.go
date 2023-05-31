@@ -28,8 +28,36 @@ func (mh *MainHero) SetCoordinates(x, y int) {
 	mh.y = y
 }
 
-func (mh *MainHero) GetTileCoordinate() (int) {
-	return mh.tilecoordinate
+func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
+	switch direction {
+		case "left":
+			if chunk[mh.tilecoordinate + 1] == 2 {
+				return true
+			}
+
+			return false
+
+		case "right":
+			if chunk[mh.tilecoordinate - 1] == 2 {
+				return true
+			}
+
+			return false
+
+		case "top":
+			if chunk[mh.tilecoordinate - 16] == 2 {
+				return true
+			}
+
+			return false
+
+		case "down":
+			if chunk[mh.tilecoordinate + 16] == 2 {
+				return true
+			}
+
+			return false
+	}
 }
 
 func InitMainHero(tilecoordinate int, tilesize int, xCount int) (*MainHero, error) {

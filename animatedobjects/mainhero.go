@@ -34,6 +34,7 @@ func (mh *MainHero) SetCoordinates(x, y int) {
 func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 	switch direction {
 		case "left":
+			fmt.Println(chunk[mh.tilecoordinate])
 			fmt.Println(chunk[mh.tilecoordinate-1])
 			if chunk[mh.tilecoordinate - 1] == 1 {
 				return true
@@ -42,6 +43,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 			return false
 
 		case "right":
+			fmt.Println(chunk[mh.tilecoordinate])
 			fmt.Println(chunk[mh.tilecoordinate+1])
 			if chunk[mh.tilecoordinate + 1] == 1 {
 				return true
@@ -50,16 +52,18 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 			return false
 
 		case "top":
-			fmt.Println(chunk[mh.tilecoordinate-17])
-			if chunk[mh.tilecoordinate - 17] == 1 {
+			fmt.Println(chunk[mh.tilecoordinate])
+			fmt.Println(chunk[mh.tilecoordinate-16])
+			if chunk[mh.tilecoordinate - 16] == 1 {
 				return true
 			}
 
 			return false
 
 		case "down":
-			fmt.Println(chunk[mh.tilecoordinate+17])
-			if chunk[mh.tilecoordinate + 17] == 1 {
+			fmt.Println("currentTile", chunk[mh.tilecoordinate])
+			fmt.Println("nextTile", chunk[mh.tilecoordinate+16])
+			if chunk[mh.tilecoordinate + 16] == 1 {
 				return true
 			}
 

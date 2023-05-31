@@ -34,31 +34,28 @@ func (mh *MainHero) SetCoordinates(x, y int) {
 func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 	switch direction {
 		case "left":
-			if chunk[mh.tilecoordinate - 1] == 2 {
+			if chunk[mh.tilecoordinate - 1] == 1 {
 				return true
 			}
 
 			return false
 
 		case "right":
-			fmt.Println(chunk)
-			if chunk[mh.tilecoordinate + 1] == 2 {
+			if chunk[mh.tilecoordinate + 1] == 1 {
 				return true
 			}
 
 			return false
 
 		case "top":
-			if chunk[mh.tilecoordinate - 16] == 2 {
+			if chunk[mh.tilecoordinate - 16] == 1 {
 				return true
 			}
 
 			return false
 
 		case "down":
-			fmt.Println(chunk[mh.tilecoordinate + 16])
-			fmt.Println(mh.tilecoordinate)
-			if chunk[mh.tilecoordinate + 16] == 2 {
+			if chunk[mh.tilecoordinate + 16] == 1 {
 				return true
 			}
 

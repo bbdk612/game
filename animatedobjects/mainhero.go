@@ -1,7 +1,7 @@
 package animatedobjects
 
 import (
-	"fmt"
+	//"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"

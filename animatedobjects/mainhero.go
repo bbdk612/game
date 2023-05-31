@@ -1,7 +1,7 @@
 package animatedobjects
 
 import (
-	//"fmt"
+	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -34,6 +34,7 @@ func (mh *MainHero) SetCoordinates(x, y int) {
 func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 	switch direction {
 		case "left":
+			fmt.Println(chunk[mh.tilecoordinate-1])
 			if chunk[mh.tilecoordinate - 1] == 1 {
 				return true
 			}
@@ -41,6 +42,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 			return false
 
 		case "right":
+			fmt.Println(chunk[mh.tilecoordinate+1])
 			if chunk[mh.tilecoordinate + 1] == 1 {
 				return true
 			}
@@ -48,6 +50,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 			return false
 
 		case "top":
+			fmt.Println(chunk[mh.tilecoordinate-16])
 			if chunk[mh.tilecoordinate - 16] == 1 {
 				return true
 			}
@@ -55,6 +58,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 			return false
 
 		case "down":
+			fmt.Println(chunk[mh.tilecoordinate+16])
 			if chunk[mh.tilecoordinate + 16] == 1 {
 				return true
 			}

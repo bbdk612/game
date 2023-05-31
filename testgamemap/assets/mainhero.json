@@ -19,7 +19,7 @@
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.x-dev",
-  "image": "./assets/testmainhero.png",
+  "image": "./assets/mainhero.png",
   "format": "RGBA8888",
   "size": { "w": 32, "h": 16 },
   "scale": "1",

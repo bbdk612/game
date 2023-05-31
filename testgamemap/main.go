@@ -22,14 +22,16 @@ func (G *Game) Update() error {
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		G.MH.AsePlayer.Play("walk")
 		if G.MH.CanIGo("left", G.Map.GetCurrentChunk()) {
+			fmt.Println("ok")
 			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x+4, y)
+			G.MH.SetCoordinates(x-4, y)
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
 		G.MH.AsePlayer.Play("walk")
 		if G.MH.CanIGo("right", G.Map.GetCurrentChunk()) {
+			fmt.Println("ok")
 			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x-4, y)
+			G.MH.SetCoordinates(x+4, y)
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
 		G.MH.AsePlayer.Play("walk")
@@ -47,7 +49,7 @@ func (G *Game) Update() error {
 		G.MH.AsePlayer.Play("stop")
 	}
 
-  
+	G.MH.AsePlayer.Update(float32(1.0 / 60.0))
 
 	return nil
 }
@@ -161,12 +163,21 @@ func main() {
 		fmt.Println(err)
 	}
 
+	mh, err := animatedobjects.InitMainHero(34, 16, 16)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	g := &Game{
 		Map: M,
+		MH:  mh,
 	}
 
 	ebiten.SetWindowSize(256*3, 256*3)
 	ebiten.SetWindowTitle("test of Gamemap")
+
+	g.MH.AsePlayer.Play("stop")
 
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)

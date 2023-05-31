@@ -32,6 +32,14 @@ func (mh *MainHero) SetCoordinates(x, y int) {
 	mh.calculateTilecoordinate(16)
 }
 
+func (mh *MainHero) iBetweenTiles() (bool) {
+	if (mh.y % 16 != 0) || (mh.x % 16 != 0) {
+		return true
+	}
+
+	return false
+}
+// TODO: Fix a moving on level
 func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 	switch direction {
 		case "left":

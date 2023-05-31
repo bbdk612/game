@@ -18,7 +18,7 @@ type MainHero struct {
 
 func (mh *MainHero) calculateTilecoordinate(tilesize int) {
 	//calculate tilecoordiante on screen
-	mh.tilecoordinate = ((mh.x % 16) / tilesize) + (mh.y / 16) * 16
+	mh.tilecoordinate = ((mh.x) / tilesize) + (mh.y / 16) * 16
 	fmt.Println(mh.x, mh.y, mh.tilecoordinate)
 }
 

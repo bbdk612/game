@@ -1,6 +1,6 @@
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/bbdk612/game/animatedobjects v0.0.0-20230531060135-3b7f76c84ccf h1:wfKScUuj98PrhwPGSCqA1BNJqi/NlclCaVQ1p/z3m+Q=
-github.com/bbdk612/game/animatedobjects v0.0.0-20230531060135-3b7f76c84ccf/go.mod h1:2n/tL3G5jR0IupD0agl6Wrf+vAoKhc351vjh1bxn1lk=
+github.com/bbdk612/game/animatedobjects v0.0.0-20230531123600-21dcf76b0098 h1:aQmeEqQGkRoDzrDHGyfo+1qkBBDxbCFESRARF4UNwRM=
+github.com/bbdk612/game/animatedobjects v0.0.0-20230531123600-21dcf76b0098/go.mod h1:2n/tL3G5jR0IupD0agl6Wrf+vAoKhc351vjh1bxn1lk=
 github.com/bbdk612/game/gamemap v0.0.0-20230529120055-4a4d57dce18c h1:b79y6Gn5+n5WcdpwsWRKwljjYPYbgW+ZOTIDfy22iBc=
 github.com/bbdk612/game/gamemap v0.0.0-20230529120055-4a4d57dce18c/go.mod h1:/8kVuYhNusXD0pdtBzjQOP1gkiAn4f8s7yEPwkPmCvg=
 github.com/ebitengine/purego v0.3.0 h1:BDv9pD98k6AuGNQf3IF41dDppGBOe0F4AofvhFtBXF4=

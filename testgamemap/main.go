@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
+	"image"
 	"log"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
 	// "github.com/hajimehoshi/ebiten/v2/ebitenutil"
 
 	"github.com/bbdk612/game/animatedobjects"
@@ -17,11 +20,33 @@ type Game struct {
 
 func (G *Game) Update() error {
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-
+		G.MH.AsePlayer.Play("walk")
+		if G.MH.CanIGo("left", G.Map.GetCurrentChunk()) {
+			x, y := G.MH.GetCoordinates()
+			G.MH.SetCoordinates(x+4, y)
+		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
+		G.MH.AsePlayer.Play("walk")
+		if G.MH.CanIGo("right", G.Map.GetCurrentChunk()) {
+			x, y := G.MH.GetCoordinates()
+			G.MH.SetCoordinates(x-4, y)
+		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
+		G.MH.AsePlayer.Play("walk")
+		if G.MH.CanIGo("top", G.Map.GetCurrentChunk()) {
+			x, y := G.MH.GetCoordinates()
+			G.MH.SetCoordinates(x, y-4)
+		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
+		G.MH.AsePlayer.Play("walk")
+		if G.MH.CanIGo("down", G.Map.GetCurrentChunk()) {
+			x, y := G.MH.GetCoordinates()
+			G.MH.SetCoordinates(x, y+4)
+		}
+	} else {
+		G.MH.AsePlayer.Play("stop")
 	}
+
   
 
 	return nil
@@ -38,6 +63,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		screen.DrawImage(g.Map.GetTile(tileNumber), options)
 	}
+
+	options := &ebiten.DrawImageOptions{}
+
+	x, y := g.MH.GetCoordinates()
+	options.GeoM.Translate(float64(x), float64(y))
+
+	sub := g.MH.Image.SubImage(image.Rect(g.MH.AsePlayer.CurrentFrameCoords()))
+
+	screen.DrawImage(sub.(*ebiten.Image), options)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {

@@ -6,35 +6,23 @@ import (
 	"log"
 	// "github.com/hajimehoshi/ebiten/v2/ebitenutil"
 
+	"github.com/bbdk612/game/animatedobjects"
 	"github.com/bbdk612/game/gamemap"
 )
 
 type Game struct {
 	Map *gamemap.GameMap
+	MH  *animatedobjects.MainHero
 }
 
 func (G *Game) Update() error {
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-		chunk, ok := G.Map.CheckDirection("left")
-		if ok {
-			G.Map.ChangeCurrentChunk(chunk)
-		}
+
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
-		chunk, ok := G.Map.CheckDirection("right")
-		if ok {
-			G.Map.ChangeCurrentChunk(chunk)
-		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		chunk, ok := G.Map.CheckDirection("top")
-		if ok {
-			G.Map.ChangeCurrentChunk(chunk)
-		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		chunk, ok := G.Map.CheckDirection("down")
-		if ok {
-			G.Map.ChangeCurrentChunk(chunk)
-		}
 	}
+  
 
 	return nil
 }

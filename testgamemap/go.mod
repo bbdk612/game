@@ -3,7 +3,7 @@ module github.com/bbdk612/game/testgamemap
 go 1.20
 
 require (
-	github.com/bbdk612/game/animatedobjects v0.0.0-20230531170435-0c170e570652
+	github.com/bbdk612/game/animatedobjects v0.0.0-20230601025351-012b92df3012
 	github.com/bbdk612/game/gamemap v0.0.0-20230531170435-0c170e570652
 	github.com/hajimehoshi/ebiten/v2 v2.5.4
 )

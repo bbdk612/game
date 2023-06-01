@@ -91,13 +91,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 			return false
 
 		case "down":
-			if mh.y % 16 != 0 {
-				if mh.x % 16 != 0 {
-					if (chunk[mh.tilecoordinate + 16] == 1) && (chunk[mh.tilecoordinate + 1] == 1) {
-						return true
-					}
-				}
-			} else if mh.x % 16 != 0 {
+			if mh.x % 16 != 0 {
 				if (chunk[mh.tilecoordinate + 16] == 1) && (chunk[mh.tilecoordinate + 1] == 1) {
 						return true
 					}

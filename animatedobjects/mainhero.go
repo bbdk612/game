@@ -32,21 +32,29 @@ func (mh *MainHero) SetCoordinates(x, y int) {
 	mh.calculateTilecoordinate(16)
 }
 
-func (mh *MainHero) iBetweenTiles() (bool) {
-	if (mh.y % 16 != 0) || (mh.x % 16 != 0) {
-		return true
-	}
 
-	return false
-}
 // TODO: Fix a moving on level
 func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 	switch direction {
 		case "left":
 			fmt.Println("nextTile", mh.tilecoordinate-1)
-			if chunk[mh.tilecoordinate - 1] == 1 {
+			if mh.x % 16 != 0 {
+				if mh.y % 16 != 0 {
+					if (chunk[mh.tilecoordinate] == 1) && (chunk[mh.tilecoordinate + 16] == 1) {
+						return true
+					}
+				}
+				if chunk[mh.tilecoordinate] == 1 {
+					return true
+				}
+			} else if mh.y % 16 != 0 {
+				if (chunk[mh.tilecoordinate] == 1) && (chunk[mh.tilecoordinate + 16] == 1) {
+					return true
+				}
+			} else if chunk[mh.tilecoordinate - 1] == 1 {
 				return true
 			}
+
 
 			return false
 
@@ -60,7 +68,17 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 
 		case "top":
 			fmt.Println("nextTile", mh.tilecoordinate-16)
-			if chunk[mh.tilecoordinate - 16] == 1 {
+			if mh.y % 16 != 0 {
+				if mh.x % 16 != 0 {
+					if (chunk[mh.tilecoordinate] == 1) && (chunk[mh.tilecoordinate + 1] == 1) {
+						return true
+					}
+				}
+
+				if chunk[mh.tilecoordinate] == 1 {
+					return true
+				}
+			} else if chunk[mh.tilecoordinate - 16] == 1 {
 				return true
 			}
 

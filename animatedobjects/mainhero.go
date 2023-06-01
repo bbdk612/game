@@ -22,6 +22,20 @@ func (mh *MainHero) calculateTilecoordinate(tilesize int) {
 	fmt.Println(mh.x, mh.y, mh.tilecoordinate)
 }
 
+func (mh *MainHero) GetTileCoor() (int) {
+	return mh.tilecoordinate
+}
+
+func (mh *MainHero) SetTileCoor(tilecoor int) {
+	var x int = (tilecoor % 16) * 16
+	var y int = (tilecoor / 16) * 16
+
+
+	mh.x = x
+	mh.y = y
+	mh.tilecoordinate = tilecoor
+}
+
 func (mh *MainHero) GetCoordinates() (int, int) {
 	return mh.x, mh.y
 }

@@ -24,26 +24,27 @@ func (G *Game) Update() error {
 		if G.MH.CanIGo("left", G.Map.GetCurrentChunk()) {
 			fmt.Println("ok")
 			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x-4, y)
+			G.MH.SetCoordinates(x-2, y)
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
 		G.MH.AsePlayer.Play("walk")
 		if G.MH.CanIGo("right", G.Map.GetCurrentChunk()) {
 			fmt.Println("ok")
 			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x+4, y)
+
+			G.MH.SetCoordinates(x+2, y)
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
 		G.MH.AsePlayer.Play("walk")
 		if G.MH.CanIGo("top", G.Map.GetCurrentChunk()) {
 			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x, y-4)
+			G.MH.SetCoordinates(x, y-2)
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
 		G.MH.AsePlayer.Play("walk")
 		if G.MH.CanIGo("down", G.Map.GetCurrentChunk()) {
 			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x, y+4)
+			G.MH.SetCoordinates(x, y+2)
 		}
 	} else {
 		G.MH.AsePlayer.Play("stop")

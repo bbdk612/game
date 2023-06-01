@@ -39,6 +39,10 @@ github.com/bbdk612/game/animatedobjects v0.0.0-20230601025120-4eee81f09b0f h1:NT
 github.com/bbdk612/game/animatedobjects v0.0.0-20230601025120-4eee81f09b0f/go.mod h1:2n/tL3G5jR0IupD0agl6Wrf+vAoKhc351vjh1bxn1lk=
 github.com/bbdk612/game/animatedobjects v0.0.0-20230601025351-012b92df3012 h1:MBhNAgA5Elk+vccB4zkP64Y9HM1PHWRcLnzFLwlCYVc=
 github.com/bbdk612/game/animatedobjects v0.0.0-20230601025351-012b92df3012/go.mod h1:2n/tL3G5jR0IupD0agl6Wrf+vAoKhc351vjh1bxn1lk=
+github.com/bbdk612/game/animatedobjects v0.0.0-20230601025604-096be74d3b47 h1:oVMMOjK/iYoPdmhztK554BiW+vTh8L5YorNqczG8Fvk=
+github.com/bbdk612/game/animatedobjects v0.0.0-20230601025604-096be74d3b47/go.mod h1:2n/tL3G5jR0IupD0agl6Wrf+vAoKhc351vjh1bxn1lk=
+github.com/bbdk612/game/animatedobjects v0.0.0-20230601031320-8e4e18e635bf h1:vOV4MrKNWdocTnqL0sFjuY/bK30LD5zRpiHXRbzX/gM=
+github.com/bbdk612/game/animatedobjects v0.0.0-20230601031320-8e4e18e635bf/go.mod h1:2n/tL3G5jR0IupD0agl6Wrf+vAoKhc351vjh1bxn1lk=
 github.com/bbdk612/game/gamemap v0.0.0-20230531125319-e720e759b348 h1:xNLSW5A4L3Nq0CE6T/DAdQsXqb0BXxkf9YOjcSsaZbg=
 github.com/bbdk612/game/gamemap v0.0.0-20230531125319-e720e759b348/go.mod h1:/8kVuYhNusXD0pdtBzjQOP1gkiAn4f8s7yEPwkPmCvg=
 github.com/bbdk612/game/gamemap v0.0.0-20230531143658-24efc8722192 h1:uHxc/oFhuj4zPKDrZAzE0nzRvpo/tFlrbfcuj8bQHPY=

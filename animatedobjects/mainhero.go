@@ -37,7 +37,6 @@ func (mh *MainHero) SetCoordinates(x, y int) {
 func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 	switch direction {
 		case "left":
-			fmt.Println("nextTile", mh.tilecoordinate-1)
 			if mh.x % 16 != 0 {
 				if mh.y % 16 != 0 {
 					if (chunk[mh.tilecoordinate] == 1) && (chunk[mh.tilecoordinate + 16] == 1) {
@@ -48,7 +47,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 					return true
 				}
 			} else if mh.y % 16 != 0 {
-				if (chunk[mh.tilecoordinate] == 1) && (chunk[mh.tilecoordinate + 16] == 1) {
+				if (chunk[mh.tilecoordinate - 1] == 1) && (chunk[mh.tilecoordinate + 16] == 1) {
 					return true
 				}
 			} else if chunk[mh.tilecoordinate - 1] == 1 {
@@ -59,7 +58,11 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 			return false
 
 		case "right":
-			fmt.Println("nextTile", mh.tilecoordinate+1)
+			if mh.y % 16 != 0 {
+				if (chunk[mh.tilecoordinate + 1] == 0) && (chunk[mh.tilecoordinate + 16] == 1) {
+					return true
+				}
+			}
 			if chunk[mh.tilecoordinate + 1] == 1 {
 				return true
 			}
@@ -67,7 +70,6 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 			return false
 
 		case "top":
-			fmt.Println("nextTile", mh.tilecoordinate-16)
 			if mh.y % 16 != 0 {
 				if mh.x % 16 != 0 {
 					if (chunk[mh.tilecoordinate] == 1) && (chunk[mh.tilecoordinate + 1] == 1) {
@@ -78,6 +80,10 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 				if chunk[mh.tilecoordinate] == 1 {
 					return true
 				}
+			} else if mh.x % 16 != 0 {
+				if (chunk[mh.tilecoordinate - 16] == 1) && (chunk[mh.tilecoordinate + 1] == 1) {
+					return true
+				}
 			} else if chunk[mh.tilecoordinate - 16] == 1 {
 				return true
 			}
@@ -85,8 +91,17 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 			return false
 
 		case "down":
-			fmt.Println("nextTile", mh.tilecoordinate+16)
-			if chunk[mh.tilecoordinate + 16] == 1 {
+			if mh.y % 16 != 0 {
+				if mh.x % 16 != 0 {
+					if (chunk[mh.tilecoordinate + 16] == 1) && (chunk[mh.tilecoordinate + 1] == 1) {
+						return true
+					}
+				}
+			} else if mh.x % 16 != 0 {
+				if (chunk[mh.tilecoordinate + 16] == 1) && (chunk[mh.tilecoordinate + 1] == 1) {
+						return true
+					}
+			} else if chunk[mh.tilecoordinate + 16] == 1 {
 				return true
 			}
 

@@ -47,7 +47,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 					return true
 				}
 			} else if mh.y % 16 != 0 {
-				if (chunk[mh.tilecoordinate - 1] == 1) && (chunk[mh.tilecoordinate + 16] == 1) {
+				if (chunk[mh.tilecoordinate - 1] == 1) && (chunk[mh.tilecoordinate - 1 + 16] == 1) {
 					return true
 				}
 			} else if chunk[mh.tilecoordinate - 1] == 1 {
@@ -59,7 +59,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 
 		case "right":
 			if mh.y % 16 != 0 {
-				if (chunk[mh.tilecoordinate + 1] == 0) && (chunk[mh.tilecoordinate + 16] == 1) {
+				if (chunk[mh.tilecoordinate + 1] == 0) && (chunk[mh.tilecoordinate + 1 + 16] == 1) {
 					return true
 				}
 			}
@@ -81,7 +81,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 					return true
 				}
 			} else if mh.x % 16 != 0 {
-				if (chunk[mh.tilecoordinate - 16] == 1) && (chunk[mh.tilecoordinate + 1] == 1) {
+				if (chunk[mh.tilecoordinate - 16] == 1) && (chunk[mh.tilecoordinate - 16 + 1] == 1) {
 					return true
 				}
 			} else if chunk[mh.tilecoordinate - 16] == 1 {

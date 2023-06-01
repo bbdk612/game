@@ -23,28 +23,57 @@ func (G *Game) Update() error {
 		G.MH.AsePlayer.Play("walk")
 		if G.MH.CanIGo("left", G.Map.GetCurrentChunk()) {
 			fmt.Println("ok")
-			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x-2, y)
+			if G.MH.GetTileCoor()%16 != 0 {
+				x, y := G.MH.GetCoordinates()
+				G.MH.SetCoordinates(x-2, y)
+			} else {
+				if chunk, ok := G.Map.CheckDirection("left"); ok {
+					G.Map.ChangeCurrentChunk(chunk)
+					G.MH.SetTileCoor(G.MH.GetTileCoor() + 15)
+				}
+			}
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
 		G.MH.AsePlayer.Play("walk")
 		if G.MH.CanIGo("right", G.Map.GetCurrentChunk()) {
 			fmt.Println("ok")
-			x, y := G.MH.GetCoordinates()
+			if (G.MH.GetTileCoor()+1)%16 != 0 {
+				x, y := G.MH.GetCoordinates()
 
-			G.MH.SetCoordinates(x+2, y)
+				G.MH.SetCoordinates(x+2, y)
+			} else {
+				if chunk, ok := G.Map.CheckDirection("right"); ok {
+					G.Map.ChangeCurrentChunk(chunk)
+					G.MH.SetTileCoor(G.MH.GetTileCoor() - 15)
+				}
+			}
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
 		G.MH.AsePlayer.Play("walk")
 		if G.MH.CanIGo("top", G.Map.GetCurrentChunk()) {
-			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x, y-2)
+			if G.MH.GetTileCoor() < 16 {
+				if chunk, ok := G.Map.CheckDirection("top"); ok {
+					G.Map.ChangeCurrentChunk(chunk)
+					G.MH.SetTileCoor(256 - G.MH.GetTileCoor())
+				}
+			} else {
+				x, y := G.MH.GetCoordinates()
+				G.MH.SetCoordinates(x, y-2)
+			}
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
 		G.MH.AsePlayer.Play("walk")
 		if G.MH.CanIGo("down", G.Map.GetCurrentChunk()) {
-			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x, y+2)
+			if (G.MH.GetTileCoor() > 240) && (G.MH.GetTileCoor() < 256) {
+				if chunk, ok := G.Map.CheckDirection("down"); ok {
+					G.Map.ChangeCurrentChunk(chunk)
+					x, _ := G.MH.GetCoordinates()
+					G.MH.SetCoordinates(x, 0)
+				}
+			} else {
+				x, y := G.MH.GetCoordinates()
+				G.MH.SetCoordinates(x, y+2)
+			}
 		}
 	} else {
 		G.MH.AsePlayer.Play("stop")

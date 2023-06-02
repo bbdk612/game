@@ -19,64 +19,56 @@ type Game struct {
 }
 
 func (G *Game) Update() error {
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+	if ebiten.IsKeyPressed(ebiten.KeyA) {
 		G.MH.AsePlayer.Play("walk")
-		if G.MH.CanIGo("left", G.Map.GetCurrentChunk()) {
+		if G.MH.GetTileCoor()%16 == 0 {
+			if chunk, ok := G.Map.CheckDirection("left"); ok {
+				G.Map.ChangeCurrentChunk(chunk)
+				G.MH.SetTileCoor(G.MH.GetTileCoor() + 15)
+			}
+		} else if G.MH.CanIGo("left", G.Map.GetCurrentChunk()) {
 			fmt.Println("ok")
-			if G.MH.GetTileCoor()%16 != 0 {
-				x, y := G.MH.GetCoordinates()
-				G.MH.SetCoordinates(x-2, y)
-			} else {
-				if chunk, ok := G.Map.CheckDirection("left"); ok {
-					G.Map.ChangeCurrentChunk(chunk)
-					G.MH.SetTileCoor(G.MH.GetTileCoor() + 15)
-				}
-			}
+			x, y := G.MH.GetCoordinates()
+			G.MH.SetCoordinates(x-4, y)
 		}
-	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyD) {
 		G.MH.AsePlayer.Play("walk")
-		if G.MH.CanIGo("right", G.Map.GetCurrentChunk()) {
+		if (G.MH.GetTileCoor()+1)%16 == 0 {
+			if chunk, ok := G.Map.CheckDirection("right"); ok {
+				G.Map.ChangeCurrentChunk(chunk)
+				G.MH.SetTileCoor(G.MH.GetTileCoor() - 15)
+			}
+		} else if G.MH.CanIGo("right", G.Map.GetCurrentChunk()) {
 			fmt.Println("ok")
-			if (G.MH.GetTileCoor()+1)%16 != 0 {
-				x, y := G.MH.GetCoordinates()
-
-				G.MH.SetCoordinates(x+2, y)
-			} else {
-				if chunk, ok := G.Map.CheckDirection("right"); ok {
-					G.Map.ChangeCurrentChunk(chunk)
-					G.MH.SetTileCoor(G.MH.GetTileCoor() - 15)
-				}
-			}
+			x, y := G.MH.GetCoordinates()
+			G.MH.SetCoordinates(x+4, y)
 		}
-	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyW) {
 		G.MH.AsePlayer.Play("walk")
-		if G.MH.CanIGo("top", G.Map.GetCurrentChunk()) {
-			if G.MH.GetTileCoor() < 16 {
-				if chunk, ok := G.Map.CheckDirection("top"); ok {
-					G.Map.ChangeCurrentChunk(chunk)
-					G.MH.SetTileCoor(256 - G.MH.GetTileCoor())
-				}
-			} else {
-				x, y := G.MH.GetCoordinates()
-				G.MH.SetCoordinates(x, y-2)
+		if _, y := G.MH.GetCoordinates(); y == 0 {
+			if chunk, ok := G.Map.CheckDirection("top"); ok {
+				G.Map.ChangeCurrentChunk(chunk)
+				G.MH.SetTileCoor(256 - (G.MH.GetTileCoor() - 2))
 			}
+		} else if G.MH.CanIGo("top", G.Map.GetCurrentChunk()) {
+			x, y := G.MH.GetCoordinates()
+			G.MH.SetCoordinates(x, y-4)
 		}
-	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyS) {
 		G.MH.AsePlayer.Play("walk")
-		if G.MH.CanIGo("down", G.Map.GetCurrentChunk()) {
-			if (G.MH.GetTileCoor() > 240) && (G.MH.GetTileCoor() < 256) {
-				if chunk, ok := G.Map.CheckDirection("down"); ok {
-					G.Map.ChangeCurrentChunk(chunk)
-					x, _ := G.MH.GetCoordinates()
-					G.MH.SetCoordinates(x, 0)
-				}
-			} else {
-				x, y := G.MH.GetCoordinates()
-				G.MH.SetCoordinates(x, y+2)
+		if (G.MH.GetTileCoor() > 240) && (G.MH.GetTileCoor() < 256) {
+			if chunk, ok := G.Map.CheckDirection("down"); ok {
+				G.Map.ChangeCurrentChunk(chunk)
+				x, _ := G.MH.GetCoordinates()
+				G.MH.SetCoordinates(x, 0)
 			}
+		} else if G.MH.CanIGo("down", G.Map.GetCurrentChunk()) {
+			x, y := G.MH.GetCoordinates()
+			G.MH.SetCoordinates(x, y+4)
 		}
-	} else {
-		G.MH.AsePlayer.Play("stop")
 	}
 
 	G.MH.AsePlayer.Update(float32(1.0 / 60.0))
@@ -204,7 +196,7 @@ func main() {
 		MH:  mh,
 	}
 
-	ebiten.SetWindowSize(256*3, 256*3)
+	ebiten.SetWindowSize(256, 256)
 	ebiten.SetWindowTitle("test of Gamemap")
 
 	g.MH.AsePlayer.Play("stop")

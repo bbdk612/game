@@ -14,6 +14,8 @@ type MainHero struct {
 	Sprite *goaseprite.File
 	AsePlayer *goaseprite.Player
 	Image  *ebiten.Image
+	Weapons [2](*Weapon)
+	currentWeapon int
 }
 
 func (mh *MainHero) calculateTilecoordinate(tilesize int) {
@@ -47,7 +49,6 @@ func (mh *MainHero) SetCoordinates(x, y int) {
 }
 
 
-// TODO: Fix a moving on level
 func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 	switch direction {
 		case "left":
@@ -120,14 +121,28 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 	}
 }
 
+func (mh *MainHero) GetCurrentWeapon() (*Weapon) {
+	return mh.Weapons[mh.currentWeapon]
+}
+
 func InitMainHero(tilecoordinate int, tilesize int, xCount int) (*MainHero, error) {
 	var x int = (tilecoordinate % xCount) * tilesize
 	var y int = (tilecoordinate / xCount) * tilesize
+
+	startWeapon, err := InitNewWeapon(x + 8, y + 8, "./assets/startWeapon.png")
+	var weapons [2](*Weapon)
+	weapons[0] = startWeapon
+	if err != nil {
+		return nil, err
+	}
+
 	mainhero := &MainHero{
 		Sprite: goaseprite.Open("./assets/mainhero.json"),
 		tilecoordinate: tilecoordinate,
 		x: x,
 		y: y,
+		Weapons: weapons,
+		currentWeapon: 0,
 	}
 
 	mainhero.AsePlayer = mainhero.Sprite.CreatePlayer()

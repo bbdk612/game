@@ -46,6 +46,9 @@ func (mh *MainHero) GetCoordinates() (int, int) {
 func (mh *MainHero) SetCoordinates(x, y int) {
 	mh.x = x
 	mh.y = y
+
+	mh.GetCurrentWeapon().ChangePosition(x + 8, y + 8)
+
 	mh.calculateTilecoordinate(16)
 }
 

@@ -41,7 +41,7 @@ func (w *Weapon) GetOCoordinates() (int, int) {
 	return w.oX, w.oY
 }
 
-func (w *Weapon) changePosition(x, y int) {
+func (w *Weapon) ChangePosition(x, y int) {
 	var differenceX int = w.oX - x
 	var differenceY int = w.oY - y
 
@@ -57,16 +57,16 @@ func (w *Weapon) MoveWeapon(direction string, step int) {
 
 	switch direction {
 	case "left":
-		w.changePosition(x-step, y)
+		w.ChangePosition(x-step, y)
 
 	case "right":
-		w.changePosition(x+step, y)
+		w.ChangePosition(x+step, y)
 
 	case "top":
-		w.changePosition(x, y-step)
+		w.ChangePosition(x, y-step)
 
 	case "down":
-		w.changePosition(x, y+step)
+		w.ChangePosition(x, y+step)
 	}
 }
 

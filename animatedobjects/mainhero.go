@@ -141,7 +141,7 @@ func (mh *MainHero) Move(direction string, chunk []int) {
 			mh.SetCoordinates(mh.x, mh.y - mh.step)
 			mh.GetCurrentWeapon().MoveWeapon(direction, mh.step)
 		
-		case "bottom":
+		case "down":
 			mh.SetCoordinates(mh.x, mh.y + mh.step)
 			mh.GetCurrentWeapon().MoveWeapon(direction, mh.step)
 		}

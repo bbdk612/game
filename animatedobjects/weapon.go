@@ -65,7 +65,7 @@ func (w *Weapon) MoveWeapon(direction string, step int) {
 	case "top":
 		w.changePosition(x, y-step)
 
-	case "bottom":
+	case "down":
 		w.changePosition(x, y+step)
 	}
 }

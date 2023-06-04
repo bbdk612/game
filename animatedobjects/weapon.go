@@ -33,6 +33,10 @@ func (w *Weapon) recalculateCoordinatesOfEnd() {
 	// fmt.Println(w.angle, math.Cos(w.angle), math.Sin(w.angle))
 }
 
+func (w *Weapon) GetAngle() (float64) {
+	return w.angle
+}
+
 func (w *Weapon) ChangePosition(x, y int) {
 	var differenceX int = w.oX - x
 	var differenceY int = w.oY - y

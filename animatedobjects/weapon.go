@@ -53,20 +53,19 @@ func (w *Weapon) ChangePosition(x, y int) {
 }
 
 func (w *Weapon) MoveWeapon(direction string, step int) {
-	x, y := w.GetOCoordinates()
 
 	switch direction {
 	case "left":
-		w.ChangePosition(x-step, y)
+		w.ChangePosition(w.oX - step, w.oY)
 
 	case "right":
-		w.ChangePosition(x+step, y)
+		w.ChangePosition(w.oX+step, w.oY)
 
 	case "top":
-		w.ChangePosition(x, y-step)
+		w.ChangePosition(w.oX, w.oY-step)
 
 	case "down":
-		w.ChangePosition(x, y+step)
+		w.ChangePosition(w.oX, w.oY+step)
 	}
 }
 

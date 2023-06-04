@@ -133,21 +133,19 @@ func (mh *MainHero) Move(direction string, chunk []int) {
 	if mh.CanIGo(direction, chunk) {
 		switch direction {
 		case "left":
-			mh.x -= mh.step
+			mh.SetCoordinates(mh.x - mh.step, mh.y)
 		
 		case "right":
-			mh.x += mh.step
+			mh.SetCoordinates(mh.x + mh.step, mh.y)
 
 		case "top":
-			mh.y -= mh.step
+			mh.SetCoordinates(mh.x, mh.y - mh.step)
 		
 		case "down":
-			mh.y += mh.step
+			mh.SetCoordinates(mh.x, mh.y + mh.step)
 		}
 
-		mh.GetCurrentWeapon().ChangePosition(mh.x + 8, mh.y + 8)
-
-	} 
+	}
 }
 
 func InitMainHero(tilecoordinate int, tilesize int, xCount int, step int) (*MainHero, error) {

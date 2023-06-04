@@ -15,6 +15,7 @@ type MainHero struct {
 	AsePlayer *goaseprite.Player
 	Image  *ebiten.Image
 	Weapons [2](*Weapon)
+	step int
 	currentWeapon int
 }
 
@@ -125,7 +126,30 @@ func (mh *MainHero) GetCurrentWeapon() (*Weapon) {
 	return mh.Weapons[mh.currentWeapon]
 }
 
-func InitMainHero(tilecoordinate int, tilesize int, xCount int) (*MainHero, error) {
+func (mh *MainHero) Move(direction string, chunk []int) {
+	if mh.CanIGo(direction, chunk) {
+		switch direction {
+		case "left":
+			mh.SetCoordinates(mh.x - mh.step, mh.y)
+			mh.GetCurrentWeapon().MoveWeapon(direction, mh.step)
+		
+		case "right":
+			mh.SetCoordinates(mh.x + mh.step, mh.y)
+			mh.GetCurrentWeapon().MoveWeapon(direction, mh.step)
+
+		case "top":
+			mh.SetCoordinates(mh.x, mh.y - mh.step)
+			mh.GetCurrentWeapon().MoveWeapon(direction, mh.step)
+		
+		case "bottom":
+			mh.SetCoordinates(mh.x, mh.y + mh.step)
+			mh.GetCurrentWeapon().MoveWeapon(direction, mh.step)
+		}
+
+	} 
+}
+
+func InitMainHero(tilecoordinate int, tilesize int, xCount int, step int) (*MainHero, error) {
 	var x int = (tilecoordinate % xCount) * tilesize
 	var y int = (tilecoordinate / xCount) * tilesize
 
@@ -143,6 +167,7 @@ func InitMainHero(tilecoordinate int, tilesize int, xCount int) (*MainHero, erro
 		y: y,
 		Weapons: weapons,
 		currentWeapon: 0,
+		step: step,
 	}
 
 	mainhero.AsePlayer = mainhero.Sprite.CreatePlayer()

@@ -1,10 +1,10 @@
 package animatedobjects
 
 import (
-	"math"
-	"os"
 	"image"
 	_ "image/png"
+	"math"
+	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -33,7 +33,7 @@ func (w *Weapon) recalculateCoordinatesOfEnd() {
 	// fmt.Println(w.angle, math.Cos(w.angle), math.Sin(w.angle))
 }
 
-func (w *Weapon) GetAngle() (float64) {
+func (w *Weapon) GetAngle() float64 {
 	return w.angle
 }
 
@@ -41,7 +41,7 @@ func (w *Weapon) GetOCoordinates() (int, int) {
 	return w.oX, w.oY
 }
 
-func (w *Weapon) ChangePosition(x, y int) {
+func (w *Weapon) changePosition(x, y int) {
 	var differenceX int = w.oX - x
 	var differenceY int = w.oY - y
 
@@ -50,6 +50,24 @@ func (w *Weapon) ChangePosition(x, y int) {
 
 	w.xEnd += differenceX
 	w.yEnd += differenceY
+}
+
+func (w *Weapon) MoveWeapon(direction string, step int) {
+	x, y := w.GetOCoordinates()
+
+	switch direction {
+	case "left":
+		w.changePosition(x-step, y)
+
+	case "right":
+		w.changePosition(x+step, y)
+
+	case "top":
+		w.changePosition(x, y-step)
+
+	case "bottom":
+		w.changePosition(x, y+step)
+	}
 }
 
 func InitNewWeapon(x, y int, imagePath string) (*Weapon, error) {

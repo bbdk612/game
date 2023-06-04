@@ -77,6 +77,8 @@ func (G *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
+
+	//drawing a map
 	xCount := (g.Map.SreenWidth / g.Map.TileSize)
 
 	currentChunk := g.Map.GetCurrentChunk()
@@ -88,14 +90,22 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.DrawImage(g.Map.GetTile(tileNumber), options)
 	}
 
-	options := &ebiten.DrawImageOptions{}
+	// drawing a personage
+
+	optionsForMainHero := &ebiten.DrawImageOptions{}
 
 	x, y := g.MH.GetCoordinates()
-	options.GeoM.Translate(float64(x), float64(y))
+	optionsForMainHero.GeoM.Translate(float64(x), float64(y))
 
 	sub := g.MH.Image.SubImage(image.Rect(g.MH.AsePlayer.CurrentFrameCoords()))
 
-	screen.DrawImage(sub.(*ebiten.Image), options)
+	screen.DrawImage(sub.(*ebiten.Image), optionsForMainHero)
+
+	// drawing a gun
+	optionsForWeapon := &ebiten.DrawImageOptions{}
+
+	optionsForWeapon.GeoM.Rotate(G.GetCurrentWeapon().GetAngle())
+	optionsForWeapon.GeoM.Translate()
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {

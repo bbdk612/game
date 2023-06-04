@@ -37,6 +37,10 @@ func (w *Weapon) GetAngle() (float64) {
 	return w.angle
 }
 
+func (w *Weapon) GetOCoordinates() (int, int) {
+	return w.oX, w.oY
+}
+
 func (w *Weapon) ChangePosition(x, y int) {
 	var differenceX int = w.oX - x
 	var differenceY int = w.oY - y

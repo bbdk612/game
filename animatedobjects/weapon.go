@@ -22,7 +22,7 @@ func (w *Weapon) CalculateAngle(x, y int) {
 	var bY float64 = (float64(w.oY) - float64(w.yEnd))
 	var bX float64 = (float64(w.oX) - float64(w.xEnd))
 
-	w.angle = (-math.Atan2(bY, bX) + math.Atan2(aY, aX)) + math.Pi
+	w.angle = (-math.Atan2(bY, bX) + math.Atan2(aY, aX))
 }
 
 func (w *Weapon) GetAngle() float64 {

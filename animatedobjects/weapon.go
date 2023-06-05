@@ -34,14 +34,11 @@ func (w *Weapon) GetOCoordinates() (int, int) {
 }
 
 func (w *Weapon) ChangePosition(x, y int) {
-	var differenceX int = w.oX - x
-	var differenceY int = w.oY - y
-
 	w.oX = x
 	w.oY = y
 
-	w.xEnd += differenceX
-	w.yEnd += differenceY
+	w.xEnd = x + 8
+	w.yEnd = y + 8
 }
 
 func (w *Weapon) MoveWeapon(direction string, step int) {

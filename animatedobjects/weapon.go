@@ -26,13 +26,6 @@ func (w *Weapon) CalculateAngle(x, y int) {
 	w.recalculateCoordinatesOfEnd()
 }
 
-func (w *Weapon) recalculateCoordinatesOfEnd() {
-	w.xEnd = int(float64(w.xEnd)*math.Cos(w.angle) - float64(w.yEnd)*math.Sin(w.angle))
-	w.yEnd = int(float64(w.xEnd)*math.Sin(w.angle) + float64(w.yEnd)*math.Cos(w.angle))
-
-	// fmt.Println(w.angle, math.Cos(w.angle), math.Sin(w.angle))
-}
-
 func (w *Weapon) GetAngle() float64 {
 	return w.angle
 }

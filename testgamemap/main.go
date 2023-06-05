@@ -27,9 +27,7 @@ func (G *Game) Update() error {
 				G.MH.SetTileCoor(G.MH.GetTileCoor() + 15)
 			}
 		} else if G.MH.CanIGo("left", G.Map.GetCurrentChunk()) {
-			fmt.Println("ok")
-			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x-4, y)
+			G.MH.Move("left", G.Map.GetCurrentChunk())
 		}
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyD) {
@@ -39,10 +37,8 @@ func (G *Game) Update() error {
 				G.Map.ChangeCurrentChunk(chunk)
 				G.MH.SetTileCoor(G.MH.GetTileCoor() - 15)
 			}
-		} else if G.MH.CanIGo("right", G.Map.GetCurrentChunk()) {
-			fmt.Println("ok")
-			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x+4, y)
+		} else {
+				G.MH.Move("right", G.Map.GetCurrentChunk())
 		}
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyW) {
@@ -52,9 +48,8 @@ func (G *Game) Update() error {
 				G.Map.ChangeCurrentChunk(chunk)
 				G.MH.SetTileCoor(256 - (G.MH.GetTileCoor() - 2))
 			}
-		} else if G.MH.CanIGo("top", G.Map.GetCurrentChunk()) {
-			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x, y-4)
+		} else {
+			G.MH.Move("top", G.Map.GetCurrentChunk())
 		}
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyS) {
@@ -65,11 +60,13 @@ func (G *Game) Update() error {
 				x, _ := G.MH.GetCoordinates()
 				G.MH.SetCoordinates(x, 0)
 			}
-		} else if G.MH.CanIGo("down", G.Map.GetCurrentChunk()) {
-			x, y := G.MH.GetCoordinates()
-			G.MH.SetCoordinates(x, y+4)
+		} else {
+			G.MH.Move("down", G.Map.GetCurrentChunk())
 		}
 	}
+
+	cursorX, cursorY := ebiten.CursorPosition()
+	G.MH.GetCurrentWeapon().CalculateAngle(cursorX, cursorY)
 
 	G.MH.AsePlayer.Update(float32(1.0 / 60.0))
 
@@ -104,8 +101,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// drawing a gun
 	optionsForWeapon := &ebiten.DrawImageOptions{}
 
-	optionsForWeapon.GeoM.Rotate(G.GetCurrentWeapon().GetAngle())
-	optionsForWeapon.GeoM.Translate()
+	optionsForWeapon.GeoM.Rotate(g.MH.GetCurrentWeapon().GetAngle())
+	oX, oY := g.MH.GetCurrentWeapon().GetOCoordinates()
+
+	optionsForWeapon.GeoM.Translate(float64(oX), float64(oY))
+
+	screen.DrawImage(g.MH.GetCurrentWeapon().Image, optionsForWeapon)
+
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -195,7 +197,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	mh, err := animatedobjects.InitMainHero(34, 16, 16)
+	mh, err := animatedobjects.InitMainHero(34, 16, 16, 4)
 
 	if err != nil {
 		log.Fatal(err)
@@ -206,7 +208,7 @@ func main() {
 		MH:  mh,
 	}
 
-	ebiten.SetWindowSize(256, 256)
+	ebiten.SetWindowSize(256 * 3, 256 * 3)
 	ebiten.SetWindowTitle("test of Gamemap")
 
 	g.MH.AsePlayer.Play("stop")

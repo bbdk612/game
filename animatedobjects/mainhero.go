@@ -1,7 +1,7 @@
 package animatedobjects
 
 import (
-	"fmt"
+	// "fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -22,7 +22,6 @@ type MainHero struct {
 func (mh *MainHero) calculateTilecoordinate(tilesize int) {
 	//calculate tilecoordiante on screen
 	mh.tilecoordinate = ((mh.x) / tilesize) + (mh.y / 16) * 16
-	fmt.Println(mh.x, mh.y, mh.tilecoordinate)
 }
 
 func (mh *MainHero) GetTileCoor() (int) {
@@ -78,7 +77,6 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) (bool) {
 
 		case "right":
 			if mh.y % 16 != 0 {
-				fmt.Println((chunk[mh.tilecoordinate + 1]), (chunk[mh.tilecoordinate + 1 + 16]))
 				if (chunk[mh.tilecoordinate + 1] == 1) && (chunk[mh.tilecoordinate + 1 + 16] == 1) {
 					return true
 				}

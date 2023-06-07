@@ -10,27 +10,18 @@ type Bullet struct {
 	a, b                   float64
 	x, y                   int
 	XDirection, YDirection int
-	endTile                int
 	Sprite                 *goaseprite.File
 	AsePlayer              *goaseprite.Player
 	Image                  *ebiten.Image
+	step                   int
 }
 
 func (b *Bullet) Move(step int) {
 	if b.XDirection != b.x {
-		if b.XDirection < b.x {
-			b.x -= step
-		} else {
-			b.x += step
-		}
-
+		b.x += step
 		b.y = int(float64(b.x)*b.a + b.b)
 	} else {
-		if b.YDirection > b.y {
-			b.y += step
-		} else {
-			b.y -= step
-		}
+		b.y += step
 	}
 
 }
@@ -44,14 +35,11 @@ func (b *Bullet) GetCurrentTile(tilesize int) int {
 	return tile
 }
 
-func (b *Bullet) GetEndTile() int {
-	return b.endTile
-}
-
 func InitNewBullet(directionX, directionY int, a, b float64, startWeaponPositonX, startWeaponPositonY int, spriteJSONPath string, tilesize int) (*Bullet, error) {
-
-	var endTile int = (directionX)/tilesize + (directionY/16)*tilesize
-
+	var step int = 2
+	if (directionY < startWeaponPositonX) || (directionY < startWeaponPositonY) {
+		step = -step
+	}
 	bullet := &Bullet{
 		a:          a,
 		b:          b,
@@ -60,7 +48,7 @@ func InitNewBullet(directionX, directionY int, a, b float64, startWeaponPositonX
 		Sprite:     goaseprite.Open(spriteJSONPath),
 		XDirection: directionX,
 		YDirection: directionY,
-		endTile:    endTile,
+		step:       step,
 	}
 
 	bullet.AsePlayer = bullet.Sprite.CreatePlayer()

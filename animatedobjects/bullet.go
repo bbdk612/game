@@ -1,4 +1,4 @@
-package animatedobjects
+package github.com/bbdk612/game/animatedobjects
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"

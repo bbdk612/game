@@ -31,7 +31,7 @@ func (b *Bullet) GetCoordinates() (int, int) {
 }
 
 func (b *Bullet) GetCurrentTile(tilesize int) int {
-	var tile int = ((b.x) / tilesize) + (b.y/16)*tilesize
+	var tile int = (((b.x) / tilesize) + (b.y/16)*tilesize) % 256
 	return tile
 }
 

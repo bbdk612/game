@@ -92,7 +92,7 @@ func (w *Weapon) Shoot(directionX, directionY int, spritePath string, tilesize i
 			}
 		}
 
-		bullet, err := InitNewBullet(directionX, directionY, a, b, startX, startY, "./bullet.json", 16)
+		bullet, err := InitNewBullet(directionX, directionY, a, b, startX, startY, spritePath, 16)
 
 		if err != nil {
 			return err

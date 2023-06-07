@@ -1,6 +1,4 @@
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/bbdk612/game/animatedobjects v0.0.0-20230605103808-9eb89ac385fb h1:Y9ePEFpX44+OOlNeauBcGIxRoWZuK+BtmaqUpR9fnP8=
-github.com/bbdk612/game/animatedobjects v0.0.0-20230605103808-9eb89ac385fb/go.mod h1:2n/tL3G5jR0IupD0agl6Wrf+vAoKhc351vjh1bxn1lk=
 github.com/bbdk612/game/animatedobjects v0.0.0-20230607031555-0d47b1a2cb6c h1:iTiBBQowuxwaHkEaKaA+lDC2C8ji0ec95QvywkHCtdo=
 github.com/bbdk612/game/animatedobjects v0.0.0-20230607031555-0d47b1a2cb6c/go.mod h1:2n/tL3G5jR0IupD0agl6Wrf+vAoKhc351vjh1bxn1lk=
 github.com/bbdk612/game/gamemap v0.0.0-20230531170435-0c170e570652 h1:jqpJWdqr47uGHL12Ek+OaTItg/Daj7TSZ3QHelkS8Mo=

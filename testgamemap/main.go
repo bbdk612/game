@@ -16,6 +16,7 @@ import (
 type Game struct {
 	Map *gamemap.GameMap
 	MH  *animatedobjects.MainHero
+	//	UI  *UI.HealthBar
 }
 
 func IsMoveKeyPressed() bool {
@@ -101,6 +102,10 @@ func (G *Game) Update() error {
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
 		go G.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
 	}
+	//if ebiten.IsMouseButtonPressed(ebiten.MouseButton2) {
+	//	charX,charY := G.MH.GetCoordinates()
+	//	G.UI.Damage(cursorX, cursorY,charX, charY)
+	//}
 
 	G.MH.AsePlayer.Update(float32(1.0 / 60.0))
 
@@ -245,6 +250,7 @@ func main() {
 	}
 
 	mh, err := animatedobjects.InitMainHero(34, 16, 16, 4)
+	//hpB, err := UI.InitUI()
 
 	if err != nil {
 		log.Fatal(err)
@@ -253,6 +259,7 @@ func main() {
 	g := &Game{
 		Map: M,
 		MH:  mh,
+		//	HPB: hpB,
 	}
 
 	ebiten.SetWindowSize(256*3, 256*3)

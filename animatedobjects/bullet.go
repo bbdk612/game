@@ -16,12 +16,12 @@ type Bullet struct {
 	step                   int
 }
 
-func (b *Bullet) Move(step int) {
+func (b *Bullet) Move() {
 	if b.XDirection != b.x {
-		b.x += step
+		b.x += b.step
 		b.y = int(float64(b.x)*b.a + b.b)
 	} else {
-		b.y += step
+		b.y += b.step
 	}
 
 }
@@ -32,13 +32,16 @@ func (b *Bullet) GetCoordinates() (int, int) {
 
 func (b *Bullet) GetCurrentTile(tilesize int) int {
 	var tile int = (((b.x) / tilesize) + (b.y/16)*tilesize) % 256
+	if tile < 0 {
+		tile = 0
+	}
 	return tile
 }
 
 func InitNewBullet(directionX, directionY int, a, b float64, startWeaponPositonX, startWeaponPositonY int, spriteJSONPath string, tilesize int) (*Bullet, error) {
 	var step int = 2
-	if (directionY < startWeaponPositonX) || (directionY < startWeaponPositonY) {
-		step = -step
+	if (directionX < startWeaponPositonX) || (directionY < startWeaponPositonY) {
+		step = -2
 	}
 	bullet := &Bullet{
 		a:          a,

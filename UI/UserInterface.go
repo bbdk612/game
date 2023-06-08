@@ -9,10 +9,13 @@ import (
 )
 
 type UI struct {
-	heathBar *HeathBar
+	healthBar *HeathBar
 }
 
-func (ui *UI) InitUI() {
-	InitHealthBar(<path to hpBar>)
-
+func InitUI() (*UI,error){
+	ui.healthBar, err :=InitHealthBar(<path to hpBar>)
+	if err != nil {
+		return nil, err
+	}
+	return ui, nil;
 }

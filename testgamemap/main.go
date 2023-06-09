@@ -162,13 +162,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 	// UI
 	//HeathBar
-	hpbX,hpbY float64;
-	hpbX,hpbY = 1;
-	for i:=1; i < g.UI.HealthBar.HealthNumber;i++{
+	for hpbX:= g.ui.healthBar.startX,hpbY:= g.ui.healthBar.startY, i:=1; i < g.UI.healthBar.HealthNumber;i++{
 		opHPBar := &ebiten.DrawImageOptions{}
 		opHPBar.GeoM.Translate(float64(hpbX),float64(hpbY))
 		screen.DrawImage(frame.(*ebiten.Image),opHPBar)
-		hpbX:=hpbX+1;
+		hpbX:=hpbX+1
 	}
 }
 

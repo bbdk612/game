@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/bbdk612/game/ui"
 )
 
 type HealthBar struct {

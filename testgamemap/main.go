@@ -6,11 +6,11 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
-
-	// "github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 
 	"github.com/bbdk612/game/animatedobjects"
 	"github.com/bbdk612/game/gamemap"
+	"github.com/bbdk612/game/ui"
 )
 
 type Game struct {

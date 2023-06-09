@@ -1,11 +1,6 @@
 package ui
 
 import (
-	"image"
-	"os"
-
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/bbdk612/game/ui"
 )
 
 type UI struct {
@@ -14,11 +9,11 @@ type UI struct {
 }
 
 func InitUI() (*UI,error){
-	ui.healthBar, err :=InitHealthBar(<path to hpBar>)
+	ui.healthBar, err :=InitHealthBar(./assets/startWeapon.png)
 	if err != nil {
 		return nil, err
 	}
-	ui.weaponBar, err :=InitWeaponBar(<path to weapBar>)
+	ui.weaponBar, err :=InitWeaponBar(./assets/startWeapon.png)
 	if err != nil {
 		return nil, err
 	}

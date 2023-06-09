@@ -1,6 +1,7 @@
 package animatedobjects
 
 import (
+	"fmt"
 	"image"
 	_ "image/png"
 	"math"
@@ -65,6 +66,7 @@ func (w *Weapon) MoveWeapon(direction string, step int) {
 
 func (w *Weapon) Shoot(directionX, directionY int, spritePath string, tilesize int) error {
 	if w.currentAmmo != 0 {
+		fmt.Println(w.currentAmmo)
 		rlbkDur, err := time.ParseDuration("500ms")
 		if err != nil {
 			return err

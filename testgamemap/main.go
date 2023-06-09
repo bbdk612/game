@@ -268,7 +268,7 @@ func main() {
 	}
 
 	mh, err := animatedobjects.InitMainHero(34, 16, 16, 4)
-	ui, err := UI.InitUI()
+	ui, err := ui.InitUI()
 
 	if err != nil {
 		log.Fatal(err)

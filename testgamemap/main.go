@@ -79,6 +79,11 @@ func (G *Game) Update() error {
 	} else {
 		G.MH.AsePlayer.Play("stop")
 	}
+
+	if ebiten.IsKeyPressed(ebiten.KeyR) {
+		G.MH.GetCurrentWeapon().Reload()
+	}
+
 	chunk := G.Map.GetCurrentChunk()
 	for i, bullet := range G.MH.GetCurrentWeapon().Bullets {
 		if bullet != nil {
@@ -92,7 +97,7 @@ func (G *Game) Update() error {
 	for _, bullet := range G.MH.GetCurrentWeapon().Bullets {
 		if bullet != nil {
 			bullet.AsePlayer.Play("fly")
-			bullet.Move(4)
+			bullet.Move()
 		}
 	}
 

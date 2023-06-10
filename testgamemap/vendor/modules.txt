@@ -1,4 +1,4 @@
-# github.com/bbdk612/game/animatedobjects v0.0.0-20230607232029-f177a396c0c1 => ../animatedobjects
+# github.com/bbdk612/game/animatedobjects v0.0.0-20230609152607-b75c01f11e89 => ../animatedobjects
 ## explicit; go 1.20
 github.com/bbdk612/game/animatedobjects
 # github.com/bbdk612/game/gamemap v0.0.0-20230531170435-0c170e570652

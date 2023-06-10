@@ -1,6 +1,7 @@
 package animatedobjects
 
 import (
+	"fmt"
 	"image"
 	_ "image/png"
 	"math"
@@ -17,6 +18,8 @@ type Weapon struct {
 	Image        *ebiten.Image
 	rollbackTime time.Time
 	Bullets      [](*Bullet)
+	currentAmmo  int
+	maxAmmo      int
 }
 
 func (w *Weapon) CalculateAngle(x, y int) {
@@ -62,47 +65,54 @@ func (w *Weapon) MoveWeapon(direction string, step int) {
 }
 
 func (w *Weapon) Shoot(directionX, directionY int, spritePath string, tilesize int) error {
-	rlbkDur, err := time.ParseDuration("500ms")
-	if err != nil {
-		return err
-	}
-	rollbk := rlbkDur.Milliseconds()
-
-	currTime := time.Now()
-	if currTime.Sub(w.rollbackTime).Milliseconds() >= rollbk {
-
-		var deltaX float64 = float64(directionX - w.oX)
-		var deltaY float64 = float64(directionY - w.oY)
-
-		var a float64 = deltaY / deltaX
-		var b float64 = float64(w.oY) - a*float64(w.oX)
-		var startX int = w.oX
-		var startY int = w.oY
-		if deltaX < 0 {
-			startX -= 8
-			startY = int(float64(startX)*a + b)
-		} else if deltaX > 0 {
-			startX += 8
-			startY = int(float64(startX)*a + b)
-		} else if deltaX == 0 {
-			if deltaY > 0 {
-				startY += 8
-			} else {
-				startY += 8
-			}
-		}
-
-		bullet, err := InitNewBullet(directionX, directionY, a, b, startX, startY, spritePath, 16)
-
+	if w.currentAmmo != 0 {
+		fmt.Println(w.currentAmmo)
+		rlbkDur, err := time.ParseDuration("500ms")
 		if err != nil {
 			return err
 		}
+		rollbk := rlbkDur.Milliseconds()
 
-		w.Bullets = append(w.Bullets, bullet)
+		currTime := time.Now()
+		if currTime.Sub(w.rollbackTime).Milliseconds() >= rollbk {
 
-		w.rollbackTime = time.Now()
+			var deltaX float64 = float64(directionX - w.oX)
+			var deltaY float64 = float64(directionY - w.oY)
+
+			var a float64 = deltaY / deltaX
+			var b float64 = float64(w.oY) - a*float64(w.oX)
+			var startX int = w.oX
+			var startY int = w.oY
+			if deltaX < 0 {
+				startX -= 8
+				startY = int(float64(startX)*a + b)
+			} else if deltaX > 0 {
+				startX += 8
+				startY = int(float64(startX)*a + b)
+			} else if deltaX == 0 {
+				if deltaY > 0 {
+					startY += 8
+				} else {
+					startY += 8
+				}
+			}
+
+			bullet, err := InitNewBullet(directionX, directionY, a, b, startX, startY, spritePath, 16)
+
+			if err != nil {
+				return err
+			}
+
+			w.Bullets = append(w.Bullets, bullet)
+			w.currentAmmo--
+			w.rollbackTime = time.Now()
+		}
 	}
 	return nil
+}
+
+func (w *Weapon) Reload() {
+	w.currentAmmo = w.maxAmmo
 }
 
 func InitNewWeapon(x, y int, imagePath string) (*Weapon, error) {
@@ -121,12 +131,14 @@ func InitNewWeapon(x, y int, imagePath string) (*Weapon, error) {
 	weaponImage := ebiten.NewImageFromImage(weaponFileDecoded)
 
 	w := &Weapon{
-		oX:    x,
-		oY:    y,
-		xEnd:  x + 8,
-		yEnd:  y + 8,
-		Image: weaponImage,
-		angle: 0.0,
+		oX:          x,
+		oY:          y,
+		xEnd:        x + 8,
+		yEnd:        y + 8,
+		Image:       weaponImage,
+		angle:       0.0,
+		currentAmmo: 20,
+		maxAmmo:     20,
 	}
 
 	return w, nil

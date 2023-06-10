@@ -2,8 +2,10 @@ module github.com/bbdk612/game/testgamemap
 
 go 1.20
 
+replace github.com/bbdk612/game/animatedobjects => ../animatedobjects
+
 require (
-	github.com/bbdk612/game/animatedobjects v0.0.0-20230607232029-f177a396c0c1
+	github.com/bbdk612/game/animatedobjects v0.0.0-20230609152607-b75c01f11e89
 	github.com/bbdk612/game/gamemap v0.0.0-20230531170435-0c170e570652
 	github.com/hajimehoshi/ebiten/v2 v2.5.4
 )
@@ -22,5 +24,3 @@ require (
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 )
-
-replace github.com/bbdk612/game/animatedobjects => ../animatedobjects

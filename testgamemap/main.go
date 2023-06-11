@@ -10,6 +10,7 @@ import (
 
 	"github.com/bbdk612/game/animatedobjects"
 	"github.com/bbdk612/game/gamemap"
+	"github.com/bbdk612/game/menu"
 	"github.com/bbdk612/game/ui"
 )
 
@@ -32,7 +33,7 @@ func IsMoveKeyPressed() bool {
 }
 
 func (G *Game) Update() error {
-	if !(inMainMenu) {
+	if !(g.MM.inMainMenu) {
 		if IsMoveKeyPressed() {
 			if ebiten.IsKeyPressed(ebiten.KeyA) {
 				G.MH.AsePlayer.Play("walk")
@@ -134,7 +135,7 @@ func (G *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	if !(inMainMenu) {
+	if !(g.MM.inMainMenu) {
 		//drawing a map
 		xCount := (g.Map.SreenWidth / g.Map.TileSize)
 

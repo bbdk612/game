@@ -2,7 +2,6 @@ package menu
 
 import{
 	"os"
-	"github.com/bbdk612/game/main"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 }

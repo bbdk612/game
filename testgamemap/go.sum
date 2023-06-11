@@ -1,6 +1,8 @@
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/bbdk612/game/gamemap v0.0.0-20230531170435-0c170e570652 h1:jqpJWdqr47uGHL12Ek+OaTItg/Daj7TSZ3QHelkS8Mo=
 github.com/bbdk612/game/gamemap v0.0.0-20230531170435-0c170e570652/go.mod h1:/8kVuYhNusXD0pdtBzjQOP1gkiAn4f8s7yEPwkPmCvg=
+github.com/bbdk612/game/ui v0.0.0-20230611095651-2702d178b7ba h1:uiKY+DQQUvd1WJYKlQe5ALSfCDmDsrPF14cBQ3xTAcw=
+github.com/bbdk612/game/ui v0.0.0-20230611095651-2702d178b7ba/go.mod h1:RZ222l41QouIpp/OPMaKT9oHX+NF/ww/lCtYVzVHG64=
 github.com/ebitengine/purego v0.3.0 h1:BDv9pD98k6AuGNQf3IF41dDppGBOe0F4AofvhFtBXF4=
 github.com/ebitengine/purego v0.3.0/go.mod h1:iIjxzd6CiRiOG0UyXP+V1+jWqUXVjPKLAI0mRfJZTmQ=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20221017161538-93cebf72946b h1:GgabKamyOYguHqHjSkDACcgoPIz3w0Dis/zJ1wyHHHU=

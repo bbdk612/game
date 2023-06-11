@@ -4,6 +4,9 @@ github.com/bbdk612/game/animatedobjects
 # github.com/bbdk612/game/gamemap v0.0.0-20230531170435-0c170e570652
 ## explicit; go 1.20
 github.com/bbdk612/game/gamemap
+# github.com/bbdk612/game/ui v0.0.0-20230611095651-2702d178b7ba
+## explicit; go 1.20
+github.com/bbdk612/game/ui
 # github.com/ebitengine/purego v0.3.0
 ## explicit; go 1.18
 github.com/ebitengine/purego

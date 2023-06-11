@@ -31,6 +31,10 @@ func (w *Weapon) CalculateAngle(x, y int) {
 	w.angle = (-math.Atan2(bY, bX) + math.Atan2(aY, aX))
 }
 
+func (w *Weapon) GetAmmo() (int, int) {
+	return w.currentAmmo, w.maxAmmo
+}
+
 func (w *Weapon) GetAngle() float64 {
 	return w.angle
 }

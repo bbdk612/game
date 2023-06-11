@@ -8,11 +8,12 @@ import (
 )
 
 type HealthBar struct {
-	startX, startY                   int
-	HealthNumber           int
-	Image                  *ebiten.Image
+	startX, startY int
+	HealthNumber   int
+	Image          *ebiten.Image
 }
-func InitHealthBar (imagePath string) (*HealthBar, error){
+
+func InitHealthBar(imagePath string) (*HealthBar, error) {
 	healthBarFile, err := os.Open(imagePath)
 
 	if err != nil {
@@ -28,17 +29,29 @@ func InitHealthBar (imagePath string) (*HealthBar, error){
 	healthBarImage := ebiten.NewImageFromImage(healthBarFileDecoded)
 
 	hpB := &HealthBar{
-		oX:    1,
-		oY:    1,
+		startX:       10,
+		startY:       50,
 		HealthNumber: 6,
-		Image: healthBarImage,
+		Image:        healthBarImage,
 	}
 
 	return hpB, nil
 }
 
-func (hpB *HealthBar) Damage(x, y, charX, charY  int){
-	if x=charX && y= charY{
-		hpB.HealthNumber = hpB.HealthNumber - 1;
-	}
+func (hpB *HealthBar) Damage(x, y, charX, charY int) {
+	//if (x == charX) && (y == charY) {
+	//	hpB.HealthNumber = hpB.HealthNumber - 1
+	//}
+	hpB.HealthNumber = hpB.HealthNumber - 1
+}
+func (hpB *HealthBar) Heal(x, y, charX, charY int) {
+	//if (x == charX) && (y == charY) {
+	//	hpB.HealthNumber = hpB.HealthNumber - 1
+	//}
+	hpB.HealthNumber = hpB.HealthNumber + 1
+}
+func (hpB *HealthBar) GetHpbStartCoordinate() (int, int) {
+	stX := hpB.startX
+	stY := hpB.startY
+	return stX, stY
 }

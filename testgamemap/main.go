@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"image"
+	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/text"
 
 	"github.com/bbdk612/game/animatedobjects"
 	"github.com/bbdk612/game/gamemap"
@@ -179,14 +181,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		hpbX = hpbX + 10
 	}
 	//WeaponBar
-	currWeap := g.MH.GetCurrentWeapon()
-	currentAmmo, maxAmmo := currWeap.GetAmmo()
-	optionsForWeaponBar := &ebiten.DrawImageOptions{}
 	wpbX, wpbY := g.UI.WpBar.GetWpbStartCoordinate()
-	screen.DrawImage(currWeap.Image, optionsForWeapon)
-	screen.DrawImage(g.UI.WpBar.Image, optionsForWeaponBar)
-	msg := fmt.Sprintf("Ammo:%d/%d", currentAmmo, maxAmmo)
-	ebitenutil.DebugPrintAt(screen, msg, wpbX+100, wpbY)
+	text.Draw(screen, g.UI.WpBar.GetAmmo(), g.UI.WpBar.Font, wpbX, wpbY, color.White)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {

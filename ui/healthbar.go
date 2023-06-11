@@ -29,8 +29,8 @@ func InitHealthBar(imagePath string) (*HealthBar, error) {
 	healthBarImage := ebiten.NewImageFromImage(healthBarFileDecoded)
 
 	hpB := &HealthBar{
-		startX:       10,
-		startY:       50,
+		startX:       5,
+		startY:       5,
 		HealthNumber: 6,
 		Image:        healthBarImage,
 	}

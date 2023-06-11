@@ -51,14 +51,14 @@ func InitWeaponBar(imagePath string) (*WeaponBar, error) {
 	}
 
 	font, err := opentype.NewFace(fontParsed, &opentype.FaceOptions{
-		Size:    14,
-		DPI:     72,
+		Size:    10,
+		DPI:     150,
 		Hinting: font.HintingVertical,
 	})
 
 	wpB := &WeaponBar{
-		startX:   250,
-		startY:   150,
+		startX:   176,
+		startY:   250,
 		Image:    weaponBarImage,
 		AmmoFont: font,
 	}

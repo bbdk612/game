@@ -28,9 +28,9 @@ func InitWeaponBar(imagePath string) (*WeaponBar, error) {
 	weaponBarImage := ebiten.NewImageFromImage(weaponBarFileDecoded)
 
 	wpB := &WeaponBar{
-		oX:    1,
-		oY:    1,
-		Image: healthBarImage,
+		startX: 10,
+		startY: 100,
+		Image:  weaponBarImage,
 	}
 
 	return wpB, nil

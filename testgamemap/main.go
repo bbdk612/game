@@ -16,7 +16,7 @@ import (
 type Game struct {
 	Map *gamemap.GameMap
 	MH  *animatedobjects.MainHero
-	UI  *ui.HealthBar
+	UI  *ui.UI
 }
 
 func IsMoveKeyPressed() bool {
@@ -107,9 +107,13 @@ func (G *Game) Update() error {
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
 		go G.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
 	}
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButton2) {
-		charX,charY := G.MH.GetCoordinates()
-		G.UI.Damage(cursorX, cursorY,charX, charY)
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
+		charX, charY := G.MH.GetCoordinates()
+		G.UI.HpBar.Damage(cursorX, cursorY, charX, charY)
+	}
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButton1) {
+		charX, charY := G.MH.GetCoordinates()
+		G.UI.HpBar.Heal(cursorX, cursorY, charX, charY)
 	}
 
 	G.MH.AsePlayer.Update(float32(1.0 / 60.0))
@@ -160,29 +164,29 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			bX, bY := bullet.GetCoordinates()
 			opBullet.GeoM.Translate(float64(bX), float64(bY))
 
-			frame :=bullet.Image.SubImage(image.Rect(bullet.AsePlayer.CurrentFrameCoords()))
+			frame := bullet.Image.SubImage(image.Rect(bullet.AsePlayer.CurrentFrameCoords()))
 			screen.DrawImage(frame.(*ebiten.Image), opBullet)
 		}
 
 	}
 	// UI
 	//HeathBar
-	for hpbX:= g.UI.healthBar.startX,hpbY:= g.UI.healthBar.startY, i:=1; i < g.UI.healthBar.HealthNumber;i++{
+	hpbX, hpbY := g.UI.HpBar.GetHpbStartCoordinate()
+	for i := 1; i < g.UI.HpBar.HealthNumber; i++ {
 		opHPBar := &ebiten.DrawImageOptions{}
-		opHPBar.GeoM.Translate(float64(hpbX),float64(hpbY))
-		screen.DrawImage(frame.(*ebiten.Image),opHPBar)
-		hpbX:=hpbX+1
+		opHPBar.GeoM.Translate(float64(hpbX), float64(hpbY))
+		screen.DrawImage(g.UI.HpBar.Image, opHPBar)
+		hpbX = hpbX + 10
 	}
 	//WeaponBar
-	currWeap:=GetCurrentWeapon()
+	currWeap := g.MH.GetCurrentWeapon()
+	currentAmmo, maxAmmo := currWeap.GetAmmo()
 	optionsForWeaponBar := &ebiten.DrawImageOptions{}
-	wpbX:= g.UI.weaponBar.startX
-	wpbY:= g.UI.weaponBar.startY
-	opBullet.GeoM.Translate(float64(bX), float64(bY))
-	//screen.DrawImage(g.MH.currWeap.Image, optionsForWeapon)
-	screen.DrawImage(g.UI.weaponBar.boardImage, optionsForWeaponBar)
-	msg :=  fmt.Sprintf("Ammo:%d/%d",g.UI.weaponBar.currentAmmo, g.UI.weaponBar.youHaveAmmo)
-	ebitenutil.DebugPrintAt(screen,msg,g.UI.weaponBar.startX+10,g.UI.weaponBar.startY)
+	wpbX, wpbY := g.UI.WpBar.GetWpbStartCoordinate()
+	screen.DrawImage(currWeap.Image, optionsForWeapon)
+	screen.DrawImage(g.UI.WpBar.Image, optionsForWeaponBar)
+	msg := fmt.Sprintf("Ammo:%d/%d", currentAmmo, maxAmmo)
+	ebitenutil.DebugPrintAt(screen, msg, wpbX+100, wpbY)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -282,7 +286,7 @@ func main() {
 	g := &Game{
 		Map: M,
 		MH:  mh,
-		UI: ui,
+		UI:  ui,
 	}
 
 	ebiten.SetWindowSize(256*3, 256*3)

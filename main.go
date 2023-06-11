@@ -285,7 +285,7 @@ func main() {
 	}
 
 	ebiten.SetWindowSize(256*3, 256*3)
-	ebiten.SetWindowTitle("test of Gamemap")
+	ebiten.SetWindowTitle("Game")
 	g.MH.AsePlayer.PlaySpeed = 0.5
 	g.MH.AsePlayer.Play("stop")
 

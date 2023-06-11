@@ -312,6 +312,10 @@ func main() {
 	}
 
 	menu, err := menu.InitMenu()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 	g := &Game{
 		Map: M,
 		MH:  mh,
@@ -322,7 +326,6 @@ func main() {
 	ebiten.SetWindowTitle("test of Gamemap")
 	g.MH.AsePlayer.PlaySpeed = 0.5
 	g.MH.AsePlayer.Play("stop")
-	inMainMenu := true
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
 	}

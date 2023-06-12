@@ -7,13 +7,13 @@ import (
 )
 
 type MainMenu struct {
-	inMainMenu     bool
-	startbuttonX   int
-	startbuttonY   int
-	startbuttonImg *ebiten.Image
-	exitbuttonX    int
-	exitbuttonY    int
-	exitbuttonImg  *ebiten.Image
+	InMainMenu     bool
+	StartbuttonX   int
+	StartbuttonY   int
+	StartbuttonImg *ebiten.Image
+	ExitbuttonX    int
+	ExitbuttonY    int
+	ExitbuttonImg  *ebiten.Image
 }
 
 func InitMenu(startbuttonImagePath, exitbuttonImagePath string) (*MainMenu, error) {
@@ -46,32 +46,29 @@ func InitMenu(startbuttonImagePath, exitbuttonImagePath string) (*MainMenu, erro
 	exitbuttonImage := ebiten.NewImageFromImage(exitbuttonFileDecoded)
 
 	mainM := &MainMenu{
-		inMainMenu:     true,
-		startbuttonX:   10,
-		startbuttonY:   50,
-		startbuttonImg: startbuttonImage,
-		exitbuttonX:    25,
-		exitbuttonY:    75,
-		exitbuttonImg:  exitbuttonImage,
+		InMainMenu:     true,
+		StartbuttonX:   10,
+		StartbuttonY:   50,
+		StartbuttonImg: startbuttonImage,
+		ExitbuttonX:    25,
+		ExitbuttonY:    75,
+		ExitbuttonImg:  exitbuttonImage,
 	}
 
 	return mainM, nil
 }
 
 func (mm *MainMenu) MenuStartGame() {
-	mm.inMainMenu = false
+	mm.InMainMenu = false
 }
 
 func (mm *MainMenu) MenuExitGame() {
 	os.Exit(0)
 }
 func (mm *MainMenu) GetMainMStartCoordinate() (int, int, int, int) {
-	stbX := mm.startbuttonX
-	stbY := mm.startbuttonY
-	extX := mm.exitbuttonX
-	extY := mm.exitbuttonY
+	stbX := mm.StartbuttonX
+	stbY := mm.StartbuttonY
+	extX := mm.ExitbuttonX
+	extY := mm.ExitbuttonY
 	return stbX, stbY, extX, extY
-}
-func (mm *MainMenu) GetMainMCurrentState() bool {
-	return mm.inMainMenu
 }

@@ -33,8 +33,7 @@ func IsMoveKeyPressed() bool {
 }
 
 func (G *Game) Update() error {
-	currSt := G.MM.GetMainMCurrentState
-	if !(currSt) {
+	if !(G.MM.InMainMenu) {
 		if IsMoveKeyPressed() {
 			if ebiten.IsKeyPressed(ebiten.KeyA) {
 				G.MH.AsePlayer.Play("walk")
@@ -136,8 +135,7 @@ func (G *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	currSt := g.MM.GetMainMCurrentState
-	if !(currSt) {
+	if !(g.MM.InMainMenu) {
 		//drawing a map
 		xCount := (g.Map.SreenWidth / g.Map.TileSize)
 
@@ -209,8 +207,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		opForExitButton := &ebiten.DrawImageOptions{}
 		opForStartButton.GeoM.Translate(float64(stX), float64(stY))
 		opForExitButton.GeoM.Translate(float64(extX), float64(extY))
-		screen.DrawImage(g.MM.startbuttonImg, opForStartButton)
-		screen.DrawImage(g.MM.exitbuttonImg, opForExitButton)
+		screen.DrawImage(g.MM.StartbuttonImg, opForStartButton)
+		msg1 := fmt.Sprintf("Start")
+		ebitenutil.DebugPrintAt(screen, msg1, stX+100, stY)
+		screen.DrawImage(g.MM.ExitbuttonImg, opForExitButton)
+		msg2 := fmt.Sprintf("Exit")
+		ebitenutil.DebugPrintAt(screen, msg2, extX+100, extY)
 	}
 }
 

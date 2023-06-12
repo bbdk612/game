@@ -1,7 +1,8 @@
 package mainmenu
 
-import (
+import/ (
 	"github.com/hajimehoshi/ebiten/v2"
+	"image"
 	"os"
 )
 

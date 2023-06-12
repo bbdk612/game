@@ -1,4 +1,4 @@
-package mainmenu
+package menu
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"

@@ -72,3 +72,6 @@ func (mm *MainMenu) GetMainMStartCoordinate() (int, int, int, int) {
 	extY := mm.exitbuttonY
 	return stbX, stbY, extX, extY
 }
+func (mm *MainMenu) GetMainMCurrentState() bool {
+	return mm.inMainMenu
+}

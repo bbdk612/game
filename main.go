@@ -33,7 +33,8 @@ func IsMoveKeyPressed() bool {
 }
 
 func (G *Game) Update() error {
-	if !(g.MM.inMainMenu) {
+	currSt := G.MM.GetMainMCurrentState
+	if !(currSt) {
 		if IsMoveKeyPressed() {
 			if ebiten.IsKeyPressed(ebiten.KeyA) {
 				G.MH.AsePlayer.Play("walk")
@@ -125,7 +126,7 @@ func (G *Game) Update() error {
 		}
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
 			//charX, charY := G.MH.GetCoordinates()
-			menu.MenuExitGame()
+			G.MM.MenuExitGame()
 		}
 	}
 
@@ -135,7 +136,8 @@ func (G *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	if !(g.MM.inMainMenu) {
+	currSt := g.MM.GetMainMCurrentState
+	if !(currSt) {
 		//drawing a map
 		xCount := (g.Map.SreenWidth / g.Map.TileSize)
 
@@ -202,13 +204,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		ebitenutil.DebugPrintAt(screen, msg, wpbX+100, wpbY)
 	} else {
 		//Main menu
-		stX, stY, extX, extY := g.MM.GetWpbStartCoordinate()
+		stX, stY, extX, extY := g.MM.GetMainMStartCoordinate()
 		opForStartButton := &ebiten.DrawImageOptions{}
 		opForExitButton := &ebiten.DrawImageOptions{}
 		opForStartButton.GeoM.Translate(float64(stX), float64(stY))
 		opForExitButton.GeoM.Translate(float64(extX), float64(extY))
 		screen.DrawImage(g.MM.startbuttonImg, opForStartButton)
-		screen.DrawImage(g.MM.startbuttonImg, opForExitButton)
+		screen.DrawImage(g.MM.exitbuttonImg, opForExitButton)
 	}
 }
 
@@ -311,7 +313,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	menu, err := menu.InitMenu()
+	menu, err := menu.InitMenu("./assets/healthpoint.png", "./assets/healthpoint.png")
 
 	if err != nil {
 		log.Fatal(err)

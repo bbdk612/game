@@ -1,9 +1,9 @@
 package mainmenu
 
-import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"os"
-)
+//import (
+//	"github.com/hajimehoshi/ebiten/v2"
+//	"os"
+//)
 
 type MainMenu struct {
 	inMainMenu     bool

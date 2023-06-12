@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/bbdk612/game/mainmenu v0.0.0-20230612122035-964fa58af210 // indirect
 	github.com/bbdk612/game/ui v0.0.0-20230611095651-2702d178b7ba // indirect
 	github.com/ebitengine/purego v0.3.0 // indirect
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20221017161538-93cebf72946b // indirect

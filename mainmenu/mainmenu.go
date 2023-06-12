@@ -1,9 +1,8 @@
 package mainmenu
 
 import (
-	"os"
-
 	"github.com/hajimehoshi/ebiten/v2"
+	"os"
 )
 
 type MainMenu struct {

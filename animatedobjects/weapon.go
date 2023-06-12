@@ -1,6 +1,7 @@
 package animatedobjects
 
 import (
+	// "fmt"
 	"fmt"
 	"image"
 	_ "image/png"
@@ -68,51 +69,70 @@ func (w *Weapon) MoveWeapon(direction string, step int) {
 	}
 }
 
-func (w *Weapon) Shoot(directionX, directionY int, spritePath string, tilesize int) error {
+func (w *Weapon) Shoot(directionX, directionY int, spritePath string, tilesize int) (*Bullet, error) {
 	if w.currentAmmo != 0 {
-		fmt.Println(w.currentAmmo)
 		rlbkDur, err := time.ParseDuration("500ms")
 		if err != nil {
-			return err
+			return nil, err
 		}
 		rollbk := rlbkDur.Milliseconds()
 
 		currTime := time.Now()
 		if currTime.Sub(w.rollbackTime).Milliseconds() >= rollbk {
 
-			var deltaX float64 = float64(directionX - w.oX)
-			var deltaY float64 = float64(directionY - w.oY)
+			var deltaX float64 = float64(w.oX) - float64(directionX)
+			var deltaY float64 = float64(w.oY) - float64(directionY)
+			var startY float64 = float64(w.oY)
+			var startX float64 = float64(w.oX)
+			var a, b float64
+			var step float64 = 2
+			if deltaY != 0 {
+				if deltaX != 0 {
+					a = deltaY / deltaX
+					b = float64(w.oY) - (float64(w.oX) * a)
 
-			var a float64 = deltaY / deltaX
-			var b float64 = float64(w.oY) - a*float64(w.oX)
-			var startX int = w.oX
-			var startY int = w.oY
-			if deltaX < 0 {
-				startX -= 8
-				startY = int(float64(startX)*a + b)
-			} else if deltaX > 0 {
-				startX += 8
-				startY = int(float64(startX)*a + b)
-			} else if deltaX == 0 {
-				if deltaY > 0 {
-					startY += 8
+					if deltaX > 0 {
+						step = -2
+						startX = startX - 8.0
+					} else {
+						startX = startX + 8.0
+					}
+					fmt.Println(step)
+					fmt.Println()
+					fmt.Println(startX + (-4))
+					startY = (startX*a + b)
 				} else {
-					startY += 8
+					a = deltaY / deltaX
+					if a > 0 {
+						step = -2
+						startY -= 8
+					} else {
+						startY += 8
+					}
+
 				}
+			} else {
+				if deltaX > 0 {
+					step = -2
+					startX -= 8
+				} else {
+					startX += 8
+				}
+
 			}
 
-			bullet, err := InitNewBullet(directionX, directionY, a, b, startX, startY, spritePath, 16)
+			bullet, err := InitNewBullet(float64(directionX), float64(directionY), a, b, step, startX, startY, spritePath, 16)
 
 			if err != nil {
-				return err
+				return nil, err
 			}
 
-			w.Bullets = append(w.Bullets, bullet)
 			w.currentAmmo--
 			w.rollbackTime = time.Now()
+			return bullet, nil
 		}
 	}
-	return nil
+	return nil, nil
 }
 
 func (w *Weapon) Reload() {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"log"
+	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -34,6 +35,10 @@ func IsMoveKeyPressed() bool {
 
 func (G *Game) Update() error {
 	if !(G.MM.InMainMenu) {
+		if ebiten.IsKeyPressed(ebiten.KeyEscape) {
+			os.Exit(0)
+		}
+
 		if IsMoveKeyPressed() {
 			if ebiten.IsKeyPressed(ebiten.KeyA) {
 				G.MH.AsePlayer.Play("walk")
@@ -87,36 +92,49 @@ func (G *Game) Update() error {
 		if ebiten.IsKeyPressed(ebiten.KeyR) {
 			G.MH.GetCurrentWeapon().Reload()
 		}
-
-		chunk := G.Map.GetCurrentChunk()
-		for i, bullet := range G.MH.GetCurrentWeapon().Bullets {
-			if bullet != nil {
-				if chunk[bullet.GetCurrentTile(16)] != 1 {
-					bullet = nil
-					G.MH.GetCurrentWeapon().Bullets[i] = nil
-				}
-			}
-		}
-
-		for _, bullet := range G.MH.GetCurrentWeapon().Bullets {
+		for _, bullet := range G.Bullets {
 			if bullet != nil {
 				bullet.AsePlayer.Play("fly")
 				bullet.Move()
+			}
+		}
+		chunk := G.Map.GetCurrentChunk()
+		for i, bullet := range G.Bullets {
+			if bullet != nil {
+				mhX, mhY := G.MH.GetCoordinates()
+				bullX, bullY := bullet.GetCoordinates()
+				if (bullX >= float64(mhX)) && (bullY >= float64(mhY)) {
+					if (bullX <= float64(mhX+16)) && (bullY <= float64(mhY+16)) {
+						bullet = nil
+						G.Bullets[i] = nil
+						G.MH.Damage()
+						continue
+					}
+				}
+				if chunk[bullet.GetCurrentTile(16)] != 1 {
+					bullet = nil
+					G.Bullets[i] = nil
+					continue
+				}
+
 			}
 		}
 
 		cursorX, cursorY := ebiten.CursorPosition()
 		G.MH.GetCurrentWeapon().CalculateAngle(cursorX, cursorY)
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
-			go G.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
+			bull, err := G.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if bull != nil {
+				G.Bullets = append(G.Bullets, bull)
+			}
 		}
-		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
-			charX, charY := G.MH.GetCoordinates()
-			G.UI.HpBar.Damage(cursorX, cursorY, charX, charY)
-		}
-		if ebiten.IsMouseButtonPressed(ebiten.MouseButton1) {
-			charX, charY := G.MH.GetCoordinates()
-			G.UI.HpBar.Heal(cursorX, cursorY, charX, charY)
+
+		if ebiten.IsKeyPressed(ebiten.KeyH) {
+			G.MH.Health = 6
 		}
 	} else {
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
@@ -171,11 +189,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		//Draw a Bullets
 
-		for _, bullet := range g.MH.GetCurrentWeapon().Bullets {
+		for _, bullet := range g.Bullets {
 			if bullet != nil {
 				opBullet := &ebiten.DrawImageOptions{}
 				bX, bY := bullet.GetCoordinates()
-				opBullet.GeoM.Translate(float64(bX), float64(bY))
+				opBullet.GeoM.Translate(bX, bY)
 
 				frame := bullet.Image.SubImage(image.Rect(bullet.AsePlayer.CurrentFrameCoords()))
 				screen.DrawImage(frame.(*ebiten.Image), opBullet)
@@ -192,14 +210,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			hpbX = hpbX + 10
 		}
 		//WeaponBar
-		currWeap := g.MH.GetCurrentWeapon()
-		currentAmmo, maxAmmo := currWeap.GetAmmo()
-		optionsForWeaponBar := &ebiten.DrawImageOptions{}
 		wpbX, wpbY := g.UI.WpBar.GetWpbStartCoordinate()
-		screen.DrawImage(currWeap.Image, optionsForWeapon)
-		screen.DrawImage(g.UI.WpBar.Image, optionsForWeaponBar)
-		msg := fmt.Sprintf("Ammo:%d/%d", currentAmmo, maxAmmo)
-		ebitenutil.DebugPrintAt(screen, msg, wpbX+100, wpbY)
+		text.Draw(screen, g.UI.WpBar.GetAmmo(g.MH.GetCurrentWeapon().GetAmmo()), g.UI.WpBar.AmmoFont, wpbX, wpbY, color.White)
 	} else {
 		//Main menu
 		stX, stY, extX, extY := g.MM.GetMainMStartCoordinate()

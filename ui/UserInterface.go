@@ -20,8 +20,3 @@ func InitUI() (*UI, error) {
 	}
 	return useri, nil
 }
-func (wpB *WeaponBar) GetWpbStartCoordinate() (int, int) {
-	stX := wpB.startX
-	stY := wpB.startY
-	return stX, stY
-}

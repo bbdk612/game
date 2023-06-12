@@ -62,7 +62,7 @@ func (mm *MainMenu) MenuStartGame() {
 	mm.inMainMenu = false
 }
 
-func (mm *MainMenu) MenuExitGame() {
+func MenuExitGame() {
 	os.Exit(0)
 }
 func (mm *MainMenu) GetMainMStartCoordinate() (int, int, int, int) {

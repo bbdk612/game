@@ -1,10 +1,10 @@
 package mainmenu
 
-import{
+import(
 	"os"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-}
+)
 
 struct MainMenu{
 	inMainMenu bool

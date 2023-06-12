@@ -10,7 +10,7 @@ import (
 
 	"github.com/bbdk612/game/animatedobjects"
 	"github.com/bbdk612/game/gamemap"
-	"github.com/bbdk612/game/menu"
+	"github.com/bbdk612/game/mainmenu"
 	"github.com/bbdk612/game/ui"
 )
 

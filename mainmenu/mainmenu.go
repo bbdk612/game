@@ -1,22 +1,22 @@
 package mainmenu
 
-import(
+import (
 	"os"
+
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-struct MainMenu{
-	inMainMenu bool
-	startbuttonX int
-	startbuttonY int
+type MainMenu struct {
+	inMainMenu     bool
+	startbuttonX   int
+	startbuttonY   int
 	startbuttonImg *ebiten.Image
-	exitbuttonX  int
-	exitbuttonY  int
-	exitbuttonImg *ebiten.Image
+	exitbuttonX    int
+	exitbuttonY    int
+	exitbuttonImg  *ebiten.Image
 }
 
-func InitMenu(startbuttonImagePath,exitbuttonImagePath string) (*MainMenu, error) {
+func InitMenu(startbuttonImagePath, exitbuttonImagePath string) (*MainMenu, error) {
 	startbuttonFile, err := os.Open(startbuttonImagePath)
 
 	if err != nil {
@@ -46,30 +46,29 @@ func InitMenu(startbuttonImagePath,exitbuttonImagePath string) (*MainMenu, error
 	exitbuttonImage := ebiten.NewImageFromImage(exitbuttonFileDecoded)
 
 	mainM := &HealthBar{
-		inMainMenu: true,
-		startbuttonX:       10,
-		startbuttonY:       50,
-		startbuttonImg:     startbuttonImage,
-		exitbuttonX:        25,
-		exitbuttonY:        75,
-		exitbuttonImg:      exitbuttonImage,
+		inMainMenu:     true,
+		startbuttonX:   10,
+		startbuttonY:   50,
+		startbuttonImg: startbuttonImage,
+		exitbuttonX:    25,
+		exitbuttonY:    75,
+		exitbuttonImg:  exitbuttonImage,
 	}
 
 	return mainM, nil
 }
 
-func (mm *MainMenu) MenuStartGame(){
-	mm.inMainMenu:= false
+func (mm *MainMenu) MenuStartGame() {
+	mm.inMainMenu := false
 }
 
-func MenuExitGame(){
+func MenuExitGame() {
 	os.exit
 }
-func (mm *MainMenu) GetMainMStartCoordinate() (int, int,int,int) {
+func (mm *MainMenu) GetMainMStartCoordinate() (int, int, int, int) {
 	stbX := mm.startbuttonX
 	stbY := mm.startbuttonY
 	extX := mm.exitbuttonX
 	extY := mm.exitbuttonY
-	return stbX, stbY,extX,extY
+	return stbX, stbY, extX, extY
 }
-

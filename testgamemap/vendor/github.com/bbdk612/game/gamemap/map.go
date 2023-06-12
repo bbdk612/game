@@ -13,17 +13,17 @@ type GameMap struct {
 	chunks                  [][]int
 	roadsTo                 []map[string]int
 	currentChunk            int
-	TileSize                int
-	SreenWidth, SreenHeight int
+	tilesize                int
+	sreenWidth, sreenHeight int
 	tileset                 *ebiten.Image
 }
 
 func (GM *GameMap) CheckDirection(direction string) (int, bool) {
 	chunk, ok := GM.roadsTo[GM.currentChunk][direction]
 	if ok {
-		return chunk, true
+		return -1, true
 	} else {
-		return -1, false
+		return chunk, false
 	}
 }
 
@@ -41,16 +41,16 @@ func (GM *GameMap) ChangeCurrentChunk(chunk int) error {
 
 func (GM *GameMap) GetTile(tileNumber int) (*ebiten.Image) {
   w := GM.tileset.Bounds().Dx()
-  tileXCount := w / GM.TileSize
+  tileXCount := w / GM.tilesize
   
-  tileStartX := (tileNumber % tileXCount) * GM.TileSize
-  tileStartY := (tileNumber / tileXCount) * GM.TileSize
+  tileStartX := (tileNumber % tileXCount) * GM.tilesize
+  tileStartY := (tileNumber / tileXCount) * GM.tilesize
 
-  return GM.tileset.SubImage(image.Rect(tileStartX, tileStartY, tileStartX+GM.TileSize, tileStartY+GM.TileSize)).(*ebiten.Image)
+  return GM.tileset.SubImage(image.Rect(tileStartX, tileStartY, tileStartX+GM.tilesize, tileStartY+GM.tilesize)).(*ebiten.Image)
 }
 
 func NewGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sreenWidth int, sreenHeight int) (*GameMap, error) {
-	tilesetFile, err := os.Open("./assets/tileset.png")
+	tilesetFile, err := os.Open("tileset.png")
 	if err != nil {
 		return nil, err
 	}
@@ -66,9 +66,9 @@ func NewGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sree
 	GM := &GameMap{
 		chunks:       chunks,
 		roadsTo:      roadsTo,
-		SreenWidth:   sreenWidth,
-		SreenHeight:  sreenHeight,
-		TileSize:     16,
+		sreenWidth:   sreenWidth,
+		sreenHeight:  sreenHeight,
+		tilesize:     16,
 		currentChunk: currentChunk,
 		tileset:      tilesImage,
 	}

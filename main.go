@@ -3,11 +3,12 @@ package main
 import (
 	"fmt"
 	"image"
+	"image/color"
 	"log"
-	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/text"
 
 	"game/animatedobjects"
 	"game/gamemap"
@@ -146,7 +147,7 @@ func (G *Game) Update() error {
 			}
 			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
 				//charX, charY := G.MH.GetCoordinates()
-				G.PM.PauseMenuExitToMMGame()
+				G.PM.PauseMenuExitToMMGame(G.MM)
 			}
 		}
 	} else {
@@ -355,7 +356,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	menu, err := menu.InitMenu("./assets/healthpoint.png", "./assets/healthpoint.png")
+	Menu, err := menu.InitMenu("./assets/healthpoint.png", "./assets/healthpoint.png")
 
 	if err != nil {
 		log.Fatal(err)
@@ -370,7 +371,7 @@ func main() {
 		Map: M,
 		MH:  mh,
 		UI:  ui,
-		MM:  menu,
+		MM:  Menu,
 		PM:  pauseM,
 	}
 	ebiten.SetWindowSize(256*3, 256*3)

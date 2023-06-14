@@ -16,6 +16,7 @@ import (
 	"game/ui"
 )
 
+// Game struct contains a game objects
 type Game struct {
 	Bullets [](*animatedobjects.Bullet)
 	Map     *gamemap.GameMap
@@ -25,6 +26,7 @@ type Game struct {
 	PM      *menu.PauseMenu
 }
 
+// IsMoveKeyPressed checks on pressing a moving Key
 func IsMoveKeyPressed() bool {
 	moveKeys := [4](ebiten.Key){ebiten.KeyA, ebiten.KeyD, ebiten.KeyW, ebiten.KeyS}
 	for _, moveKey := range moveKeys {
@@ -36,89 +38,89 @@ func IsMoveKeyPressed() bool {
 	return false
 }
 
-func (G *Game) Update() error {
-	if !(G.MM.InMainMenu) {
-		if !(G.PM.InPauseMenu) {
+// Update This Function Updates game data for game objects
+func (g *Game) Update() error {
+	if !(g.MM.InMainMenu) {
+		if !(g.PM.InPauseMenu) {
 			if ebiten.IsKeyPressed(ebiten.KeyEscape) {
-				G.PM.InPauseMenu = true
+				g.PM.InPauseMenu = true
 			}
 
 			if IsMoveKeyPressed() {
 				if ebiten.IsKeyPressed(ebiten.KeyA) {
-					G.MH.AsePlayer.Play("walk")
-					if G.MH.GetTileCoor()%16 == 0 {
-						if chunk, ok := G.Map.CheckDirection("left"); ok {
-							G.Map.ChangeCurrentChunk(chunk)
-							G.MH.SetTileCoor(G.MH.GetTileCoor() + 15)
+					g.MH.AsePlayer.Play("walk")
+					if g.MH.GetTileCoor()%16 == 0 {
+						if chunk, ok := g.Map.CheckDirection("left"); ok {
+							g.Map.ChangeCurrentChunk(chunk)
+							g.MH.SetTileCoor(g.MH.GetTileCoor() + 15)
 						}
-					} else if G.MH.CanIGo("left", G.Map.GetCurrentChunk()) {
-						G.MH.Move("left", G.Map.GetCurrentChunk())
+					} else if g.MH.CanIGo("left", g.Map.GetCurrentChunk()) {
+						g.MH.Move("left", g.Map.GetCurrentChunk())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyD) {
-					G.MH.AsePlayer.Play("walk")
-					if (G.MH.GetTileCoor()+1)%16 == 0 {
-						if chunk, ok := G.Map.CheckDirection("right"); ok {
-							G.Map.ChangeCurrentChunk(chunk)
-							G.MH.SetTileCoor(G.MH.GetTileCoor() - 15)
+					g.MH.AsePlayer.Play("walk")
+					if (g.MH.GetTileCoor()+1)%16 == 0 {
+						if chunk, ok := g.Map.CheckDirection("right"); ok {
+							g.Map.ChangeCurrentChunk(chunk)
+							g.MH.SetTileCoor(g.MH.GetTileCoor() - 15)
 						}
 					} else {
-						G.MH.Move("right", G.Map.GetCurrentChunk())
+						g.MH.Move("right", g.Map.GetCurrentChunk())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyW) {
-					G.MH.AsePlayer.Play("walk")
-					if _, y := G.MH.GetCoordinates(); y == 0 {
-						if chunk, ok := G.Map.CheckDirection("top"); ok {
-							G.Map.ChangeCurrentChunk(chunk)
-							G.MH.SetTileCoor(256 - (G.MH.GetTileCoor() - 2))
+					g.MH.AsePlayer.Play("walk")
+					if _, y := g.MH.GetCoordinates(); y == 0 {
+						if chunk, ok := g.Map.CheckDirection("top"); ok {
+							g.Map.ChangeCurrentChunk(chunk)
+							g.MH.SetTileCoor(256 - (g.MH.GetTileCoor() - 2))
 						}
 					} else {
-						G.MH.Move("top", G.Map.GetCurrentChunk())
+						g.MH.Move("top", g.Map.GetCurrentChunk())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyS) {
-					G.MH.AsePlayer.Play("walk")
-					if (G.MH.GetTileCoor() > 240) && (G.MH.GetTileCoor() < 256) {
-						if chunk, ok := G.Map.CheckDirection("down"); ok {
-							G.Map.ChangeCurrentChunk(chunk)
-							x, _ := G.MH.GetCoordinates()
-							G.MH.SetCoordinates(x, 0)
+					g.MH.AsePlayer.Play("walk")
+					if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
+						if chunk, ok := g.Map.CheckDirection("down"); ok {
+							g.Map.ChangeCurrentChunk(chunk)
+							x, _ := g.MH.GetCoordinates()
+							g.MH.SetCoordinates(x, 0)
 						}
 					} else {
-						G.MH.Move("down", G.Map.GetCurrentChunk())
+						g.MH.Move("down", g.Map.GetCurrentChunk())
 					}
 				}
 			}
 		} else {
-			G.MH.AsePlayer.Play("stop")
+			g.MH.AsePlayer.Play("stop")
 		}
-
 		if ebiten.IsKeyPressed(ebiten.KeyR) {
-			G.MH.GetCurrentWeapon().Reload()
+			g.MH.GetCurrentWeapon().Reload()
 		}
-		for _, bullet := range G.Bullets {
+		for _, bullet := range g.Bullets {
 			if bullet != nil {
 				bullet.AsePlayer.Play("fly")
 				bullet.Move()
 			}
 		}
-		chunk := G.Map.GetCurrentChunk()
-		for i, bullet := range G.Bullets {
+		chunk := g.Map.GetCurrentChunk()
+		for i, bullet := range g.Bullets {
 			if bullet != nil {
-				mhX, mhY := G.MH.GetCoordinates()
+				mhX, mhY := g.MH.GetCoordinates()
 				bullX, bullY := bullet.GetCoordinates()
 				if (bullX >= float64(mhX)) && (bullY >= float64(mhY)) {
 					if (bullX <= float64(mhX+16)) && (bullY <= float64(mhY+16)) {
 						bullet = nil
-						G.Bullets[i] = nil
-						G.MH.Damage()
+						g.Bullets[i] = nil
+						g.MH.Damage()
 						continue
 					}
 				}
 				if chunk[bullet.GetCurrentTile(16)] != 1 {
 					bullet = nil
-					G.Bullets[i] = nil
+					g.Bullets[i] = nil
 					continue
 				}
 
@@ -126,46 +128,47 @@ func (G *Game) Update() error {
 		}
 
 		cursorX, cursorY := ebiten.CursorPosition()
-		G.MH.GetCurrentWeapon().CalculateAngle(cursorX, cursorY)
+		g.MH.GetCurrentWeapon().CalculateAngle(cursorX, cursorY)
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
-			bull, err := G.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
+			bull, err := g.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
 			if err != nil {
 				log.Fatal(err)
 			}
 
 			if bull != nil {
-				G.Bullets = append(G.Bullets, bull)
+				g.Bullets = append(g.Bullets, bull)
 			}
 		}
 
 		if ebiten.IsKeyPressed(ebiten.KeyH) {
-			G.MH.Health = 6
+			g.MH.Health = 6
 		} else {
 			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-				//charX, charY := G.MH.GetCoordinates()
-				G.PM.PauseMenuContinueGame()
+				//charX, charY := g.MH.GetCoordinates()
+				g.PM.PauseMenuContinueGame()
 			}
 			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
-				//charX, charY := G.MH.GetCoordinates()
-				G.PM.PauseMenuExitToMMGame(G.MM)
+				//charX, charY := g.MH.GetCoordinates()
+				g.PM.PauseMenuExitToMMGame(g.MM)
 			}
 		}
 	} else {
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-			//charX, charY := G.MH.GetCoordinates()
-			G.MM.MenuStartGame()
+			//charX, charY := g.MH.GetCoordinates()
+			g.MM.MenuStartGame()
 		}
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
-			//charX, charY := G.MH.GetCoordinates()
-			G.MM.MenuExitGame()
+			//charX, charY := g.MH.GetCoordinates()
+			g.MM.MenuExitGame()
 		}
 	}
 
-	G.MH.AsePlayer.Update(float32(1.0 / 60.0))
+	g.MH.AsePlayer.Update(float32(1.0 / 60.0))
 
 	return nil
 }
 
+// Draw drawing a game objects on the screen
 func (g *Game) Draw(screen *ebiten.Image) {
 	if !(g.MM.InMainMenu) {
 		if !(g.PM.InPauseMenu) {

@@ -8,6 +8,8 @@ github.com/hajimehoshi/ebiten/v2 v2.5.4 h1:NvUU6LvVc6oc+u+rD9KfHMjruRdpNwbpalVUI
 github.com/hajimehoshi/ebiten/v2 v2.5.4/go.mod h1:mnHSOVysTr/nUZrN1lBTRqhK4NG+T9NR3JsJP2rCppk=
 github.com/jezek/xgb v1.1.0 h1:wnpxJzP1+rkbGclEkmwpVFQWpuE2PUGNUzP8SbfFobk=
 github.com/jezek/xgb v1.1.0/go.mod h1:nrhwO0FX/enq75I7Y7G8iN1ubpSGZEiA3v9e9GyRFlk=
+github.com/nsf/gocode v0.0.0-20230322162601-b672b49f3818 h1:btvxUuer0DCdhu/N5fvMxW759ASqzIsm6cF8D23TNYs=
+github.com/nsf/gocode v0.0.0-20230322162601-b672b49f3818/go.mod h1:6Q8/OMaaKAgTX7/jt2bOXVDrm1eJhoNd+iwzghR7jvs=
 github.com/solarlune/goaseprite v0.0.0-20230307024607-2911e971dfbc h1:yJjY2/gG7p1wI2mcMrRR6wKwN+eHjh5p6aDrm8ciarc=
 github.com/solarlune/goaseprite v0.0.0-20230307024607-2911e971dfbc/go.mod h1:rWOw3i1ltwGcNyiLsjZLiYQ4UrfoISLfIJjPPcrWv80=
 github.com/tidwall/gjson v1.10.2 h1:APbLGOM0rrEkd8WBw9C24nllro4ajFuJu0Sc9hRz8Bo=

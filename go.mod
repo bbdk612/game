@@ -12,6 +12,7 @@ require (
 	github.com/ebitengine/purego v0.3.0 // indirect
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20221017161538-93cebf72946b // indirect
 	github.com/jezek/xgb v1.1.0 // indirect
+	github.com/nsf/gocode v0.0.0-20230322162601-b672b49f3818 // indirect
 	github.com/tidwall/gjson v1.10.2 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect

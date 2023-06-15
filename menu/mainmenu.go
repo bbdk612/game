@@ -1,60 +1,58 @@
 package menu
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"image"
 	"os"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/solarlune/goaseprite"
 )
 
 type MainMenu struct {
-	InMainMenu     bool
-	StartbuttonX   int
-	StartbuttonY   int
-	StartbuttonImg *ebiten.Image
-	ExitbuttonX    int
-	ExitbuttonY    int
-	ExitbuttonImg  *ebiten.Image
+	InMainMenu        bool
+	StartbuttonX      int
+	StartbuttonY      int
+	StartButtonFile   *goaseprite.File
+	StartButtonPlayer *goaseprite.Player
+	StartButtonImg    *ebiten.Image
+	ExitbuttonX       int
+	ExitbuttonY       int
+	ExitButtonFile    *goaseprite.File
+	ExitButtonPlayer  *goaseprite.Player
+	ExitButtonImg     *ebiten.Image
 }
 
-func InitMenu(startbuttonImagePath, exitbuttonImagePath string) (*MainMenu, error) {
-	startbuttonFile, err := os.Open(startbuttonImagePath)
-
-	if err != nil {
-		return nil, err
-	}
-
-	startbuttonFileDecoded, _, err := image.Decode(startbuttonFile)
-
-	if err != nil {
-		return nil, err
-	}
-
-	startbuttonImage := ebiten.NewImageFromImage(startbuttonFileDecoded)
-
-	exitbuttonFile, err := os.Open(exitbuttonImagePath)
-
-	if err != nil {
-		return nil, err
-	}
-
-	exitbuttonFileDecoded, _, err := image.Decode(exitbuttonFile)
-
-	if err != nil {
-		return nil, err
-	}
-
-	exitbuttonImage := ebiten.NewImageFromImage(exitbuttonFileDecoded)
+func InitMenu(startbuttonJSONPath, exitbuttonJSONPath string) (*MainMenu, error) {
 
 	mainM := &MainMenu{
-		InMainMenu:     true,
-		StartbuttonX:   10,
-		StartbuttonY:   50,
-		StartbuttonImg: startbuttonImage,
-		ExitbuttonX:    25,
-		ExitbuttonY:    75,
-		ExitbuttonImg:  exitbuttonImage,
+		InMainMenu:      true,
+		StartbuttonX:    10,
+		StartbuttonY:    50,
+		StartButtonFile: goaseprite.Open(startbuttonJSONPath),
+		ExitbuttonX:     25,
+		ExitbuttonY:     75,
+		ExitButtonFile:  goaseprite.Open(exitbuttonJSONPath),
 	}
 
+	mainM.StartButtonPlayer = mainM.StartButtonFile.CreatePlayer()
+
+	startimg, _, err := ebitenutil.NewImageFromFile(mainM.StartButtonFile.ImagePath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	mainM.StartButtonImg = startimg
+
+	mainM.ExitButtonPlayer = mainM.ExitButtonFile.CreatePlayer()
+
+	exitimg, _, err := ebitenutil.NewImageFromFile(mainM.ExitButtonFile.ImagePath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	mainM.ExitButtonImg = exitimg
 	return mainM, nil
 }
 
@@ -71,4 +69,25 @@ func (mm *MainMenu) GetMainMStartCoordinate() (int, int, int, int) {
 	extX := mm.ExitbuttonX
 	extY := mm.ExitbuttonY
 	return stbX, stbY, extX, extY
+}
+
+func (mm *MainMenu) StartIsActive(cursorX, cursorY int) bool {
+	if cursorX > mm.StartbuttonX && cursorX < mm.StartbuttonX+48 {
+		if cursorY > mm.StartbuttonY && cursorY < mm.StartbuttonY+16 {
+			mm.StartButtonPlayer.Play("Active")
+			return true
+		}
+	}
+	mm.StartButtonPlayer.Play("NoActive")
+	return false
+}
+func (mm *MainMenu) ExitIsActive(cursorX, cursorY int) bool {
+	if cursorX > mm.ExitbuttonX && cursorX < mm.ExitbuttonX+48 {
+		if cursorY > mm.ExitbuttonY && cursorY < mm.ExitbuttonY+16 {
+			mm.ExitButtonPlayer.Play("Active")
+			return true
+		}
+	}
+	mm.ExitButtonPlayer.Play("NoActive")
+	return false
 }

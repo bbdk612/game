@@ -153,11 +153,12 @@ func (g *Game) Update() error {
 			}
 		}
 	} else {
-		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		cursorX, cursorY := ebiten.CursorPosition()
+		if g.MM.StartIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			//charX, charY := g.MH.GetCoordinates()
 			g.MM.MenuStartGame()
 		}
-		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
+		if g.MM.ExitIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			//charX, charY := g.MH.GetCoordinates()
 			g.MM.MenuExitGame()
 		}
@@ -251,12 +252,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		opForExitButton := &ebiten.DrawImageOptions{}
 		opForStartButton.GeoM.Translate(float64(stX), float64(stY))
 		opForExitButton.GeoM.Translate(float64(extX), float64(extY))
-		screen.DrawImage(g.MM.StartbuttonImg, opForStartButton)
-		msg1 := fmt.Sprintf("Start")
-		ebitenutil.DebugPrintAt(screen, msg1, stX+100, stY)
-		screen.DrawImage(g.MM.ExitbuttonImg, opForExitButton)
-		msg2 := fmt.Sprintf("Exit")
-		ebitenutil.DebugPrintAt(screen, msg2, extX+100, extY)
+
+		subImageStartBtn := g.MM.StartButtonImg.SubImage(image.Rect(g.MM.StartButtonPlayer.CurrentFrameCoords()))
+		screen.DrawImage(subImageStartBtn.(*ebiten.Image), opForStartButton)
+		subImageExitBtn := g.MM.ExitButtonImg.SubImage(image.Rect(g.MM.ExitButtonPlayer.CurrentFrameCoords()))
+		screen.DrawImage(subImageExitBtn.(*ebiten.Image), opForExitButton)
+
 	}
 }
 
@@ -359,7 +360,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	Menu, err := menu.InitMenu("./assets/healthpoint.png", "./assets/healthpoint.png")
+	Menu, err := menu.InitMenu("./assets/start_button.json", "./assets/exitButton.json")
 
 	if err != nil {
 		log.Fatal(err)

@@ -26,6 +26,10 @@ type GameMapOptions struct {
 	SreenWidth, SreenHeight int
 	tileset                 *ebiten.Image
 }
+type Neighbors struct{
+	X int
+	Y int
+}
 func (GM *GameMap) CheckDirection(direction string) (int, bool) {
 	chunk, ok := GM.roadsTo[GM.currentChunk][direction]
 	if ok {
@@ -75,15 +79,81 @@ func InitGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sre
 	return GM, nil
 }
 
-func GenerateMap(numberOfCommonRooms,numberOfBossRooms,numberOfShopRooms,numberOfChestRooms int){
-	StartRoom :=GameMap{
-	MapX: 0,
-	MapY: 0,
-	RoomID: 101,
-	LeftDestination: nil,
-	UpDestination: nil,
-	RightDestination: nil,
-	DownDestination: nil,
+func GenerateMap(numberOfCommonRooms,numberOfBossRooms,numberOfShopRooms,numberOfChestRooms int)
+{
+	minimap:= [][]int
+	for int i := 0 ; i < 10; i++{
+			for int j := 0 ; j < 10; j++{
+				minimap[i][j]=0
+			}
 	}
+	currentPointX := random(2,7)
+	currentPointY := random(2,7)
+	minimap[currentPointX][currentPointY]=101;
+	potencial:= []&Neighbors
+	numberOfRooms:= numberOfBossRooms+numberOfChestRooms+numberOfCommonRooms+numberOfShopRooms
+	for i=0;i<numberOfRooms;i++{
+		//Left potencial
+		if ((currentPointX - 1)&&(currentPointY))==0{
+			potencialNeighbor:=Neighbors{
+				X: currentPointX-1,
+				Y: currentPointY,
+			}
+			potencial:=append(potencial,potencialNeighbor)
+		}
+		//Up potencial
+		if ((currentPointX)&&(currentPointY+1))==0{
+			potencialNeighbor:=Neighbors{
+				X: currentPointX,
+				Y: currentPointY+1,
+			}
+			potencial:=append(potencial,potencialNeighbor)
+		}
+		//Right potencial
+		if ((currentPointX+1)&&(currentPointY))==0{
+			potencialNeighbor:=Neighbors{
+				X: currentPointX+1,
+				Y: currentPointY,
+			}
+			potencial:=append(potencial,potencialNeighbor)
+		}
+		//Down potencial
+		if ((currentPointX)&&(currentPointY-1))==0{
+			potencialNeighbor:=Neighbors{
+				X: currentPointX,
+				Y: currentPointY-1,
+			}
+			potencial:=append(potencial,potencialNeighbor)
+		}
+		//Choose New Point
+		rand1:= random(0,potencial.lenght)
+		currentPointX = potencial[rand1].X
+		currentPointY = potencial[rand1].Y
+		splice(potencial,rand1,1)
+		if (numberOfCommonRooms!=0){
+			rand2:=random(0,IDList.length)
+			minimap[currentPointX][currentPointY]=IDList[rand2]
+			numberOfCommonRooms=numberOfCommonRooms-1
+		}else{
+			if (numberOfChestRooms!=0){
+			rand2:=random(0,IDList.length)
+			minimap[currentPointX][currentPointY]=IDList[rand2]
+			numberOfChestRooms=numberOfChestRooms-1
+			}else{
+				if (numberOfShopRooms!=0){
+					rand2:=random(0,IDList.length)
+					minimap[currentPointX][currentPointY]=IDList[rand2]
+					numberOfShopRooms=numberOfShopRooms-1
+				}else{
 
+					if (numberOfBossRooms!=0){
+						rand2:=random(0,IDList.length)
+						minimap[currentPointX][currentPointY]=IDList[rand2]
+						numberOfBossRooms=numberOfBossRooms-1
+
+					}
+				}
+			}
+		}
+	}
 }

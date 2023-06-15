@@ -10,6 +10,8 @@ import (
 )
 
 type GameMap struct {
+	mapX                    int
+	ampY                    int
 	chunks                  [][]int
 	roadsTo                 []map[string]int
 	currentChunk            int
@@ -27,8 +29,8 @@ func (GM *GameMap) CheckDirection(direction string) (int, bool) {
 	}
 }
 
-func (GM *GameMap) GetCurrentChunk() ([]int) {
-  return GM.chunks[GM.currentChunk]
+func (GM *GameMap) GetCurrentChunk() []int {
+	return GM.chunks[GM.currentChunk]
 }
 
 func (GM *GameMap) ChangeCurrentChunk(chunk int) error {
@@ -39,14 +41,14 @@ func (GM *GameMap) ChangeCurrentChunk(chunk int) error {
 	return nil
 }
 
-func (GM *GameMap) GetTile(tileNumber int) (*ebiten.Image) {
-  w := GM.tileset.Bounds().Dx()
-  tileXCount := w / GM.TileSize
-  
-  tileStartX := (tileNumber % tileXCount) * GM.TileSize
-  tileStartY := (tileNumber / tileXCount) * GM.TileSize
+func (GM *GameMap) GetTile(tileNumber int) *ebiten.Image {
+	w := GM.tileset.Bounds().Dx()
+	tileXCount := w / GM.TileSize
 
-  return GM.tileset.SubImage(image.Rect(tileStartX, tileStartY, tileStartX+GM.TileSize, tileStartY+GM.TileSize)).(*ebiten.Image)
+	tileStartX := (tileNumber % tileXCount) * GM.TileSize
+	tileStartY := (tileNumber / tileXCount) * GM.TileSize
+
+	return GM.tileset.SubImage(image.Rect(tileStartX, tileStartY, tileStartX+GM.TileSize, tileStartY+GM.TileSize)).(*ebiten.Image)
 }
 
 func NewGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sreenWidth int, sreenHeight int) (*GameMap, error) {

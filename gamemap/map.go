@@ -2,34 +2,34 @@ package gamemap
 
 import (
 	"errors"
+	"fmt"
 	"image"
 	_ "image/png"
+	"math/rand"
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type GameMap struct {
-	MapX                    int
-	MapY                    int
-	RoomID                  int
-	LeftDestination         &GameMap
-	UpDestination         &GameMap
-	RightDestination         &GameMap
-	DownDestination         &GameMap
-	TileSize                int
-	SreenWidth, SreenHeight int
-	tileset                 *ebiten.Image
+	MapX             int
+	MapY             int
+	RoomID           int
+	LeftDestination  *GameMap
+	UpDestination    *GameMap
+	RightDestination *GameMap
+	DownDestination  *GameMap
 }
 type GameMapOptions struct {
 	TileSize                int
 	SreenWidth, SreenHeight int
 	tileset                 *ebiten.Image
 }
-type Neighbors struct{
+type Neighbors struct {
 	X int
 	Y int
 }
+
 func (GM *GameMap) CheckDirection(direction string) (int, bool) {
 	chunk, ok := GM.roadsTo[GM.currentChunk][direction]
 	if ok {
@@ -39,7 +39,7 @@ func (GM *GameMap) CheckDirection(direction string) (int, bool) {
 	}
 }
 
-func (GM *GameMap) GetCurrentRoomID()(int) {
+func (GM *GameMap) GetCurrentRoomID() int {
 	return GM.RoomID
 }
 
@@ -79,80 +79,114 @@ func InitGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sre
 	return GM, nil
 }
 
-func GenerateMap(numberOfCommonRooms,numberOfBossRooms,numberOfShopRooms,numberOfChestRooms int)
-{
-	minimap:= [][]int
-	for int i := 0 ; i < 10; i++{
-			for int j := 0 ; j < 10; j++{
-				minimap[i][j]=0
-			}
+func GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) {
+	//minimap generation
+	minimap := [][]int
+	for i := 0; i < 10; i++ {
+		for j := 0; j < 10; j++ {
+			minimap[i][j] = 0
+		}
 	}
-	currentPointX := random(2,7)
-	currentPointY := random(2,7)
-	minimap[currentPointX][currentPointY]=101;
-	potencial:= []&Neighbors
-	numberOfRooms:= numberOfBossRooms+numberOfChestRooms+numberOfCommonRooms+numberOfShopRooms
-	for i=0;i<numberOfRooms;i++{
+	currentPointX := rand.Intn(5) + 2
+	currentPointY := rand.Intn(5) + 2
+	minimap[currentPointX][currentPointY] = 101
+	potencial := [](*Neighbors)
+	numberOfRooms := numberOfBossRooms + numberOfChestRooms + numberOfCommonRooms + numberOfShopRooms
+	for i = 0; i < numberOfRooms; i++ {
 		//Left potencial
-		if ((currentPointX - 1)&&(currentPointY))==0{
-			potencialNeighbor:=Neighbors{
-				X: currentPointX-1,
+		if ((currentPointX - 1) == 0) && ((currentPointY) == 0) {
+			potencialNeighbor := Neighbors{
+				X: currentPointX - 1,
 				Y: currentPointY,
 			}
-			potencial:=append(potencial,potencialNeighbor)
+			potencial := append(potencial, potencialNeighbor)
 		}
 		//Up potencial
-		if ((currentPointX)&&(currentPointY+1))==0{
-			potencialNeighbor:=Neighbors{
+		if ((currentPointX) == 0) && ((currentPointY + 1) == 0) {
+			potencialNeighbor := Neighbors{
 				X: currentPointX,
-				Y: currentPointY+1,
+				Y: currentPointY + 1,
 			}
-			potencial:=append(potencial,potencialNeighbor)
+			potencial := append(potencial, potencialNeighbor)
 		}
 		//Right potencial
-		if ((currentPointX+1)&&(currentPointY))==0{
-			potencialNeighbor:=Neighbors{
-				X: currentPointX+1,
+		if ((currentPointX + 1) == 0) && ((currentPointY) == 0) {
+			potencialNeighbor := Neighbors{
+				X: currentPointX + 1,
 				Y: currentPointY,
 			}
-			potencial:=append(potencial,potencialNeighbor)
+			potencial := append(potencial, potencialNeighbor)
 		}
 		//Down potencial
-		if ((currentPointX)&&(currentPointY-1))==0{
-			potencialNeighbor:=Neighbors{
+		if ((currentPointX) == 0) && ((currentPointY-1) == 0) == 0 {
+			potencialNeighbor := Neighbors{
 				X: currentPointX,
-				Y: currentPointY-1,
+				Y: currentPointY - 1,
 			}
-			potencial:=append(potencial,potencialNeighbor)
+			potencial := append(potencial, potencialNeighbor)
 		}
 		//Choose New Point
-		rand1:= random(0,potencial.lenght)
+		rand1 := rand.Intn(len(potencial))
 		currentPointX = potencial[rand1].X
 		currentPointY = potencial[rand1].Y
-		splice(potencial,rand1,1)
-		if (numberOfCommonRooms!=0){
-			rand2:=random(0,IDList.length)
-			minimap[currentPointX][currentPointY]=IDList[rand2]
-			numberOfCommonRooms=numberOfCommonRooms-1
-		}else{
-			if (numberOfChestRooms!=0){
-			rand2:=random(0,IDList.length)
-			minimap[currentPointX][currentPointY]=IDList[rand2]
-			numberOfChestRooms=numberOfChestRooms-1
-			}else{
-				if (numberOfShopRooms!=0){
-					rand2:=random(0,IDList.length)
-					minimap[currentPointX][currentPointY]=IDList[rand2]
-					numberOfShopRooms=numberOfShopRooms-1
-				}else{
+		splice(potencial, rand1, 1)
+		if numberOfCommonRooms != 0 {
+			rand2 := random(0, len(IDList))
+			minimap[currentPointX][currentPointY] = IDList[rand2]
+			numberOfCommonRooms = numberOfCommonRooms - 1
+		} else {
+			if numberOfChestRooms != 0 {
+				rand2 := random(0, len(IDList))
+				minimap[currentPointX][currentPointY] = IDList[rand2]
+				numberOfChestRooms = numberOfChestRooms - 1
+			} else {
+				if numberOfShopRooms != 0 {
+					rand2 := random(0, len(IDList))
+					minimap[currentPointX][currentPointY] = IDList[rand2]
+					numberOfShopRooms = numberOfShopRooms - 1
+				} else {
 
-					if (numberOfBossRooms!=0){
-						rand2:=random(0,IDList.length)
-						minimap[currentPointX][currentPointY]=IDList[rand2]
-						numberOfBossRooms=numberOfBossRooms-1
+					if numberOfBossRooms != 0 {
+						rand2 := random(0, len(IDList))
+						minimap[currentPointX][currentPointY] = IDList[rand2]
+						numberOfBossRooms = numberOfBossRooms - 1
 
 					}
 				}
+			}
+		}
+	}
+	//map GenerateMap
+	GameRoomList := []*GameMap
+	for i := 0; i < 10; i++ {
+		for j := 0; j < 10; j++ {
+			if minimap[i][j] != 0 {
+				NewRoom := *GameMap{
+					MapX:   i - 1,
+					MapY:   j,
+					RoomID: minimap[i-1][j],
+				}
+				GameRoomList = append(GameRoomList, NewRoom)
+			}
+		}
+	}
+	for i := 0; i < len(GameRoomList)-1; i++ {
+		for j := i + 1; j < len(GameRoomList); j++ {
+			//Left Doors
+			if (GameRoomList[i].MapX-1 == GameRoomList[j].MapX) && (GameRoomList[i].MapY == GameRoomList[j].MapY) {
+
+			}
+			//Up Doors
+			if (GameRoomList[i].MapX == GameRoomList[j].MapX) && (GameRoomList[i].MapY+1 == GameRoomList[j].MapY) {
+
+			}
+			//Right Doors
+			if (GameRoomList[i].MapX+1 == GameRoomList[j].MapX) && (GameRoomList[i].MapY == GameRoomList[j].MapY) {
+
+			}
+			//Down Doors
+			if (GameRoomList[i].MapX == GameRoomList[j].MapX) && (GameRoomList[i].MapY-1 == GameRoomList[j].MapY) {
+
 			}
 		}
 	}

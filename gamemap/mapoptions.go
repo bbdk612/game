@@ -23,7 +23,7 @@ func (GM *GameMapOptions) GetTile(tileNumber int) *ebiten.Image {
 	return GM.tileset.SubImage(image.Rect(tileStartX, tileStartY, tileStartX+GM.TileSize, tileStartY+GM.TileSize)).(*ebiten.Image)
 }
 
-func InitGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sreenWidth int, sreenHeight int) (*GameMap, error) {
+func InitGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sreenWidth int, sreenHeight int) (*GameMapOptions, error) {
 	tilesetFile, err := os.Open("./assets/tileset.png")
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func InitGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sre
 
 	tilesImage := ebiten.NewImageFromImage(tileset)
 
-	GM := &GameMap{
+	GM := &GameMapOptions{
 		TileSize:     16,
 		SreenWidth:   sreenWidth,
 		SreenHeight:  sreenHeight,

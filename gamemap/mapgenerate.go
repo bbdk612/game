@@ -1,10 +1,8 @@
 package gamemap
 
 import (
-	"errors"
 	"fmt"
 	"math/rand"
-	"os"
 )
 
 type GameMap struct {
@@ -36,46 +34,46 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 	currentPointX := rand.Intn(5) + 2
 	currentPointY := rand.Intn(5) + 2
 	minimap[currentPointX][currentPointY] = 101
-	potencial := [](*Neighbors)
+	potencial := [](*Neighbors){}
 	numberOfRooms := numberOfBossRooms + numberOfChestRooms + numberOfCommonRooms + numberOfShopRooms
-	for i = 0; i < numberOfRooms; i++ {
+	for i := 0; i < numberOfRooms; i++ {
 		//Left potencial
 		if ((currentPointX - 1) == 0) && ((currentPointY) == 0) {
-			potencialNeighbor := Neighbors{
+			potencialNeighbor := &Neighbors{
 				X: currentPointX - 1,
 				Y: currentPointY,
 			}
-			potencial := append(potencial, potencialNeighbor)
+			potencial = append(potencial, potencialNeighbor)
 		}
 		//Up potencial
 		if ((currentPointX) == 0) && ((currentPointY + 1) == 0) {
-			potencialNeighbor := Neighbors{
+			potencialNeighbor := &Neighbors{
 				X: currentPointX,
 				Y: currentPointY + 1,
 			}
-			potencial := append(potencial, potencialNeighbor)
+			potencial = append(potencial, potencialNeighbor)
 		}
 		//Right potencial
 		if ((currentPointX + 1) == 0) && ((currentPointY) == 0) {
-			potencialNeighbor := Neighbors{
+			potencialNeighbor := &Neighbors{
 				X: currentPointX + 1,
 				Y: currentPointY,
 			}
-			potencial := append(potencial, potencialNeighbor)
+			potencial = append(potencial, potencialNeighbor)
 		}
 		//Down potencial
-		if ((currentPointX) == 0) && ((currentPointY-1) == 0) == 0 {
-			potencialNeighbor := Neighbors{
+		if ((currentPointX) == 0) && ((currentPointY - 1) == 0) {
+			potencialNeighbor := &Neighbors{
 				X: currentPointX,
 				Y: currentPointY - 1,
 			}
-			potencial := append(potencial, potencialNeighbor)
+			potencial = append(potencial, potencialNeighbor)
 		}
 		//Choose New Point
-		rand1 := rand.Intn(len(potencial))
+		rand1 := rand.Intn(len(potencial) - 1)
 		currentPointX = potencial[rand1].X
 		currentPointY = potencial[rand1].Y
-		splice(potencial, rand1, 1)
+		potencial = append(potencial[:rand1-1], potencial[rand1+1:])
 		if numberOfCommonRooms != 0 {
 			rand2 := rand.Intn(len(IDList))
 			minimap[currentPointX][currentPointY] = IDList[rand2]
@@ -103,11 +101,11 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 		}
 	}
 	//map GenerateMap
-	GameRoomList := []*GameMap
+	GameRoomList := [](*GameMap){}
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 10; j++ {
 			if minimap[i][j] != 0 {
-				NewRoom := *GameMap{
+				NewRoom := &GameMap{
 					MapX:   i - 1,
 					MapY:   j,
 					RoomID: minimap[i-1][j],
@@ -121,7 +119,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			//Left Doors
 			if (GameRoomList[i].MapX-1 == GameRoomList[j].MapX) && (GameRoomList[i].MapY == GameRoomList[j].MapY) {
 				GameRoomList[i].LeftDestination = GameRoomList[j]
-				GameRoomList[j].RigthDestination = GameRoomList[i]
+				GameRoomList[j].RightDestination = GameRoomList[i]
 			}
 			//Up Doors
 			if (GameRoomList[i].MapX == GameRoomList[j].MapX) && (GameRoomList[i].MapY+1 == GameRoomList[j].MapY) {
@@ -130,7 +128,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			}
 			//Right Doors
 			if (GameRoomList[i].MapX+1 == GameRoomList[j].MapX) && (GameRoomList[i].MapY == GameRoomList[j].MapY) {
-				GameRoomList[i].RigthDestination = GameRoomList[j]
+				GameRoomList[i].RightDestination = GameRoomList[j]
 				GameRoomList[j].LeftDestination = GameRoomList[i]
 			}
 			//Down Doors

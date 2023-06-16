@@ -3,12 +3,8 @@ package gamemap
 import (
 	"errors"
 	"fmt"
-	"image"
-	_ "image/png"
 	"math/rand"
 	"os"
-
-	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type GameMap struct {
@@ -20,66 +16,16 @@ type GameMap struct {
 	RightDestination *GameMap
 	DownDestination  *GameMap
 }
-type GameMapOptions struct {
-	TileSize                int
-	SreenWidth, SreenHeight int
-	tileset                 *ebiten.Image
-}
 type Neighbors struct {
 	X int
 	Y int
-}
-
-func (GM *GameMap) CheckDirection(direction string) (int, bool) {
-	chunk, ok := GM.roadsTo[GM.currentChunk][direction]
-	if ok {
-		return chunk, true
-	} else {
-		return -1, false
-	}
 }
 
 func (GM *GameMap) GetCurrentRoomID() int {
 	return GM.RoomID
 }
 
-func (GM *GameMapOptions) GetTile(tileNumber int) *ebiten.Image {
-	w := GM.tileset.Bounds().Dx()
-	tileXCount := w / GM.TileSize
-
-	tileStartX := (tileNumber % tileXCount) * GM.TileSize
-	tileStartY := (tileNumber / tileXCount) * GM.TileSize
-
-	return GM.tileset.SubImage(image.Rect(tileStartX, tileStartY, tileStartX+GM.TileSize, tileStartY+GM.TileSize)).(*ebiten.Image)
-}
-
-func InitGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sreenWidth int, sreenHeight int) (*GameMap, error) {
-	tilesetFile, err := os.Open("./assets/tileset.png")
-	if err != nil {
-		return nil, err
-	}
-
-	tileset, _, err := image.Decode(tilesetFile)
-
-	if err != nil {
-		return nil, err
-	}
-
-	tilesImage := ebiten.NewImageFromImage(tileset)
-
-	GM := &GameMap{
-		chunks:       chunks,
-		roadsTo:      roadsTo,
-		SreenWidth:   sreenWidth,
-		SreenHeight:  sreenHeight,
-		TileSize:     16,
-		currentChunk: currentChunk,
-		tileset:      tilesImage,
-	}
-	return GM, nil
-}
-
-func GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) {
+func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) {
 	//minimap generation
 	minimap := [][]int
 	for i := 0; i < 10; i++ {
@@ -131,23 +77,23 @@ func GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numb
 		currentPointY = potencial[rand1].Y
 		splice(potencial, rand1, 1)
 		if numberOfCommonRooms != 0 {
-			rand2 := random(0, len(IDList))
+			rand2 := rand.Intn(len(IDList))
 			minimap[currentPointX][currentPointY] = IDList[rand2]
 			numberOfCommonRooms = numberOfCommonRooms - 1
 		} else {
 			if numberOfChestRooms != 0 {
-				rand2 := random(0, len(IDList))
+				rand2 := rand.Intn(len(IDList))
 				minimap[currentPointX][currentPointY] = IDList[rand2]
 				numberOfChestRooms = numberOfChestRooms - 1
 			} else {
 				if numberOfShopRooms != 0 {
-					rand2 := random(0, len(IDList))
+					rand2 := rand.Intn(len(IDList))
 					minimap[currentPointX][currentPointY] = IDList[rand2]
 					numberOfShopRooms = numberOfShopRooms - 1
 				} else {
 
 					if numberOfBossRooms != 0 {
-						rand2 := random(0, len(IDList))
+						rand2 := rand.Intn(len(IDList))
 						minimap[currentPointX][currentPointY] = IDList[rand2]
 						numberOfBossRooms = numberOfBossRooms - 1
 

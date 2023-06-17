@@ -21,6 +21,7 @@ type Game struct {
 	Bullets          [](*animatedobjects.Bullet)
 	CurrentRoom      *gamemap.GameMap
 	MapOptions       *gamemap.GameMapOptions
+	RD               *gamemap.RoomData
 	currentRoomTiles []int
 	MH               *animatedobjects.MainHero
 	UI               *ui.UI
@@ -53,7 +54,9 @@ func (g *Game) Update() error {
 					g.MH.AsePlayer.Play("walk")
 					if g.MH.GetTileCoor()%16 == 0 {
 						g.CurrentRoom.ChangeCurrentRoom("left")
-						currentRoomTiles := g.CurrentRoom.DeleteDoors()
+						gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.currentRoomTiles = g.RD.GetCurrentRoomTileMap()
+						g.currentRoomTiles = g.CurrentRoom.DeleteDoors()
 						g.MH.SetTileCoor(g.MH.GetTileCoor() + 15)
 					} else {
 						g.MH.Move("left", g.CurrentRoom.GetCurrentRoomID())
@@ -63,7 +66,8 @@ func (g *Game) Update() error {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor()+1)%16 == 0 {
 						g.CurrentRoom.ChangeCurrentRoom("right")
-						currentRoomTiles := g.CurrentRoom.DeleteDoors()
+						g.currentRoomTiles = g.RD.GetCurrentRoomTileMap()
+						g.currentRoomTiles = g.CurrentRoom.DeleteDoors()
 						g.MH.SetTileCoor(g.MH.GetTileCoor() - 15)
 					} else {
 						g.MH.Move("right", g.MapOptions.GetCurrentRoomID())
@@ -73,7 +77,8 @@ func (g *Game) Update() error {
 					g.MH.AsePlayer.Play("walk")
 					if _, y := g.MH.GetCoordinates(); y == 0 {
 						g.CurrentRoom.ChangeCurrentRoom("top")
-						currentRoomTiles := g.CurrentRoom.DeleteDoors()
+						g.currentRoomTiles = g.RD.GetCurrentRoomTileMap()
+						g.currentRoomTiles = g.CurrentRoom.DeleteDoors()
 						g.MH.SetTileCoor(256 - (g.MH.GetTileCoor() - 2))
 					} else {
 						g.MH.Move("top", g.MapOptions.GetCurrentRoomID())
@@ -83,7 +88,8 @@ func (g *Game) Update() error {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
 						g.CurrentRoom.ChangeCurrentRoom("down")
-						currentRoomTiles := g.CurrentRoom.DeleteDoors()
+						g.currentRoomTiles = g.RD.GetCurrentRoomTileMap()
+						g.currentRoomTiles = g.CurrentRoom.DeleteDoors()
 						x, _ := g.MH.GetCoordinates()
 						g.MH.SetCoordinates(x, 0)
 					} else {
@@ -115,7 +121,7 @@ func (g *Game) Update() error {
 						continue
 					}
 				}
-				if currentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
+				if g.currentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
 					bullet = nil
 					g.Bullets[i] = nil
 					continue
@@ -154,6 +160,8 @@ func (g *Game) Update() error {
 		if g.MM.StartIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			//charX, charY := g.MH.GetCoordinates()
 			g.MM.MenuStartGame()
+			g.currentRoomTiles = g.RD.GetCurrentRoomTileMap()
+			g.currentRoomTiles = g.CurrentRoom.DeleteDoors()
 		}
 		if g.MM.ExitIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			//charX, charY := g.MH.GetCoordinates()

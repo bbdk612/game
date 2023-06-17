@@ -3,7 +3,6 @@ module game
 go 1.20
 
 require (
-	github.com/hajimehoshi/ebiten v1.12.12
 	github.com/hajimehoshi/ebiten/v2 v2.5.4
 	github.com/solarlune/goaseprite v0.0.0-20230307024607-2911e971dfbc
 	golang.org/x/image v0.6.0

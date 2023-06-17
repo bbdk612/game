@@ -51,21 +51,17 @@ func (g *Game) Update() error {
 				if ebiten.IsKeyPressed(ebiten.KeyA) {
 					g.MH.AsePlayer.Play("walk")
 					if g.MH.GetTileCoor()%16 == 0 {
-						if chunk, ok := g.MapOptions.CheckDirection("left"); ok {
-							g.MapOptions.ChangeCurrentChunk(chunk)
-							g.MH.SetTileCoor(g.MH.GetTileCoor() + 15)
-						}
-					} else if g.MH.CanIGo("left", g.MapOptions.GetCurrentChunk()) {
-						g.MH.Move("left", g.MapOptions.GetCurrentChunk())
+						g.MapOptions.ChangeCurrentRoom("left", CurrentRoom)
+						g.MH.SetTileCoor(g.MH.GetTileCoor() + 15)
+					} else {
+						g.MH.Move("left", g.Map.GetCurrentRoomID())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyD) {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor()+1)%16 == 0 {
-						if chunk, ok := g.MapOptions.CheckDirection("right"); ok {
-							g.MapOptions.ChangeCurrentChunk(chunk)
-							g.MH.SetTileCoor(g.MH.GetTileCoor() - 15)
-						}
+						g.MapOptions.ChangeCurrentRoom("right", CurrentRoom)
+						g.MH.SetTileCoor(g.MH.GetTileCoor() - 15)
 					} else {
 						g.MH.Move("right", g.MapOptions.GetCurrentChunk())
 					}
@@ -73,10 +69,8 @@ func (g *Game) Update() error {
 				if ebiten.IsKeyPressed(ebiten.KeyW) {
 					g.MH.AsePlayer.Play("walk")
 					if _, y := g.MH.GetCoordinates(); y == 0 {
-						if chunk, ok := g.MapOptions.CheckDirection("top"); ok {
-							g.MapOptions.ChangeCurrentChunk(chunk)
-							g.MH.SetTileCoor(256 - (g.MH.GetTileCoor() - 2))
-						}
+						g.MapOptions.ChangeCurrentRoom("top", CurrentRoom)
+						g.MH.SetTileCoor(256 - (g.MH.GetTileCoor() - 2))
 					} else {
 						g.MH.Move("top", g.MapOptions.GetCurrentChunk())
 					}
@@ -84,11 +78,9 @@ func (g *Game) Update() error {
 				if ebiten.IsKeyPressed(ebiten.KeyS) {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
-						if chunk, ok := g.MapOptions.CheckDirection("down"); ok {
-							g.MapOptions.ChangeCurrentChunk(chunk)
-							x, _ := g.MH.GetCoordinates()
-							g.MH.SetCoordinates(x, 0)
-						}
+						g.MapOptions.ChangeCurrentRoom("down", CurrentRoom)
+						x, _ := g.MH.GetCoordinates()
+						g.MH.SetCoordinates(x, 0)
 					} else {
 						g.MH.Move("down", g.MapOptions.GetCurrentChunk())
 					}
@@ -268,83 +260,8 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func main() {
 	fmt.Println("hello, world")
-	chunks := [][]int{
-		{
-			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-			4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4,
-			4, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 4,
-			4, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 4,
-			4, 1, 2, 2, 3, 3, 2, 2, 2, 2, 3, 3, 2, 2, 1, 4,
-			4, 1, 2, 2, 3, 3, 2, 2, 2, 2, 3, 3, 2, 2, 1, 4,
-			4, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1,
-			4, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			4, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1,
-			4, 1, 2, 2, 3, 3, 2, 2, 2, 2, 3, 3, 2, 2, 1, 4,
-			4, 1, 2, 2, 3, 3, 2, 2, 2, 2, 3, 3, 2, 2, 1, 4,
-			4, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 4,
-			4, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 4,
-			4, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 4,
-			4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4,
-			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-		},
-		{
-			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 1, 1, 2, 1, 1, 1, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 4, 4, 1, 2, 1, 4, 4, 4, 4, 4,
-			4, 4, 4, 4, 4, 4, 4, 4, 1, 2, 1, 4, 4, 4, 4, 4,
-			4, 4, 4, 4, 4, 4, 4, 4, 1, 2, 1, 4, 4, 4, 4, 4,
-			4, 4, 4, 4, 4, 4, 4, 4, 1, 2, 1, 4, 4, 4, 4, 4,
-		},
-		{
-			4, 4, 4, 4, 4, 4, 4, 4, 1, 2, 1, 4, 4, 4, 4, 4,
-			4, 4, 4, 4, 4, 4, 4, 4, 1, 2, 1, 4, 4, 4, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 1, 1, 2, 1, 1, 1, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 2, 2, 2, 2, 2, 2, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4,
-			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-			4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-		},
-	}
 
-	for i := range chunks {
-		for j := range chunks[i] {
-			chunks[i][j]--
-		}
-	}
-
-	roadsTo := []map[string]int{
-		{
-			"right": 1,
-		},
-		{
-			"left": 0,
-			"down": 2,
-		},
-		{
-			"top": 1,
-		},
-	}
-
-	M, err := gamemap.InitGameMap(chunks, 0, roadsTo, 256, 256)
+	M, err := gamemap.InitGameMap("./assets/start_button.json")
 	if err != nil {
 		fmt.Println(err)
 	}

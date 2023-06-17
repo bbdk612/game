@@ -114,27 +114,23 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			}
 		}
 	}
-	for i := 0; i < len(GameRoomList)-1; i++ {
-		for j := i + 1; j < len(GameRoomList); j++ {
+	for i := 0; i < len(GameRoomList); i++ {
+		for j := 0; j < len(GameRoomList); j++ {
 			//Left Doors
 			if (GameRoomList[i].MapX-1 == GameRoomList[j].MapX) && (GameRoomList[i].MapY == GameRoomList[j].MapY) {
 				GameRoomList[i].LeftDestination = GameRoomList[j]
-				GameRoomList[j].RightDestination = GameRoomList[i]
 			}
 			//Up Doors
 			if (GameRoomList[i].MapX == GameRoomList[j].MapX) && (GameRoomList[i].MapY+1 == GameRoomList[j].MapY) {
 				GameRoomList[i].UpDestination = GameRoomList[j]
-				GameRoomList[j].DownDestination = GameRoomList[i]
 			}
 			//Right Doors
 			if (GameRoomList[i].MapX+1 == GameRoomList[j].MapX) && (GameRoomList[i].MapY == GameRoomList[j].MapY) {
 				GameRoomList[i].RightDestination = GameRoomList[j]
-				GameRoomList[j].LeftDestination = GameRoomList[i]
 			}
 			//Down Doors
 			if (GameRoomList[i].MapX == GameRoomList[j].MapX) && (GameRoomList[i].MapY-1 == GameRoomList[j].MapY) {
 				GameRoomList[i].DownDestination = GameRoomList[j]
-				GameRoomList[j].UpDestination = GameRoomList[i]
 			}
 		}
 	}

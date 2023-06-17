@@ -13,6 +13,23 @@ type GameMapOptions struct {
 	tileset                 *ebiten.Image
 }
 
+func (GM *GameMapOptions) ChangeCurrentRoom(room int) error {
+	switch direction {
+		case "left":
+			GM.currentRoom =
+
+		case "right":
+			GM.currentRoom = room
+
+		case "top":
+			GM.currentRoom = room
+
+		case "down":
+			GM.currentRoom = room
+		}
+	return nil
+}
+
 func (GM *GameMapOptions) GetTile(tileNumber int) *ebiten.Image {
 	w := GM.tileset.Bounds().Dx()
 	tileXCount := w / GM.TileSize
@@ -23,8 +40,8 @@ func (GM *GameMapOptions) GetTile(tileNumber int) *ebiten.Image {
 	return GM.tileset.SubImage(image.Rect(tileStartX, tileStartY, tileStartX+GM.TileSize, tileStartY+GM.TileSize)).(*ebiten.Image)
 }
 
-func InitGameMap(chunks [][]int, currentChunk int, roadsTo []map[string]int, sreenWidth int, sreenHeight int) (*GameMapOptions, error) {
-	tilesetFile, err := os.Open("./assets/tileset.png")
+func InitGameMap(tilesetImgPath string) (*GameMapOptions, error) {
+	tilesetFile, err := os.Open(tilesetImgPath)
 	if err != nil {
 		return nil, err
 	}

@@ -2,6 +2,9 @@ package gamemap
 
 import (
 	"crypto/x509"
+	"encoding/json"
+	"io"
+	"log"
 	"math/rand"
 )
 

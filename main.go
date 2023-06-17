@@ -63,7 +63,7 @@ func (g *Game) Update() error {
 						g.CurrentRoom.ChangeCurrentRoom("right")
 						g.MH.SetTileCoor(g.MH.GetTileCoor() - 15)
 					} else {
-						g.MH.Move("right", g.MapOptions.GetCurrentChunk())
+						g.MH.Move("right", g.MapOptions.GetCurrentRoomID())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyW) {
@@ -72,7 +72,7 @@ func (g *Game) Update() error {
 						g.CurrentRoom.ChangeCurrentRoom("top")
 						g.MH.SetTileCoor(256 - (g.MH.GetTileCoor() - 2))
 					} else {
-						g.MH.Move("top", g.MapOptions.GetCurrentChunk())
+						g.MH.Move("top", g.MapOptions.GetCurrentRoomID())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyS) {
@@ -82,7 +82,7 @@ func (g *Game) Update() error {
 						x, _ := g.MH.GetCoordinates()
 						g.MH.SetCoordinates(x, 0)
 					} else {
-						g.MH.Move("down", g.MapOptions.GetCurrentChunk())
+						g.MH.Move("down", g.MapOptions.GetCurrentRoomID())
 					}
 				}
 			}
@@ -98,7 +98,7 @@ func (g *Game) Update() error {
 				bullet.Move()
 			}
 		}
-		chunk := g.MapOptions.GetCurrentChunk()
+		chunk := g.MapOptions.GetCurrentRoomID()
 		for i, bullet := range g.Bullets {
 			if bullet != nil {
 				mhX, mhY := g.MH.GetCoordinates()
@@ -169,9 +169,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			//drawing a map
 			xCount := (g.MapOptions.SreenWidth / g.MapOptions.TileSize)
 
-			currentChunk := g.MapOptions.GetCurrentChunk()
+			currentRoomID := g.CurrentRoom.GetCurrentRoomID()
 
-			for tileCoordinate, tileNumber := range currentChunk {
+			for tileCoordinate, tileNumber := range currentRoomID {
 				options := &ebiten.DrawImageOptions{}
 				options.GeoM.Translate(float64((tileCoordinate%xCount)*g.MapOptions.TileSize), float64((tileCoordinate/xCount)*g.MapOptions.TileSize))
 

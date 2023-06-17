@@ -13,23 +13,6 @@ type GameMapOptions struct {
 	tileset                 *ebiten.Image
 }
 
-func (GM *GameMapOptions) ChangeCurrentRoom(room int) error {
-	switch direction {
-		case "left":
-			GM.currentRoom =
-
-		case "right":
-			GM.currentRoom = room
-
-		case "top":
-			GM.currentRoom = room
-
-		case "down":
-			GM.currentRoom = room
-		}
-	return nil
-}
-
 func (GM *GameMapOptions) GetTile(tileNumber int) *ebiten.Image {
 	w := GM.tileset.Bounds().Dx()
 	tileXCount := w / GM.TileSize

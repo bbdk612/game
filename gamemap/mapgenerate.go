@@ -22,6 +22,26 @@ type Neighbors struct {
 func (GM *GameMap) GetCurrentRoomID() int {
 	return GM.RoomID
 }
+func (GM *GameMap) ChangeCurrentRoom(direction string) *GameMap {
+	switch direction {
+	case "left":
+		CurrentRoom := GM.LeftDestination
+		return CurrentRoom
+
+	case "right":
+		CurrentRoom := GM.RightDestination
+		return CurrentRoom
+
+	case "top":
+		CurrentRoom := GM.UpDestination
+		return CurrentRoom
+
+	case "down":
+		CurrentRoom := GM.DownDestination
+		return CurrentRoom
+	}
+	return nil
+}
 
 func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) {
 	//minimap generation

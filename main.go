@@ -18,13 +18,13 @@ import (
 
 // Game struct contains a game objects
 type Game struct {
-	Bullets    [](*animatedobjects.Bullet)
-	Map        *gamemap.GameMap
-	MapOptions *gamemap.GameMapOptions
-	MH         *animatedobjects.MainHero
-	UI         *ui.UI
-	MM         *menu.MainMenu
-	PM         *menu.PauseMenu
+	Bullets     [](*animatedobjects.Bullet)
+	CurrentRoom *gamemap.GameMap
+	MapOptions  *gamemap.GameMapOptions
+	MH          *animatedobjects.MainHero
+	UI          *ui.UI
+	MM          *menu.MainMenu
+	PM          *menu.PauseMenu
 }
 
 // IsMoveKeyPressed checks on pressing a moving Key
@@ -51,16 +51,16 @@ func (g *Game) Update() error {
 				if ebiten.IsKeyPressed(ebiten.KeyA) {
 					g.MH.AsePlayer.Play("walk")
 					if g.MH.GetTileCoor()%16 == 0 {
-						g.MapOptions.ChangeCurrentRoom("left", CurrentRoom)
+						g.CurrentRoom.ChangeCurrentRoom("left")
 						g.MH.SetTileCoor(g.MH.GetTileCoor() + 15)
 					} else {
-						g.MH.Move("left", g.Map.GetCurrentRoomID())
+						g.MH.Move("left", g.CurrentRoom.GetCurrentRoomID())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyD) {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor()+1)%16 == 0 {
-						g.MapOptions.ChangeCurrentRoom("right", CurrentRoom)
+						g.CurrentRoom.ChangeCurrentRoom("right")
 						g.MH.SetTileCoor(g.MH.GetTileCoor() - 15)
 					} else {
 						g.MH.Move("right", g.MapOptions.GetCurrentChunk())
@@ -69,7 +69,7 @@ func (g *Game) Update() error {
 				if ebiten.IsKeyPressed(ebiten.KeyW) {
 					g.MH.AsePlayer.Play("walk")
 					if _, y := g.MH.GetCoordinates(); y == 0 {
-						g.MapOptions.ChangeCurrentRoom("top", CurrentRoom)
+						g.CurrentRoom.ChangeCurrentRoom("top")
 						g.MH.SetTileCoor(256 - (g.MH.GetTileCoor() - 2))
 					} else {
 						g.MH.Move("top", g.MapOptions.GetCurrentChunk())
@@ -78,7 +78,7 @@ func (g *Game) Update() error {
 				if ebiten.IsKeyPressed(ebiten.KeyS) {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
-						g.MapOptions.ChangeCurrentRoom("down", CurrentRoom)
+						g.CurrentRoom.ChangeCurrentRoom("down")
 						x, _ := g.MH.GetCoordinates()
 						g.MH.SetCoordinates(x, 0)
 					} else {

@@ -22,7 +22,7 @@ type Game struct {
 	CurrentRoom      *gamemap.GameMap
 	MapOptions       *gamemap.GameMapOptions
 	RD               *gamemap.RoomData
-	currentRoomTiles []int
+	CurrentRoomTiles []int
 	MH               *animatedobjects.MainHero
 	UI               *ui.UI
 	MM               *menu.MainMenu
@@ -55,45 +55,48 @@ func (g *Game) Update() error {
 					if g.MH.GetTileCoor()%16 == 0 {
 						g.CurrentRoom.ChangeCurrentRoom("left")
 						gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
-						g.currentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.currentRoomTiles = g.CurrentRoom.DeleteDoors()
+						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
+						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors()
 						g.MH.SetTileCoor(g.MH.GetTileCoor() + 15)
 					} else {
-						g.MH.Move("left", g.CurrentRoom.GetCurrentRoomID())
+						g.MH.Move("left", g.RD.GetCurrentRoomTileMap())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyD) {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor()+1)%16 == 0 {
 						g.CurrentRoom.ChangeCurrentRoom("right")
-						g.currentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.currentRoomTiles = g.CurrentRoom.DeleteDoors()
+						gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
+						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors()
 						g.MH.SetTileCoor(g.MH.GetTileCoor() - 15)
 					} else {
-						g.MH.Move("right", g.MapOptions.GetCurrentRoomID())
+						g.MH.Move("right", g.RD.GetCurrentRoomTileMap())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyW) {
 					g.MH.AsePlayer.Play("walk")
 					if _, y := g.MH.GetCoordinates(); y == 0 {
 						g.CurrentRoom.ChangeCurrentRoom("top")
-						g.currentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.currentRoomTiles = g.CurrentRoom.DeleteDoors()
+						gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
+						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors()
 						g.MH.SetTileCoor(256 - (g.MH.GetTileCoor() - 2))
 					} else {
-						g.MH.Move("top", g.MapOptions.GetCurrentRoomID())
+						g.MH.Move("top", g.RD.GetCurrentRoomTileMap())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyS) {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
 						g.CurrentRoom.ChangeCurrentRoom("down")
-						g.currentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.currentRoomTiles = g.CurrentRoom.DeleteDoors()
+						gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
+						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors()
 						x, _ := g.MH.GetCoordinates()
 						g.MH.SetCoordinates(x, 0)
 					} else {
-						g.MH.Move("down", g.MapOptions.GetCurrentRoomID())
+						g.MH.Move("down", g.RD.GetCurrentRoomTileMap())
 					}
 				}
 			}
@@ -121,7 +124,7 @@ func (g *Game) Update() error {
 						continue
 					}
 				}
-				if g.currentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
+				if g.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
 					bullet = nil
 					g.Bullets[i] = nil
 					continue
@@ -160,8 +163,10 @@ func (g *Game) Update() error {
 		if g.MM.StartIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			//charX, charY := g.MH.GetCoordinates()
 			g.MM.MenuStartGame()
-			g.currentRoomTiles = g.RD.GetCurrentRoomTileMap()
-			g.currentRoomTiles = g.CurrentRoom.DeleteDoors()
+			g.CurrentRoom.GenerateMap(10, 0, 0, 0)
+			gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+			g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
+			g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors()
 		}
 		if g.MM.ExitIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			//charX, charY := g.MH.GetCoordinates()
@@ -181,7 +186,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			//drawing a map
 			xCount := (g.MapOptions.SreenWidth / g.MapOptions.TileSize)
 
-			for tileCoordinate, tileNumber := range currentRoomTiles {
+			for tileCoordinate, tileNumber := range g.CurrentRoomTiles {
 				options := &ebiten.DrawImageOptions{}
 				options.GeoM.Translate(float64((tileCoordinate%xCount)*g.MapOptions.TileSize), float64((tileCoordinate/xCount)*g.MapOptions.TileSize))
 

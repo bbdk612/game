@@ -2,7 +2,6 @@ package gamemap
 
 import (
 	"crypto/x509"
-	"fmt"
 	"math/rand"
 )
 
@@ -44,9 +43,86 @@ func (GM *GameMap) ChangeCurrentRoom(direction string) *GameMap {
 	return nil
 }
 
+func (gm *GameMap) DeleteDoors(currentRoom []int) []int {
+	//delete doors
+	if gm.LeftDestination == nil {
+		currentRoom[112] = 1
+		currentRoom[128] = 1
+	}
+	if gm.UpDestination == nil {
+		currentRoom[7] = 1
+		currentRoom[8] = 1
+	}
+	if gm.RightDestination == nil {
+		currentRoom[127] = 1
+		currentRoom[143] = 1
+	}
+	if gm.DownDestination == nil {
+		currentRoom[247] = 1
+		currentRoom[248] = 1
+	}
+	return currentRoom
+}
+
+func (gm *GameMap) CloseDoors(currentRoom []int) []int {
+	//delete doors
+	if !(gm.LeftDestination == nil) {
+		currentRoom[112] = 5
+		currentRoom[128] = 5
+	}
+	if !(gm.UpDestination == nil) {
+		currentRoom[7] = 5
+		currentRoom[8] = 5
+	}
+	if !(gm.RightDestination == nil) {
+		currentRoom[127] = 5
+		currentRoom[143] = 5
+	}
+	if !(gm.DownDestination == nil) {
+		currentRoom[247] = 5
+		currentRoom[248] = 5
+	}
+	return currentRoom
+}
+
+func (gm *GameMap) OpenDoors(currentRoom []int) []int {
+	//delete doors
+	if !(gm.LeftDestination == nil) {
+		currentRoom[112] = 2
+		currentRoom[128] = 2
+	}
+	if !(gm.UpDestination == nil) {
+		currentRoom[7] = 2
+		currentRoom[8] = 2
+	}
+	if !(gm.RightDestination == nil) {
+		currentRoom[127] = 2
+		currentRoom[143] = 2
+	}
+	if !(gm.DownDestination == nil) {
+		currentRoom[247] = 2
+		currentRoom[248] = 2
+	}
+	return currentRoom
+}
+func GetRoomID() []int {
+	IDList := []int{}
+	data := json.NewDecoder(strings.NewReader(jsonStream))
+	for {
+		var RD RoomData
+		if err := data.Decode(&RD); err == io.EOF {
+			break
+		} else if err != nil {
+			log.Fatal(err)
+		}
+		IDList = append(IDList, RD.id)
+	}
+	return IDList
+}
+
 func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) *GameMap {
 	//minimap generation
-	minimap := [][]int
+	minimap := [][]int{}
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 10; j++ {
 			minimap[i][j] = 0
@@ -90,6 +166,8 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			}
 			potencial = append(potencial, potencialNeighbor)
 		}
+		//get ID List
+		IDList := GetRoomID()
 		//Choose New Point
 		rand1 := rand.Intn(len(potencial) - 1)
 		currentPointX = potencial[rand1].X
@@ -157,7 +235,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 	}
 	StartRoom := &GameMap{}
 	for i := 0; i < len(GameRoomList); i++ {
-		if gm.RoomID == 101 {
+		if GameRoomList[i].RoomID == 101 {
 			StartRoom = GameRoomList[i]
 		}
 	}

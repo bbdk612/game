@@ -18,12 +18,13 @@ import (
 
 // Game struct contains a game objects
 type Game struct {
-	Bullets [](*animatedobjects.Bullet)
-	Map     *gamemap.GameMap
-	MH      *animatedobjects.MainHero
-	UI      *ui.UI
-	MM      *menu.MainMenu
-	PM      *menu.PauseMenu
+	Bullets    [](*animatedobjects.Bullet)
+	Map        *gamemap.GameMap
+	MapOptions *gamemap.GameMapOptions
+	MH         *animatedobjects.MainHero
+	UI         *ui.UI
+	MM         *menu.MainMenu
+	PM         *menu.PauseMenu
 }
 
 // IsMoveKeyPressed checks on pressing a moving Key
@@ -50,46 +51,46 @@ func (g *Game) Update() error {
 				if ebiten.IsKeyPressed(ebiten.KeyA) {
 					g.MH.AsePlayer.Play("walk")
 					if g.MH.GetTileCoor()%16 == 0 {
-						if chunk, ok := g.Map.CheckDirection("left"); ok {
-							g.Map.ChangeCurrentChunk(chunk)
+						if chunk, ok := g.MapOptions.CheckDirection("left"); ok {
+							g.MapOptions.ChangeCurrentChunk(chunk)
 							g.MH.SetTileCoor(g.MH.GetTileCoor() + 15)
 						}
-					} else if g.MH.CanIGo("left", g.Map.GetCurrentChunk()) {
-						g.MH.Move("left", g.Map.GetCurrentChunk())
+					} else if g.MH.CanIGo("left", g.MapOptions.GetCurrentChunk()) {
+						g.MH.Move("left", g.MapOptions.GetCurrentChunk())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyD) {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor()+1)%16 == 0 {
-						if chunk, ok := g.Map.CheckDirection("right"); ok {
-							g.Map.ChangeCurrentChunk(chunk)
+						if chunk, ok := g.MapOptions.CheckDirection("right"); ok {
+							g.MapOptions.ChangeCurrentChunk(chunk)
 							g.MH.SetTileCoor(g.MH.GetTileCoor() - 15)
 						}
 					} else {
-						g.MH.Move("right", g.Map.GetCurrentChunk())
+						g.MH.Move("right", g.MapOptions.GetCurrentChunk())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyW) {
 					g.MH.AsePlayer.Play("walk")
 					if _, y := g.MH.GetCoordinates(); y == 0 {
-						if chunk, ok := g.Map.CheckDirection("top"); ok {
-							g.Map.ChangeCurrentChunk(chunk)
+						if chunk, ok := g.MapOptions.CheckDirection("top"); ok {
+							g.MapOptions.ChangeCurrentChunk(chunk)
 							g.MH.SetTileCoor(256 - (g.MH.GetTileCoor() - 2))
 						}
 					} else {
-						g.MH.Move("top", g.Map.GetCurrentChunk())
+						g.MH.Move("top", g.MapOptions.GetCurrentChunk())
 					}
 				}
 				if ebiten.IsKeyPressed(ebiten.KeyS) {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
-						if chunk, ok := g.Map.CheckDirection("down"); ok {
-							g.Map.ChangeCurrentChunk(chunk)
+						if chunk, ok := g.MapOptions.CheckDirection("down"); ok {
+							g.MapOptions.ChangeCurrentChunk(chunk)
 							x, _ := g.MH.GetCoordinates()
 							g.MH.SetCoordinates(x, 0)
 						}
 					} else {
-						g.MH.Move("down", g.Map.GetCurrentChunk())
+						g.MH.Move("down", g.MapOptions.GetCurrentChunk())
 					}
 				}
 			}
@@ -105,7 +106,7 @@ func (g *Game) Update() error {
 				bullet.Move()
 			}
 		}
-		chunk := g.Map.GetCurrentChunk()
+		chunk := g.MapOptions.GetCurrentChunk()
 		for i, bullet := range g.Bullets {
 			if bullet != nil {
 				mhX, mhY := g.MH.GetCoordinates()
@@ -174,15 +175,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if !(g.MM.InMainMenu) {
 		if !(g.PM.InPauseMenu) {
 			//drawing a map
-			xCount := (g.Map.SreenWidth / g.Map.TileSize)
+			xCount := (g.MapOptions.SreenWidth / g.MapOptions.TileSize)
 
-			currentChunk := g.Map.GetCurrentChunk()
+			currentChunk := g.MapOptions.GetCurrentChunk()
 
 			for tileCoordinate, tileNumber := range currentChunk {
 				options := &ebiten.DrawImageOptions{}
-				options.GeoM.Translate(float64((tileCoordinate%xCount)*g.Map.TileSize), float64((tileCoordinate/xCount)*g.Map.TileSize))
+				options.GeoM.Translate(float64((tileCoordinate%xCount)*g.MapOptions.TileSize), float64((tileCoordinate/xCount)*g.MapOptions.TileSize))
 
-				screen.DrawImage(g.Map.GetTile(tileNumber), options)
+				screen.DrawImage(g.MapOptions.GetTile(tileNumber), options)
 			}
 
 			// drawing a personage
@@ -262,7 +263,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
-	return g.Map.SreenWidth, g.Map.SreenHeight
+	return g.MapOptions.SreenWidth, g.MapOptions.SreenHeight
 }
 
 func main() {
@@ -343,7 +344,7 @@ func main() {
 		},
 	}
 
-	M, err := gamemap.NewGameMap(chunks, 0, roadsTo, 256, 256)
+	M, err := gamemap.InitGameMap(chunks, 0, roadsTo, 256, 256)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -372,11 +373,11 @@ func main() {
 		log.Fatal(err)
 	}
 	g := &Game{
-		Map: M,
-		MH:  mh,
-		UI:  ui,
-		MM:  Menu,
-		PM:  pauseM,
+		MapOptions: M,
+		MH:         mh,
+		UI:         ui,
+		MM:         Menu,
+		PM:         pauseM,
 	}
 	ebiten.SetWindowSize(256*3, 256*3)
 	ebiten.SetWindowTitle("test of Gamemap")

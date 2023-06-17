@@ -1,6 +1,7 @@
 package gamemap
 
 import (
+	"crypto/x509"
 	"fmt"
 	"math/rand"
 )
@@ -41,6 +42,75 @@ func (GM *GameMap) ChangeCurrentRoom(direction string) *GameMap {
 		return CurrentRoom
 	}
 	return nil
+}
+
+func (gm *GameMap) DeleteDoors() int {
+	currentRoomID := gm.GetCurrentRoomID
+	//take json file
+	//delete doors
+	if gm.LeftDestination == nil {
+		x = 1
+		y = 1
+	}
+	if gm.RightDestination == nil {
+		x = 1
+		y = 1
+	}
+	if gm.UpDestination == nil {
+		x = 1
+		y = 1
+	}
+	if gm.DownDestination == nil {
+		x = 1
+		y = 1
+	}
+	return currentRoom
+}
+
+func (gm *GameMap) CloseDoors() int {
+	currentRoomID := gm.GetCurrentRoomID
+	//take json file
+	//delete doors
+	if !(gm.LeftDestination == nil) {
+		currentRoom[x] = 5
+		currentRoom[y] = 5
+	}
+	if !(gm.RightDestination == nil) {
+		currentRoom[x] = 5
+		currentRoom[y] = 5
+	}
+	if !(gm.UpDestination == nil) {
+		currentRoom[x] = 5
+		currentRoom[y] = 5
+	}
+	if !(gm.DownDestination == nil) {
+		currentRoom[x] = 5
+		currentRoom[y] = 5
+	}
+	return currentRoom
+}
+
+func (gm *GameMap) OpenDoors() int {
+	currentRoomID := gm.GetCurrentRoomID
+	//take json file
+	//delete doors
+	if !(gm.LeftDestination == nil) {
+		currentRoom[x] = 2
+		currentRoom[y] = 2
+	}
+	if !(gm.RightDestination == nil) {
+		currentRoom[x] = 2
+		currentRoom[y] = 2
+	}
+	if !(gm.UpDestination == nil) {
+		currentRoom[x] = 2
+		currentRoom[y] = 2
+	}
+	if !(gm.DownDestination == nil) {
+		currentRoom[x] = 2
+		currentRoom[y] = 2
+	}
+	return currentRoom
 }
 
 func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) {

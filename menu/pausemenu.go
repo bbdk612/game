@@ -2,58 +2,56 @@ package menu
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"image"
-	"os"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/solarlune/goaseprite"
 )
 
 type PauseMenu struct {
-	InPauseMenu       bool
-	ContinuebuttonX   int
-	ContinuebuttonY   int
-	ContinuebuttonImg *ebiten.Image
-	ExitToMMbuttonX   int
-	ExitToMMbuttonY   int
-	ExitToMMbuttonImg *ebiten.Image
+	InPauseMenu          bool
+	ContinuebuttonX      int
+	ContinuebuttonY      int
+	ContinueButtonFile   *goaseprite.File
+	ContinueButtonPlayer *goaseprite.Player
+	ContinueButtonImg    *ebiten.Image
+
+	ExitToMMbuttonX      int
+	ExitToMMbuttonY      int
+	ExitToMMButtonImg    *ebiten.Image
+	ExitToMMButtonFile   *goaseprite.File
+	ExitToMMButtonPlayer *goaseprite.Player
 }
 
-func InitPauseMenu(continuebuttonImagePath, exitToMMbuttonImagePath string) (*PauseMenu, error) {
-	continuebuttonFile, err := os.Open(continuebuttonImagePath)
-
-	if err != nil {
-		return nil, err
-	}
-
-	continuebuttonFileDecoded, _, err := image.Decode(continuebuttonFile)
-
-	if err != nil {
-		return nil, err
-	}
-
-	continuebuttonImage := ebiten.NewImageFromImage(continuebuttonFileDecoded)
-
-	exitToMMbuttonFile, err := os.Open(exitToMMbuttonImagePath)
-
-	if err != nil {
-		return nil, err
-	}
-
-	exitToMMbuttonFileDecoded, _, err := image.Decode(exitToMMbuttonFile)
-
-	if err != nil {
-		return nil, err
-	}
-
-	exitToMMbuttonImage := ebiten.NewImageFromImage(exitToMMbuttonFileDecoded)
+func InitPauseMenu(continuebuttonJSONPath, exitToMMbuttonJSONPath string) (*PauseMenu, error) {
 
 	pauseM := &PauseMenu{
-		InPauseMenu:       false,
-		ContinuebuttonX:   10,
-		ContinuebuttonY:   50,
-		ContinuebuttonImg: continuebuttonImage,
-		ExitToMMbuttonX:   25,
-		ExitToMMbuttonY:   75,
-		ExitToMMbuttonImg: exitToMMbuttonImage,
+		InPauseMenu:        false,
+		ContinuebuttonX:    10,
+		ContinuebuttonY:    50,
+		ContinueButtonFile: goaseprite.Open(continuebuttonJSONPath),
+		ExitToMMbuttonX:    10,
+		ExitToMMbuttonY:    75,
+		ExitToMMButtonFile: goaseprite.Open(exitToMMbuttonJSONPath),
 	}
+
+	pauseM.ContinueButtonPlayer = pauseM.ContinueButtonFile.CreatePlayer()
+
+	ContinueImg, _, err := ebitenutil.NewImageFromFile(pauseM.ContinueButtonFile.ImagePath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	pauseM.ContinueButtonImg = ContinueImg
+
+	pauseM.ExitToMMButtonPlayer = pauseM.ExitToMMButtonFile.CreatePlayer()
+
+	ExitToMMImg, _, err := ebitenutil.NewImageFromFile(pauseM.ExitToMMButtonFile.ImagePath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	pauseM.ExitToMMButtonImg = ExitToMMImg
 
 	return pauseM, nil
 }
@@ -72,4 +70,28 @@ func (pm *PauseMenu) GetPauseMStartCoordinate() (int, int, int, int) {
 	extX := pm.ExitToMMbuttonX
 	extY := pm.ExitToMMbuttonY
 	return stbX, stbY, extX, extY
+}
+
+func (pm *PauseMenu) ContinueIsActive(cursorX, cursorY int) bool {
+	if cursorX > pm.ContinuebuttonX && cursorY > pm.ContinuebuttonY {
+		if cursorX < pm.ContinuebuttonX+80 && cursorY < pm.ContinuebuttonY+16 {
+			pm.ContinueButtonPlayer.Play("Active")
+			return true
+		}
+	}
+
+	pm.ContinueButtonPlayer.Play("NoActive")
+	return false
+}
+
+func (pm *PauseMenu) ExitToMMIsActive(cursorX, cursorY int) bool {
+	if cursorX > pm.ExitToMMbuttonX && cursorY > pm.ExitToMMbuttonY {
+		if cursorX < pm.ExitToMMbuttonY+80 && cursorY < pm.ExitToMMbuttonY+16 {
+			pm.ExitToMMButtonPlayer.Play("Active")
+			return true
+		}
+	}
+
+	pm.ExitToMMButtonPlayer.Play("NoActive")
+	return false
 }

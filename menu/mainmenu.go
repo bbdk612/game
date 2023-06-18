@@ -29,7 +29,7 @@ func InitMenu(startbuttonJSONPath, exitbuttonJSONPath string) (*MainMenu, error)
 		StartbuttonX:    10,
 		StartbuttonY:    50,
 		StartButtonFile: goaseprite.Open(startbuttonJSONPath),
-		ExitbuttonX:     25,
+		ExitbuttonX:     10,
 		ExitbuttonY:     75,
 		ExitButtonFile:  goaseprite.Open(exitbuttonJSONPath),
 	}

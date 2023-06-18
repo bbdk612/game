@@ -161,7 +161,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			//fmt.Println("Down")
 		}
 		//get ID List
-		IDList := [2]int{101, 102}
+		IDList := GetRoomIDList()
 		//fmt.Println(IDList)
 		//Choose New Point
 		fmt.Println(len(potencial))

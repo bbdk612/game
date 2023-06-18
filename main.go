@@ -70,10 +70,6 @@ func (g *Game) Update() error {
 						fmt.Println("good: ", g.RD)
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
-						fmt.Println("Left: ", g.CurrentRoom.LeftDestination)
-						fmt.Println("Right: ", g.CurrentRoom.RightDestination)
-						fmt.Println("Up: ", g.CurrentRoom.UpDestination)
-						fmt.Println("Down: ", g.CurrentRoom.DownDestination)
 						g.MH.SetTileCoor(g.MH.GetTileCoor() - 14)
 					} else {
 						g.MH.Move("right", g.RD.GetCurrentRoomTileMap())
@@ -174,10 +170,6 @@ func (g *Game) Update() error {
 			g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
 			g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 			g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
-			fmt.Println("Left: ", g.CurrentRoom.LeftDestination)
-			fmt.Println("Right: ", g.CurrentRoom.RightDestination)
-			fmt.Println("Up: ", g.CurrentRoom.UpDestination)
-			fmt.Println("Down: ", g.CurrentRoom.DownDestination)
 		}
 		if g.MM.ExitIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			//charX, charY := g.MH.GetCoordinates()

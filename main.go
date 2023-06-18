@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
@@ -28,6 +29,7 @@ type Game struct {
 	UI               *ui.UI
 	MM               *menu.MainMenu
 	PM               *menu.PauseMenu
+	MenuRoll         time.Time
 }
 
 // IsMoveKeyPressed checks on pressing a moving Key
@@ -46,134 +48,168 @@ func IsMoveKeyPressed() bool {
 func (g *Game) Update() error {
 	if !(g.MM.InMainMenu) {
 		if !(g.PM.InPauseMenu) {
-			if ebiten.IsKeyPressed(ebiten.KeyEscape) {
-				g.PM.InPauseMenu = true
+			currTime := time.Now()
+			dur, err := time.ParseDuration("300ms")
+			if err != nil {
+				return err
 			}
 
-			if IsMoveKeyPressed() {
-				if ebiten.IsKeyPressed(ebiten.KeyA) {
-					g.MH.AsePlayer.Play("walk")
-					if g.MH.GetTileCoor()%16 == 0 {
-						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("left")
-						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
-						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
-						g.MH.SetTileCoor(g.MH.GetTileCoor() + 14)
-					} else {
-						g.MH.Move("left", g.RD.GetCurrentRoomTileMap())
-					}
+			rlbck := dur.Milliseconds()
+
+			if time.Duration(time.Duration(currTime.Sub(g.MenuRoll))).Milliseconds() > rlbck {
+				if ebiten.IsKeyPressed(ebiten.KeyEscape) {
+					g.PM.InPauseMenu = true
 				}
-				if ebiten.IsKeyPressed(ebiten.KeyD) {
-					g.MH.AsePlayer.Play("walk")
-					if (g.MH.GetTileCoor()+1)%16 == 0 {
-						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("right")
-						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
-						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
-						g.MH.SetTileCoor(g.MH.GetTileCoor() - 14)
-					} else {
-						g.MH.Move("right", g.RD.GetCurrentRoomTileMap())
-					}
-				}
-				if ebiten.IsKeyPressed(ebiten.KeyW) {
-					g.MH.AsePlayer.Play("walk")
-					if _, y := g.MH.GetCoordinates(); y == 0 {
-						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("top")
-						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
-						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
-						x, _ := g.MH.GetCoordinates()
-						g.MH.SetCoordinates(x, 224)
-					} else {
-						g.MH.Move("top", g.RD.GetCurrentRoomTileMap())
-					}
-				}
-				if ebiten.IsKeyPressed(ebiten.KeyS) {
-					g.MH.AsePlayer.Play("walk")
-					if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
-						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("down")
-						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
-						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
-						x, _ := g.MH.GetCoordinates()
-						g.MH.SetCoordinates(x, 16)
-					} else {
-						g.MH.Move("down", g.RD.GetCurrentRoomTileMap())
-					}
-				}
-			} else {
-				g.MH.AsePlayer.Play("stop")
-			}
-			if ebiten.IsKeyPressed(ebiten.KeyR) {
-				g.MH.GetCurrentWeapon().Reload()
-			}
-			for _, bullet := range g.Bullets {
-				if bullet != nil {
-					bullet.AsePlayer.Play("fly")
-					bullet.Move()
-				}
-			}
-			for i, bullet := range g.Bullets {
-				if bullet != nil {
-					mhX, mhY := g.MH.GetCoordinates()
-					bullX, bullY := bullet.GetCoordinates()
-					if (bullX >= float64(mhX)) && (bullY >= float64(mhY)) {
-						if (bullX <= float64(mhX+16)) && (bullY <= float64(mhY+16)) {
-							bullet = nil
-							g.Bullets[i] = nil
-							g.MH.Damage()
-							continue
+
+				if IsMoveKeyPressed() {
+					if ebiten.IsKeyPressed(ebiten.KeyA) {
+						g.MH.AsePlayer.Play("walk")
+						if g.MH.GetTileCoor()%16 == 0 {
+							g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("left")
+							g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
+							g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
+							g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+							g.MH.SetTileCoor(g.MH.GetTileCoor() + 14)
+						} else {
+							g.MH.Move("left", g.RD.GetCurrentRoomTileMap())
 						}
 					}
-					if g.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
-						bullet = nil
-						g.Bullets[i] = nil
-						continue
+					if ebiten.IsKeyPressed(ebiten.KeyD) {
+						g.MH.AsePlayer.Play("walk")
+						if (g.MH.GetTileCoor()+1)%16 == 0 {
+							g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("right")
+							g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
+							g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
+							g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+							g.MH.SetTileCoor(g.MH.GetTileCoor() - 14)
+						} else {
+							g.MH.Move("right", g.RD.GetCurrentRoomTileMap())
+						}
+					}
+					if ebiten.IsKeyPressed(ebiten.KeyW) {
+						g.MH.AsePlayer.Play("walk")
+						if _, y := g.MH.GetCoordinates(); y == 0 {
+							g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("top")
+							g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
+							g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
+							g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+							x, _ := g.MH.GetCoordinates()
+							g.MH.SetCoordinates(x, 224)
+						} else {
+							g.MH.Move("top", g.RD.GetCurrentRoomTileMap())
+						}
+					}
+					if ebiten.IsKeyPressed(ebiten.KeyS) {
+						g.MH.AsePlayer.Play("walk")
+						if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
+							g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("down")
+							g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
+							g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
+							g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+							x, _ := g.MH.GetCoordinates()
+							g.MH.SetCoordinates(x, 16)
+						} else {
+							g.MH.Move("down", g.RD.GetCurrentRoomTileMap())
+						}
+					}
+				} else {
+					g.MH.AsePlayer.Play("stop")
+				}
+				if ebiten.IsKeyPressed(ebiten.KeyR) {
+					g.MH.GetCurrentWeapon().Reload()
+				}
+				for _, bullet := range g.Bullets {
+					if bullet != nil {
+						bullet.AsePlayer.Play("fly")
+						bullet.Move()
+					}
+				}
+				for i, bullet := range g.Bullets {
+					if bullet != nil {
+						mhX, mhY := g.MH.GetCoordinates()
+						bullX, bullY := bullet.GetCoordinates()
+						if (bullX >= float64(mhX)) && (bullY >= float64(mhY)) {
+							if (bullX <= float64(mhX+16)) && (bullY <= float64(mhY+16)) {
+								bullet = nil
+								g.Bullets[i] = nil
+								g.MH.Damage()
+								continue
+							}
+						}
+						if g.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
+							bullet = nil
+							g.Bullets[i] = nil
+							continue
+						}
+
+					}
+				}
+
+				cursorX, cursorY := ebiten.CursorPosition()
+				g.MH.GetCurrentWeapon().CalculateAngle(cursorX, cursorY)
+				if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
+					bull, err := g.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
+					if err != nil {
+						log.Fatal(err)
 					}
 
-				}
-			}
-
-			cursorX, cursorY := ebiten.CursorPosition()
-			g.MH.GetCurrentWeapon().CalculateAngle(cursorX, cursorY)
-			if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
-				bull, err := g.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
-				if err != nil {
-					log.Fatal(err)
+					if bull != nil {
+						g.Bullets = append(g.Bullets, bull)
+					}
 				}
 
-				if bull != nil {
-					g.Bullets = append(g.Bullets, bull)
+				if ebiten.IsKeyPressed(ebiten.KeyH) {
+					g.MH.Health = 6
 				}
-			}
-
-			if ebiten.IsKeyPressed(ebiten.KeyH) {
-				g.MH.Health = 6
 			}
 		} else {
-			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-				//charX, charY := g.MH.GetCoordinates()
-				g.PM.PauseMenuContinueGame()
+			currTime := time.Now()
+			dur, err := time.ParseDuration("300ms")
+			if err != nil {
+				return err
 			}
-			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
-				//charX, charY := g.MH.GetCoordinates()
-				g.PM.PauseMenuExitToMMGame(g.MM)
+
+			rlbck := dur.Milliseconds()
+
+			if time.Duration(time.Duration(currTime.Sub(g.MenuRoll))).Milliseconds() > rlbck {
+				cursorX, cursorY := ebiten.CursorPosition()
+				if g.PM.ContinueIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+					//charX, charY := g.MH.GetCoordinates()
+					g.PM.PauseMenuContinueGame()
+					g.MenuRoll = time.Now()
+				}
+				if g.PM.ExitToMMIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+					//charX, charY := g.MH.GetCoordinates()
+					g.PM.PauseMenuExitToMMGame(g.MM)
+					g.MenuRoll = time.Now()
+				}
 			}
 		}
 	} else {
-		cursorX, cursorY := ebiten.CursorPosition()
-		if g.MM.StartIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-			//charX, charY := g.MH.GetCoordinates()
-			g.MM.MenuStartGame()
-			g.CurrentRoom, g.MiniMapPlan, g.RoomList = g.CurrentRoom.GenerateMap(10, 0, 0, 0)
-			fmt.Println("good: ", g.CurrentRoom.RoomID)
-			g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
-			g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-			g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+		currTime := time.Now()
+		dur, err := time.ParseDuration("300ms")
+		if err != nil {
+			return err
 		}
-		if g.MM.ExitIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-			//charX, charY := g.MH.GetCoordinates()
-			g.MM.MenuExitGame()
+
+		rlbck := dur.Milliseconds()
+
+		if time.Duration(time.Duration(currTime.Sub(g.MenuRoll))).Milliseconds() > rlbck {
+			cursorX, cursorY := ebiten.CursorPosition()
+			if g.MM.StartIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+				//charX, charY := g.MH.GetCoordinates()
+				g.MM.MenuStartGame()
+				g.CurrentRoom, g.MiniMapPlan, g.RoomList = g.CurrentRoom.GenerateMap(10, 0, 0, 0)
+				fmt.Println("good: ", g.CurrentRoom.RoomID)
+				g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
+				g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
+				g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+				g.MenuRoll = time.Now()
+			}
+			if g.MM.ExitIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+				//charX, charY := g.MH.GetCoordinates()
+				g.MM.MenuExitGame()
+			}
 		}
 	}
 
@@ -244,7 +280,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			text.Draw(screen, g.UI.WpBar.GetAmmo(g.MH.GetCurrentWeapon().GetAmmo()), g.UI.WpBar.AmmoFont, wpbX, wpbY, color.White)
 		} else {
 			//Pause menu
-			stX, stY, extX, extY := g.MM.GetMainMStartCoordinate()
+			stX, stY, extX, extY := g.PM.GetPauseMStartCoordinate()
 			opForContinueButton := &ebiten.DrawImageOptions{}
 			opForExitToMMButton := &ebiten.DrawImageOptions{}
 
@@ -255,7 +291,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			screen.DrawImage(subContinue.(*ebiten.Image), opForContinueButton)
 
 			subExitMM := g.PM.ExitToMMButtonImg.SubImage(image.Rect(g.PM.ExitToMMButtonPlayer.CurrentFrameCoords()))
-			screen.DrawImage(subExitMM.(*ebiten.Image), opForContinueButton)
+			screen.DrawImage(subExitMM.(*ebiten.Image), opForExitToMMButton)
 
 			//Mini Map
 			startmmX, startmmY := g.UI.MiniM.GetMiniMapStartCoordinate()
@@ -266,9 +302,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				for j := 0; j < len(g.MiniMapPlan); j++ {
 					opMiniM := &ebiten.DrawImageOptions{}
 					opMiniM.GeoM.Translate(float64(mmX), float64(mmY))
-					//if g.MiniMapPlan[j][i] != 0 {
-					screen.DrawImage(g.UI.MiniM.CommonRoomImage, opMiniM)
-					//}
+					if g.MiniMapPlan[j][i] != 0 {
+						screen.DrawImage(g.UI.MiniM.CommonRoomImage, opMiniM)
+					}
 					mmX = mmX + 9
 				}
 				mmY = mmY - 9

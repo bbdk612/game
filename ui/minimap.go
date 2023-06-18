@@ -59,7 +59,7 @@ func InitMiniMap(CommonRoomimagePath, ShopRoomimagePath, ChestRoomimagePath, Bos
 	}
 
 	mm := &MiniMap{
-		startX:          5,
+		startX:          10,
 		startY:          240,
 		CommonRoomImage: commonRoomImage,
 		ShopRoomImage:   shopRoomImage,

@@ -20,6 +20,7 @@ import (
 type Game struct {
 	Bullets          [](*animatedobjects.Bullet)
 	CurrentRoom      *gamemap.GameMap
+	RoomList         [](*gamemap.GameMap)
 	MapOptions       *gamemap.GameMapOptions
 	RD               *gamemap.RoomData
 	CurrentRoomTiles []int
@@ -53,10 +54,15 @@ func (g *Game) Update() error {
 				if ebiten.IsKeyPressed(ebiten.KeyA) {
 					g.MH.AsePlayer.Play("walk")
 					if g.MH.GetTileCoor()%16 == 0 {
-						g.CurrentRoom.ChangeCurrentRoom("left")
-						gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("left")
+						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						fmt.Println("good: ", g.RD)
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors()
+						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+						fmt.Println("Left: ", g.CurrentRoom.LeftDestination)
+						fmt.Println("Right: ", g.CurrentRoom.RightDestination)
+						fmt.Println("Up: ", g.CurrentRoom.UpDestination)
+						fmt.Println("Down: ", g.CurrentRoom.DownDestination)
 						g.MH.SetTileCoor(g.MH.GetTileCoor() + 15)
 					} else {
 						g.MH.Move("left", g.RD.GetCurrentRoomTileMap())
@@ -65,10 +71,15 @@ func (g *Game) Update() error {
 				if ebiten.IsKeyPressed(ebiten.KeyD) {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor()+1)%16 == 0 {
-						g.CurrentRoom.ChangeCurrentRoom("right")
-						gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("right")
+						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						fmt.Println("good: ", g.RD)
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors()
+						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+						fmt.Println("Left: ", g.CurrentRoom.LeftDestination)
+						fmt.Println("Right: ", g.CurrentRoom.RightDestination)
+						fmt.Println("Up: ", g.CurrentRoom.UpDestination)
+						fmt.Println("Down: ", g.CurrentRoom.DownDestination)
 						g.MH.SetTileCoor(g.MH.GetTileCoor() - 15)
 					} else {
 						g.MH.Move("right", g.RD.GetCurrentRoomTileMap())
@@ -77,10 +88,15 @@ func (g *Game) Update() error {
 				if ebiten.IsKeyPressed(ebiten.KeyW) {
 					g.MH.AsePlayer.Play("walk")
 					if _, y := g.MH.GetCoordinates(); y == 0 {
-						g.CurrentRoom.ChangeCurrentRoom("top")
-						gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("top")
+						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						fmt.Println("good: ", g.RD)
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors()
+						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+						fmt.Println("Left: ", g.CurrentRoom.LeftDestination)
+						fmt.Println("Right: ", g.CurrentRoom.RightDestination)
+						fmt.Println("Up: ", g.CurrentRoom.UpDestination)
+						fmt.Println("Down: ", g.CurrentRoom.DownDestination)
 						g.MH.SetTileCoor(256 - (g.MH.GetTileCoor() - 2))
 					} else {
 						g.MH.Move("top", g.RD.GetCurrentRoomTileMap())
@@ -89,10 +105,15 @@ func (g *Game) Update() error {
 				if ebiten.IsKeyPressed(ebiten.KeyS) {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
-						g.CurrentRoom.ChangeCurrentRoom("down")
-						gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("down")
+						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						fmt.Println("good: ", g.RD)
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors()
+						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+						fmt.Println("Left: ", g.CurrentRoom.LeftDestination)
+						fmt.Println("Right: ", g.CurrentRoom.RightDestination)
+						fmt.Println("Up: ", g.CurrentRoom.UpDestination)
+						fmt.Println("Down: ", g.CurrentRoom.DownDestination)
 						x, _ := g.MH.GetCoordinates()
 						g.MH.SetCoordinates(x, 0)
 					} else {
@@ -163,10 +184,15 @@ func (g *Game) Update() error {
 		if g.MM.StartIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			//charX, charY := g.MH.GetCoordinates()
 			g.MM.MenuStartGame()
-			g.CurrentRoom.GenerateMap(10, 0, 0, 0)
-			gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+			g.CurrentRoom, g.RoomList = g.CurrentRoom.GenerateMap(10, 0, 0, 0)
+			fmt.Println("good: ", g.CurrentRoom.RoomID)
+			g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
 			g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-			g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors()
+			g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+			fmt.Println("Left: ", g.CurrentRoom.LeftDestination)
+			fmt.Println("Right: ", g.CurrentRoom.RightDestination)
+			fmt.Println("Up: ", g.CurrentRoom.UpDestination)
+			fmt.Println("Down: ", g.CurrentRoom.DownDestination)
 		}
 		if g.MM.ExitIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			//charX, charY := g.MH.GetCoordinates()
@@ -184,7 +210,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if !(g.MM.InMainMenu) {
 		if !(g.PM.InPauseMenu) {
 			//drawing a map
-			xCount := (g.MapOptions.SreenWidth / g.MapOptions.TileSize)
+			xCount := (g.MapOptions.ScreenWidth / g.MapOptions.TileSize)
 
 			for tileCoordinate, tileNumber := range g.CurrentRoomTiles {
 				options := &ebiten.DrawImageOptions{}
@@ -270,13 +296,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
-	return g.MapOptions.SreenWidth, g.MapOptions.SreenHeight
+	return g.MapOptions.ScreenWidth, g.MapOptions.ScreenHeight
 }
 
 func main() {
 	fmt.Println("hello, world")
 
-	M, err := gamemap.InitGameMap("./assets/start_button.json")
+	M, err := gamemap.InitGameMap("./gamemap/assets/tileset.png", 256, 256)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -311,7 +337,7 @@ func main() {
 		MM:         Menu,
 		PM:         pauseM,
 	}
-	ebiten.SetWindowSize(256*3, 256*3)
+	ebiten.SetWindowSize(256*2, 256*2)
 	ebiten.SetWindowTitle("test of Gamemap")
 	g.MH.AsePlayer.PlaySpeed = 0.5
 	g.MH.AsePlayer.Play("stop")

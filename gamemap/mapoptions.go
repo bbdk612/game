@@ -1,16 +1,16 @@
 package gamemap
 
-import{
-
+import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
 	_ "image/png"
-}
+	"os"
+)
 
 type GameMapOptions struct {
-	TileSize                int
-	SreenWidth, SreenHeight int
-	tileset                 *ebiten.Image
+	TileSize                  int
+	ScreenWidth, ScreenHeight int
+	tileset                   *ebiten.Image
 }
 
 func (GM *GameMapOptions) GetTile(tileNumber int) *ebiten.Image {
@@ -23,7 +23,7 @@ func (GM *GameMapOptions) GetTile(tileNumber int) *ebiten.Image {
 	return GM.tileset.SubImage(image.Rect(tileStartX, tileStartY, tileStartX+GM.TileSize, tileStartY+GM.TileSize)).(*ebiten.Image)
 }
 
-func InitGameMap(tilesetImgPath string) (*GameMapOptions, error) {
+func InitGameMap(tilesetImgPath string, screenWidth, screenHeight int) (*GameMapOptions, error) {
 	tilesetFile, err := os.Open(tilesetImgPath)
 	if err != nil {
 		return nil, err
@@ -39,8 +39,8 @@ func InitGameMap(tilesetImgPath string) (*GameMapOptions, error) {
 
 	GM := &GameMapOptions{
 		TileSize:     16,
-		SreenWidth:   sreenWidth,
-		SreenHeight:  sreenHeight,
+		ScreenWidth:  screenWidth,
+		ScreenHeight: screenHeight,
 		tileset:      tilesImage,
 	}
 	return GM, nil

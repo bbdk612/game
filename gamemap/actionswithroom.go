@@ -2,14 +2,14 @@ package gamemap
 
 import (
 	"encoding/json"
-	"io"
+	"fmt"
 	"log"
 	"os"
 )
 
 type RoomData struct {
-	TileMap []int
-	id      int
+	Data []int
+	Id   int
 }
 
 func GetRoomIDList() []int {
@@ -21,7 +21,7 @@ func GetRoomIDList() []int {
 	}
 	err = json.Unmarshal(IDListRead, &RD)
 	for i := 0; i < len(RD); i++ {
-		IDList = append(IDList, RD[i].id)
+		IDList = append(IDList, RD[i].Id)
 	}
 	return IDList
 }
@@ -34,14 +34,14 @@ func JsonFileDecodeCurrentRoom(currentRoomID int) *RoomData {
 	}
 	err = json.Unmarshal(data, &RD)
 	for i := 0; i < len(RD); i++ {
-		if RD[i].id == currentRoomID {
+		if RD[i].Id == currentRoomID {
 			return RD[i]
 		}
 	}
-	log.Fatal(err)
+	fmt.Println("error")
 	return nil
 }
 
 func (rd *RoomData) GetCurrentRoomTileMap() []int {
-	return rd.TileMap
+	return rd.Data
 }

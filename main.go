@@ -242,24 +242,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			//WeaponBar
 			wpbX, wpbY := g.UI.WpBar.GetWpbStartCoordinate()
 			text.Draw(screen, g.UI.WpBar.GetAmmo(g.MH.GetCurrentWeapon().GetAmmo()), g.UI.WpBar.AmmoFont, wpbX, wpbY, color.White)
-			//Mini Map
-			startmmX, startmmY := g.UI.MiniM.GetMiniMapStartCoordinate()
-			mmX := startmmX
-			mmY := startmmY
-			for i := 0; i < len(g.MiniMapPlan); i++ {
-				mmX = startmmX
-				for j := 0; j < len(g.MiniMapPlan); j++ {
-					opMiniM := &ebiten.DrawImageOptions{}
-					opMiniM.GeoM.Translate(float64(mmX), float64(mmY))
-					if g.MiniMapPlan[j][i] != 0 {
-						screen.DrawImage(g.UI.MiniM.CommonRoomImage, opMiniM)
-					}
-					mmX = mmX + 10
-				}
-				mmY = mmY - 10
-			}
 		} else {
-			//Main menu
+			//Pause menu
 			stX, stY, extX, extY := g.MM.GetMainMStartCoordinate()
 			opForContinueButton := &ebiten.DrawImageOptions{}
 			opForExitToMMButton := &ebiten.DrawImageOptions{}
@@ -272,6 +256,23 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 			subExitMM := g.PM.ExitToMMButtonImg.SubImage(image.Rect(g.PM.ExitToMMButtonPlayer.CurrentFrameCoords()))
 			screen.DrawImage(subExitMM.(*ebiten.Image), opForContinueButton)
+
+			//Mini Map
+			startmmX, startmmY := g.UI.MiniM.GetMiniMapStartCoordinate()
+			mmX := startmmX
+			mmY := startmmY
+			for i := 0; i < len(g.MiniMapPlan); i++ {
+				mmX = startmmX
+				for j := 0; j < len(g.MiniMapPlan); j++ {
+					opMiniM := &ebiten.DrawImageOptions{}
+					opMiniM.GeoM.Translate(float64(mmX), float64(mmY))
+					//if g.MiniMapPlan[j][i] != 0 {
+					screen.DrawImage(g.UI.MiniM.CommonRoomImage, opMiniM)
+					//}
+					mmX = mmX + 9
+				}
+				mmY = mmY - 9
+			}
 		}
 	} else {
 		//Main menu

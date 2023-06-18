@@ -3,6 +3,7 @@ package ui
 type UI struct {
 	HpBar *HealthBar
 	WpBar *WeaponBar
+	MiniM *MiniMap
 }
 
 func InitUI() (*UI, error) {
@@ -14,9 +15,14 @@ func InitUI() (*UI, error) {
 	if err != nil {
 		return nil, err
 	}
+	miniM, err := InitMiniMap("./assets/healthpoint.png", "./assets/healthpoint.png", "./assets/healthpoint.png", "./assets/healthpoint.png")
+	if err != nil {
+		return nil, err
+	}
 	useri := &UI{
 		HpBar: hpBar,
 		WpBar: wpBar,
+		MiniM: miniM,
 	}
 	return useri, nil
 }

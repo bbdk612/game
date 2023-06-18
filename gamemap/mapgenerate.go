@@ -106,19 +106,19 @@ func (gm *GameMap) OpenDoors(currentRoom []int) []int {
 	return currentRoom
 }
 
-func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) (*GameMap, [](*GameMap)) {
+func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) (*GameMap, [10][10]int, [](*GameMap)) {
 	//minimap generation
-	minimap := [10][10]int{}
+	Minimap := [10][10]int{}
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 10; j++ {
-			minimap[i][j] = 0
+			Minimap[i][j] = 0
 		}
 	}
 	//currentPointX := rand.Intn(5) + 2
 	//currentPointY := rand.Intn(5) + 2
 	currentPointX := 5
 	currentPointY := 5
-	minimap[currentPointX][currentPointY] = 101
+	Minimap[currentPointX][currentPointY] = 101
 	potencial := [](*Neighbors){}
 	numberOfRooms := numberOfBossRooms + numberOfChestRooms + numberOfCommonRooms + numberOfShopRooms
 	//get ID List
@@ -128,7 +128,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 		//fmt.Println(currentPointX)
 		//fmt.Println(currentPointY)
 		//Left potencial
-		if (currentPointX > 0) && (minimap[currentPointX-1][currentPointY] == 0) {
+		if (currentPointX > 0) && (Minimap[currentPointX-1][currentPointY] == 0) {
 			potencialNeighbor := &Neighbors{
 				X: currentPointX - 1,
 				Y: currentPointY,
@@ -137,7 +137,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			//fmt.Println("Left")
 		}
 		//Up potencial
-		if (currentPointY < 9) && (minimap[currentPointX][currentPointY+1] == 0) {
+		if (currentPointY < 9) && (Minimap[currentPointX][currentPointY+1] == 0) {
 			potencialNeighbor := &Neighbors{
 				X: currentPointX,
 				Y: currentPointY + 1,
@@ -146,7 +146,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			//fmt.Println("Up")
 		}
 		//Right potencial
-		if (currentPointX < 9) && (minimap[currentPointX+1][currentPointY] == 0) {
+		if (currentPointX < 9) && (Minimap[currentPointX+1][currentPointY] == 0) {
 			potencialNeighbor := &Neighbors{
 				X: currentPointX + 1,
 				Y: currentPointY,
@@ -155,7 +155,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			//fmt.Println("Right")
 		}
 		//Down potencial
-		if (currentPointY > 0) && (minimap[currentPointX][currentPointY-1] == 0) {
+		if (currentPointY > 0) && (Minimap[currentPointX][currentPointY-1] == 0) {
 			potencialNeighbor := &Neighbors{
 				X: currentPointX,
 				Y: currentPointY - 1,
@@ -172,23 +172,23 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 		potencial = append(potencial[:rand1-1], potencial[rand1+1:]...)
 		if numberOfCommonRooms != 0 {
 			rand2 := rand.Intn(len(CommonRoomsIDList))
-			minimap[currentPointX][currentPointY] = CommonRoomsIDList[rand2]
+			Minimap[currentPointX][currentPointY] = CommonRoomsIDList[rand2]
 			numberOfCommonRooms = numberOfCommonRooms - 1
 		} else {
 			if numberOfChestRooms != 0 {
 				rand2 := rand.Intn(len(IDList))
-				minimap[currentPointX][currentPointY] = IDList[rand2]
+				Minimap[currentPointX][currentPointY] = IDList[rand2]
 				numberOfChestRooms = numberOfChestRooms - 1
 			} else {
 				if numberOfShopRooms != 0 {
 					rand2 := rand.Intn(len(IDList))
-					minimap[currentPointX][currentPointY] = IDList[rand2]
+					Minimap[currentPointX][currentPointY] = IDList[rand2]
 					numberOfShopRooms = numberOfShopRooms - 1
 				} else {
 
 					if numberOfBossRooms != 0 {
 						rand2 := rand.Intn(len(IDList))
-						minimap[currentPointX][currentPointY] = IDList[rand2]
+						Minimap[currentPointX][currentPointY] = IDList[rand2]
 						numberOfBossRooms = numberOfBossRooms - 1
 
 					}
@@ -200,11 +200,11 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 	GameRoomList := [](*GameMap){}
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 10; j++ {
-			if minimap[i][j] != 0 {
+			if Minimap[i][j] != 0 {
 				NewRoom := &GameMap{
 					MapX:   i,
 					MapY:   j,
-					RoomID: minimap[i][j],
+					RoomID: Minimap[i][j],
 				}
 				GameRoomList = append(GameRoomList, NewRoom)
 			}
@@ -236,5 +236,5 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			StartRoom = GameRoomList[i]
 		}
 	}
-	return StartRoom, GameRoomList
+	return StartRoom, Minimap, GameRoomList
 }

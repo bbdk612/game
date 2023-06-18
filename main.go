@@ -7,7 +7,6 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/text"
 
 	"game/animatedobjects"
@@ -242,7 +241,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			// UI
 			//HeathBar
 			hpbX, hpbY := g.UI.HpBar.GetHpbStartCoordinate()
-			for i := 1; i < g.UI.HpBar.HealthNumber; i++ {
+			for i := 1; i < g.MH.Health; i++ {
 				opHPBar := &ebiten.DrawImageOptions{}
 				opHPBar.GeoM.Translate(float64(hpbX), float64(hpbY))
 				screen.DrawImage(g.UI.HpBar.Image, opHPBar)
@@ -256,14 +255,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			stX, stY, extX, extY := g.MM.GetMainMStartCoordinate()
 			opForContinueButton := &ebiten.DrawImageOptions{}
 			opForExitToMMButton := &ebiten.DrawImageOptions{}
+
 			opForContinueButton.GeoM.Translate(float64(stX), float64(stY))
 			opForExitToMMButton.GeoM.Translate(float64(extX), float64(extY))
-			screen.DrawImage(g.PM.ContinuebuttonImg, opForContinueButton)
-			msg1 := fmt.Sprintf("Continue")
-			ebitenutil.DebugPrintAt(screen, msg1, stX+100, stY)
-			screen.DrawImage(g.PM.ExitToMMbuttonImg, opForExitToMMButton)
-			msg2 := fmt.Sprintf("Exit To Main Menu")
-			ebitenutil.DebugPrintAt(screen, msg2, extX+100, extY)
+
+			subContinue := g.PM.ContinueButtonImg.SubImage(image.Rect(g.PM.ContinueButtonPlayer.CurrentFrameCoords()))
+			screen.DrawImage(subContinue.(*ebiten.Image), opForContinueButton)
+
+			subExitMM := g.PM.ExitToMMButtonImg.SubImage(image.Rect(g.PM.ExitToMMButtonPlayer.CurrentFrameCoords()))
+			screen.DrawImage(subExitMM.(*ebiten.Image), opForContinueButton)
 		}
 	} else {
 		//Main menu
@@ -311,7 +311,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	pauseM, err := menu.InitPauseMenu("./assets/healthpoint.png", "./assets/healthpoint.png")
+	pauseM, err := menu.InitPauseMenu("./assets/cotinue.json", "./assets/exitToMM.json")
 
 	if err != nil {
 		log.Fatal(err)

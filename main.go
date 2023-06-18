@@ -56,14 +56,9 @@ func (g *Game) Update() error {
 					if g.MH.GetTileCoor()%16 == 0 {
 						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("left")
 						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
-						fmt.Println("good: ", g.RD)
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
-						fmt.Println("Left: ", g.CurrentRoom.LeftDestination)
-						fmt.Println("Right: ", g.CurrentRoom.RightDestination)
-						fmt.Println("Up: ", g.CurrentRoom.UpDestination)
-						fmt.Println("Down: ", g.CurrentRoom.DownDestination)
-						g.MH.SetTileCoor(g.MH.GetTileCoor() + 15)
+						g.MH.SetTileCoor(g.MH.GetTileCoor() + 14)
 					} else {
 						g.MH.Move("left", g.RD.GetCurrentRoomTileMap())
 					}
@@ -80,7 +75,7 @@ func (g *Game) Update() error {
 						fmt.Println("Right: ", g.CurrentRoom.RightDestination)
 						fmt.Println("Up: ", g.CurrentRoom.UpDestination)
 						fmt.Println("Down: ", g.CurrentRoom.DownDestination)
-						g.MH.SetTileCoor(g.MH.GetTileCoor() - 15)
+						g.MH.SetTileCoor(g.MH.GetTileCoor() - 14)
 					} else {
 						g.MH.Move("right", g.RD.GetCurrentRoomTileMap())
 					}
@@ -90,14 +85,10 @@ func (g *Game) Update() error {
 					if _, y := g.MH.GetCoordinates(); y == 0 {
 						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("top")
 						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
-						fmt.Println("good: ", g.RD)
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
-						fmt.Println("Left: ", g.CurrentRoom.LeftDestination)
-						fmt.Println("Right: ", g.CurrentRoom.RightDestination)
-						fmt.Println("Up: ", g.CurrentRoom.UpDestination)
-						fmt.Println("Down: ", g.CurrentRoom.DownDestination)
-						g.MH.SetTileCoor(256 - (g.MH.GetTileCoor() - 2))
+						x, _ := g.MH.GetCoordinates()
+						g.MH.SetCoordinates(x, 224)
 					} else {
 						g.MH.Move("top", g.RD.GetCurrentRoomTileMap())
 					}
@@ -107,68 +98,63 @@ func (g *Game) Update() error {
 					if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
 						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("down")
 						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
-						fmt.Println("good: ", g.RD)
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
-						fmt.Println("Left: ", g.CurrentRoom.LeftDestination)
-						fmt.Println("Right: ", g.CurrentRoom.RightDestination)
-						fmt.Println("Up: ", g.CurrentRoom.UpDestination)
-						fmt.Println("Down: ", g.CurrentRoom.DownDestination)
 						x, _ := g.MH.GetCoordinates()
-						g.MH.SetCoordinates(x, 0)
+						g.MH.SetCoordinates(x, 16)
 					} else {
 						g.MH.Move("down", g.RD.GetCurrentRoomTileMap())
 					}
 				}
+			} else {
+				g.MH.AsePlayer.Play("stop")
 			}
-		} else {
-			g.MH.AsePlayer.Play("stop")
-		}
-		if ebiten.IsKeyPressed(ebiten.KeyR) {
-			g.MH.GetCurrentWeapon().Reload()
-		}
-		for _, bullet := range g.Bullets {
-			if bullet != nil {
-				bullet.AsePlayer.Play("fly")
-				bullet.Move()
+			if ebiten.IsKeyPressed(ebiten.KeyR) {
+				g.MH.GetCurrentWeapon().Reload()
 			}
-		}
-		for i, bullet := range g.Bullets {
-			if bullet != nil {
-				mhX, mhY := g.MH.GetCoordinates()
-				bullX, bullY := bullet.GetCoordinates()
-				if (bullX >= float64(mhX)) && (bullY >= float64(mhY)) {
-					if (bullX <= float64(mhX+16)) && (bullY <= float64(mhY+16)) {
+			for _, bullet := range g.Bullets {
+				if bullet != nil {
+					bullet.AsePlayer.Play("fly")
+					bullet.Move()
+				}
+			}
+			for i, bullet := range g.Bullets {
+				if bullet != nil {
+					mhX, mhY := g.MH.GetCoordinates()
+					bullX, bullY := bullet.GetCoordinates()
+					if (bullX >= float64(mhX)) && (bullY >= float64(mhY)) {
+						if (bullX <= float64(mhX+16)) && (bullY <= float64(mhY+16)) {
+							bullet = nil
+							g.Bullets[i] = nil
+							g.MH.Damage()
+							continue
+						}
+					}
+					if g.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
 						bullet = nil
 						g.Bullets[i] = nil
-						g.MH.Damage()
 						continue
 					}
+
 				}
-				if g.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
-					bullet = nil
-					g.Bullets[i] = nil
-					continue
+			}
+
+			cursorX, cursorY := ebiten.CursorPosition()
+			g.MH.GetCurrentWeapon().CalculateAngle(cursorX, cursorY)
+			if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
+				bull, err := g.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
+				if err != nil {
+					log.Fatal(err)
 				}
 
-			}
-		}
-
-		cursorX, cursorY := ebiten.CursorPosition()
-		g.MH.GetCurrentWeapon().CalculateAngle(cursorX, cursorY)
-		if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
-			bull, err := g.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
-			if err != nil {
-				log.Fatal(err)
+				if bull != nil {
+					g.Bullets = append(g.Bullets, bull)
+				}
 			}
 
-			if bull != nil {
-				g.Bullets = append(g.Bullets, bull)
+			if ebiten.IsKeyPressed(ebiten.KeyH) {
+				g.MH.Health = 6
 			}
-		}
-
-		if ebiten.IsKeyPressed(ebiten.KeyH) {
-			g.MH.Health = 6
 		} else {
 			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 				//charX, charY := g.MH.GetCoordinates()

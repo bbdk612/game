@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"math/rand"
+	"os"
 )
 
 type GameMap struct {
@@ -108,20 +109,6 @@ func (gm *GameMap) OpenDoors(currentRoom []int) []int {
 	}
 	return currentRoom
 }
-func GetRoomID() []int {
-	IDList := []int{}
-	data := json.NewDecoder(strings.NewReader(jsonStream))
-	for {
-		var RD RoomData
-		if err := data.Decode(&RD); err == io.EOF {
-			break
-		} else if err != nil {
-			log.Fatal(err)
-		}
-		IDList = append(IDList, RD.id)
-	}
-	return IDList
-}
 
 func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) *GameMap {
 	//minimap generation
@@ -170,7 +157,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			potencial = append(potencial, potencialNeighbor)
 		}
 		//get ID List
-		IDList := GetRoomID()
+		IDList := GetRosomIDList()
 		//Choose New Point
 		rand1 := rand.Intn(len(potencial) - 1)
 		currentPointX = potencial[rand1].X

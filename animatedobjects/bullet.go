@@ -10,49 +10,39 @@ import (
 )
 
 type Bullet struct {
-	a, b           float64
-	x, y           float64
-	deltaX, deltaY float64
-	Sprite         *goaseprite.File
-	AsePlayer      *goaseprite.Player
-	Image          *ebiten.Image
-	step           float64
-}
+	a, b      float64
+	X, Y      float64
+	Sprite    *goaseprite.File
+	AsePlayer *goaseprite.Player
+	Image     *ebiten.Image
+	step      float64
 
-func (b *Bullet) Move() {
-	if math.Abs(b.a) == math.Inf(1) {
-		b.y += b.step
-	} else if b.a == 0 {
-		b.x += b.step
-	} else {
-		b.x += b.step
-		b.y = (b.x*b.a + b.b)
-	}
+	CalculateNextStep func(float64, float64, float64, float64, float64) (float64, float64)
 }
 
 func (b *Bullet) GetCoordinates() (float64, float64) {
-	return b.x, b.y
+	return b.X, b.Y
 }
 
 func (b *Bullet) GetCurrentTile(tilesize int) int {
-	var tile int = ((int(b.x) / tilesize) + ((int(b.y) / 16) * tilesize)) % 256
+	var tile int = ((int(b.X) / tilesize) + ((int(b.Y) / 16) * tilesize)) % 256
 	if tile < 0 {
 		tile = 0
 	}
 	return tile
 }
 
-func InitNewBullet(directionX, directionY float64, a, b float64, step float64, startWeaponPositonX, startWeaponPositonY float64, spriteJSONPath string, tilesize int) (*Bullet, error) {
-	fmt.Println("step:", step, "Start:", startWeaponPositonX, startWeaponPositonY)
-	fmt.Println("direction:", directionX, directionY)
+func (b *Bullet) Move() {
+	b.X, b.Y = b.CalculateNextStep(b.X, b.Y, b.a, b.b, b.step)
+}
+
+func InitNewBullet(a, b float64, step float64, startWeaponPositonX, startWeaponPositonY float64, spriteJSONPath string, tilesize int) (*Bullet, error) {
 	bullet := &Bullet{
 		a:      a,
 		b:      b,
-		x:      startWeaponPositonX,
-		y:      startWeaponPositonY,
+		X:      startWeaponPositonX,
+		Y:      startWeaponPositonY,
 		Sprite: goaseprite.Open(spriteJSONPath),
-		deltaX: directionX - startWeaponPositonX,
-		deltaY: directionY - startWeaponPositonY,
 		step:   step,
 	}
 

@@ -54,7 +54,7 @@ func (g *Game) Update() error {
 					g.MH.AsePlayer.Play("walk")
 					if g.MH.GetTileCoor()%16 == 0 {
 						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("left")
-						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
 						g.MH.SetTileCoor(g.MH.GetTileCoor() + 14)
@@ -66,7 +66,7 @@ func (g *Game) Update() error {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor()+1)%16 == 0 {
 						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("right")
-						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
 						fmt.Println("good: ", g.RD)
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
@@ -79,7 +79,7 @@ func (g *Game) Update() error {
 					g.MH.AsePlayer.Play("walk")
 					if _, y := g.MH.GetCoordinates(); y == 0 {
 						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("top")
-						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
 						x, _ := g.MH.GetCoordinates()
@@ -92,7 +92,7 @@ func (g *Game) Update() error {
 					g.MH.AsePlayer.Play("walk")
 					if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
 						g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("down")
-						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+						g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
 						g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 						g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
 						x, _ := g.MH.GetCoordinates()
@@ -167,7 +167,7 @@ func (g *Game) Update() error {
 			g.MM.MenuStartGame()
 			g.CurrentRoom, g.RoomList = g.CurrentRoom.GenerateMap(10, 0, 0, 0)
 			fmt.Println("good: ", g.CurrentRoom.RoomID)
-			g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID)
+			g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
 			g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 			g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
 		}

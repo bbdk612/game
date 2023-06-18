@@ -12,9 +12,9 @@ type RoomData struct {
 	Id   int
 }
 
-func GetRoomIDList() []int {
+func GetRoomIDList(filePath string) []int {
 	IDList := []int{}
-	IDListRead, err := os.ReadFile("./gamemap/assets/commonrooms.json")
+	IDListRead, err := os.ReadFile(filePath)
 	RD := [](*RoomData){}
 	if err != nil {
 		log.Fatal(err)
@@ -26,8 +26,8 @@ func GetRoomIDList() []int {
 	return IDList
 }
 
-func JsonFileDecodeCurrentRoom(currentRoomID int) *RoomData {
-	data, err := os.ReadFile("./gamemap/assets/commonrooms.json")
+func JsonFileDecodeCurrentRoom(currentRoomID int, filePath string) *RoomData {
+	data, err := os.ReadFile(filePath)
 	RD := [](*RoomData){}
 	if err != nil {
 		log.Fatal(err)

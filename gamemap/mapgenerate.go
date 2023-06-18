@@ -121,6 +121,9 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 	minimap[currentPointX][currentPointY] = 101
 	potencial := [](*Neighbors){}
 	numberOfRooms := numberOfBossRooms + numberOfChestRooms + numberOfCommonRooms + numberOfShopRooms
+	//get ID List
+	CommonRoomsIDList := GetRoomIDList("./gamemap/assets/commonrooms.json")
+	IDList := GetRoomIDList("./gamemap/assets/commonrooms.json")
 	for i := 0; i < numberOfRooms; i++ {
 		//fmt.Println(currentPointX)
 		//fmt.Println(currentPointY)
@@ -160,8 +163,6 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			potencial = append(potencial, potencialNeighbor)
 			//fmt.Println("Down")
 		}
-		//get ID List
-		IDList := GetRoomIDList()
 		//fmt.Println(IDList)
 		//Choose New Point
 		fmt.Println(len(potencial))
@@ -170,8 +171,8 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 		currentPointY = potencial[rand1].Y
 		potencial = append(potencial[:rand1-1], potencial[rand1+1:]...)
 		if numberOfCommonRooms != 0 {
-			rand2 := rand.Intn(len(IDList))
-			minimap[currentPointX][currentPointY] = IDList[rand2]
+			rand2 := rand.Intn(len(CommonRoomsIDList))
+			minimap[currentPointX][currentPointY] = CommonRoomsIDList[rand2]
 			numberOfCommonRooms = numberOfCommonRooms - 1
 		} else {
 			if numberOfChestRooms != 0 {

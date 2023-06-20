@@ -3,6 +3,7 @@ package animatedobjects
 import (
 	"fmt"
 	"math"
+	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -37,8 +38,7 @@ func (ms *Monster) GetCoordinates() (float64, float64) {
 
 func (ms *Monster) DoesHeSeeMH(x, y float64) {
 	dist := math.Abs(distance(ms.Position.x, x, ms.Position.y, y))
-	//если дисанция меньше определенного расстояния(хз какого)
-	if dist < 80 {
+	if dist < 300 {
 		ms.SeeMH = true
 	} else {
 		ms.SeeMH = false
@@ -50,54 +50,119 @@ func (ms *Monster) TileCoordinate(tilesize int, x float64, y float64) int {
 	return TileCoor
 }
 
-func (ms *Monster) CanIGo(direction Vector, chunk []int) bool {
-	x := ms.Position.x + direction.x*ms.Step
-	y := ms.Position.y + direction.y*ms.Step
-	nextTile1 := ms.TileCoordinate(16, x, y)
-	nextTile2 := ms.TileCoordinate(16, x+16, y)
-	nextTile3 := ms.TileCoordinate(16, x+16, y+16)
-	nextTile4 := ms.TileCoordinate(16, x, y+16)
-	fmt.Println(chunk[nextTile1], chunk[nextTile2], chunk[nextTile3], chunk[nextTile4])
-	if chunk[nextTile1] == 1 && chunk[nextTile2] == 1 && chunk[nextTile3] == 1 && chunk[nextTile4] == 1 {
-		return true
+func (ms *Monster) CanIGo(direction Vector, chunk []int) (bool, bool) {
+	MoveX, MoveY := false, false
+	Tile := ms.TileCoordinate(16, ms.Position.x, ms.Position.y)
+	if direction.x < 0 {
+		if int(ms.Position.x)%16 != 0 {
+			if int(ms.Position.y)%16 != 0 {
+				if (chunk[Tile] == 1) && (chunk[Tile+16] == 1) {
+					MoveX = true
+				}
+			}
+			if chunk[Tile] == 1 {
+				MoveX = true
+			}
+		} else if int(ms.Position.y)%16 != 0 {
+			if (chunk[Tile-1] == 1) && (chunk[Tile-1+16] == 1) {
+				MoveX = true
+			}
+		} else if chunk[Tile-1] == 1 {
+			MoveX = true
+		}
+	} else if direction.x > 0 {
+		if int(ms.Position.y)%16 != 0 {
+			if (chunk[Tile+1] == 1) && (chunk[Tile+1+16] == 1) {
+				MoveX = true
+			}
+		} else if chunk[Tile+1] == 1 {
+			MoveX = true
+		}
 	}
-	return false
+	if direction.y < 0 {
+		if int(ms.Position.y)%16 != 0 {
+			if int(ms.Position.x)%16 != 0 {
+				if (chunk[Tile] == 1) && (chunk[Tile+1] == 1) {
+					MoveY = true
+					return MoveX, MoveY
+				}
+			}
+			if chunk[Tile] == 1 {
+				MoveY = true
+				return MoveX, MoveY
+			}
+		} else if int(ms.Position.x)%16 != 0 {
+			if (chunk[Tile-16] == 1) && (chunk[Tile-16+1] == 1) {
+				MoveY = true
+				return MoveX, MoveY
+			}
+		} else if chunk[Tile-16] == 1 {
+			MoveY = true
+			return MoveX, MoveY
+		}
+	} else if direction.y > 0 {
+		if int(ms.Position.x)%16 != 0 {
+			if (chunk[Tile+16] == 1) && (chunk[Tile+1+16] == 1) {
+				MoveY = true
+				return MoveX, MoveY
+			}
+		} else if chunk[Tile+16] == 1 {
+			MoveY = true
+			return MoveX, MoveY
+		}
+	}
+	fmt.Println(chunk[Tile], chunk[Tile+16], chunk[Tile-1], chunk[Tile-1+16], chunk[Tile+1], chunk[Tile+1+16])
+	return MoveX, MoveY
 }
 
 func (ms *Monster) Actions(MHx, MHy float64, chunk []int) {
 	ms.DoesHeSeeMH(MHx, MHy)
 	direction := Vector{MHx - ms.Position.x, MHy - ms.Position.y}
 	direction.Normalize()
-	if ms.SeeMH && ms.CanIGo(direction, chunk) {
+	if ms.SeeMH {
+		MoveX, MoveY := ms.CanIGo(direction, chunk)
 		dist := distance(ms.Position.x, MHx, ms.Position.y, MHy)
-		if dist > 50 {
-			ms.Position.x += direction.x * ms.Step
-			ms.Position.y += direction.y * ms.Step
+		if dist > 70 {
+			if MoveX {
+				ms.Position.x += direction.x * ms.Step
+			}
+			if MoveY {
+				ms.Position.y += direction.y * ms.Step
+			}
 		} else {
 			fmt.Println("fire")
 		}
-		//если дисанция меньше определенного расстояния(хз какого)
-		// if dist < 10 {
-		// 	//действия с хп главного героя
-		// 	fmt.Println()
-		// }
-	} else {
-		ms.Patrol(chunk)
 	}
+	// else {
+	// 	ms.Patrol(chunk)
+	// }
 }
 
-func (ms *Monster) Patrol(chunk []int) {
-	target := ms.Route[0]
-	direction := Vector{target.x - ms.Position.x, target.y - ms.Position.y}
-	direction.Normalize()
-	if ms.CanIGo(direction, chunk) {
-		ms.Position.x += direction.x * ms.Step
-		ms.Position.y += direction.y * ms.Step
-		if math.Abs(ms.Position.x-target.x) < 1 && math.Abs(ms.Position.y-target.y) < 1 {
-			ms.Route = append(ms.Route[1:], ms.Route[0])
-		}
-	}
-}
+// func (ms *Monster) Patrol(chunk []int) {
+// 	target := ms.Route[0]
+// 	direction := Vector{target.x - ms.Position.x, target.y - ms.Position.y}
+// 	direction.Normalize()
+// 	MoveX, MoveY := ms.CanIGo(direction, chunk)
+// 	if MoveX {
+// 		ms.Position.x += direction.x * ms.Step
+// 	}
+// 	if MoveY {
+// 		ms.Position.y += direction.y * ms.Step
+// 	}
+// 	fmt.Println(math.Abs(ms.Position.x-target.x), math.Abs(ms.Position.y-target.y), MoveX, MoveY)
+// 	if math.Abs(ms.Position.x-target.x) <= 20 && math.Abs(ms.Position.y-target.y) > 20 && !MoveY {
+// 		ms.Route = append(ms.Route[1:], ms.Route[0])
+// 	}
+// 	if math.Abs(ms.Position.x-target.x) > 20 && math.Abs(ms.Position.y-target.y) <= 20 && !MoveX {
+// 		ms.Route = append(ms.Route[1:], ms.Route[0])
+// 	}
+// 	if math.Abs(ms.Position.x-target.x) <= 20 && math.Abs(ms.Position.y-target.y) <= 20 {
+// 		ms.Route = append(ms.Route[1:], ms.Route[0])
+// 	}
+// 	if !MoveY && !MoveX {
+// 		ms.Route = append(ms.Route[1:], ms.Route[0])
+// 	}
+// }
 
 func distance(x1, x2, y1, y2 float64) float64 {
 	dist := math.Sqrt(math.Pow(x2-x1, 2) + math.Pow(y2-y1, 2))
@@ -115,9 +180,10 @@ func InitMonsters(step int, tilesize int, tilecoordinate int, xCount int) (*Mons
 		Position: Vector{x: x, y: y},
 		Sprite:   goaseprite.Open("./assets/mainhero.json"),
 		Route: []Vector{
-			{x: 20, y: 20},
-			{x: 70, y: 45},
-			{x: 30, y: 100},
+			{x: float64(rand.Intn(208-32) + 32), y: float64(rand.Intn(208-32) + 32)},
+			{x: float64(rand.Intn(208-32) + 32), y: float64(rand.Intn(208-32) + 32)},
+			{x: float64(rand.Intn(208-32) + 32), y: float64(rand.Intn(208-32) + 32)},
+			{x: float64(rand.Intn(208-32) + 32), y: float64(rand.Intn(208-32) + 32)},
 		},
 	}
 	monster.AsePlayer = monster.Sprite.CreatePlayer()

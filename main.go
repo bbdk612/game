@@ -16,7 +16,7 @@ import (
 type Game struct {
 	Map *gamemap.GameMap
 	MH  *animatedobjects.MainHero
-	MS  *animatedobjects.Monster
+	MS  [](*animatedobjects.Monster)
 }
 
 func (G *Game) Update() error {
@@ -28,7 +28,6 @@ func (G *Game) Update() error {
 				G.MH.SetTileCoor(G.MH.GetTileCoor() + 15)
 			}
 		} else if G.MH.CanIGo("left", G.Map.GetCurrentChunk()) {
-			fmt.Println("ok")
 			x, y := G.MH.GetCoordinates()
 			G.MH.SetCoordinates(x-4, y)
 		}
@@ -41,7 +40,6 @@ func (G *Game) Update() error {
 				G.MH.SetTileCoor(G.MH.GetTileCoor() - 15)
 			}
 		} else if G.MH.CanIGo("right", G.Map.GetCurrentChunk()) {
-			fmt.Println("ok")
 			x, y := G.MH.GetCoordinates()
 			G.MH.SetCoordinates(x+4, y)
 		}
@@ -73,12 +71,18 @@ func (G *Game) Update() error {
 	}
 
 	x, y := G.MH.GetCoordinates()
+	for i, monster := range G.MS {
+		fmt.Println(i)
+		monster.Actions(float64(x), float64(y), G.Map.GetCurrentChunk())
 
-	G.MS.Actions(float64(x), float64(y), G.Map.GetCurrentChunk())
-
+		monster.AsePlayer.Update(float32(1.0 / 60.0))
+		// if i == 0 {
+		// 	s, p := monster.GetCoordinates()
+		// 	fmt.Println(monster.Route, s, p)
+		// }
+		fmt.Println()
+	}
 	G.MH.AsePlayer.Update(float32(1.0 / 60.0))
-
-	G.MS.AsePlayer.Update(float32(1.0 / 60.0))
 
 	return nil
 }
@@ -118,11 +122,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	// drawing a monster
 
-	optionsForMonster := &ebiten.DrawImageOptions{}
-	MSx, MSy := g.MS.GetCoordinates()
-	optionsForMonster.GeoM.Translate(MSx, MSy)
-	MSsub := g.MS.Image.SubImage(image.Rect(g.MS.AsePlayer.CurrentFrameCoords()))
-	screen.DrawImage(MSsub.(*ebiten.Image), optionsForMonster)
+	for _, monster := range g.MS {
+		optionsForMonster := &ebiten.DrawImageOptions{}
+		MSx, MSy := monster.GetCoordinates()
+		optionsForMonster.GeoM.Translate(MSx, MSy)
+		MSsub := monster.Image.SubImage(image.Rect(monster.AsePlayer.CurrentFrameCoords()))
+		screen.DrawImage(MSsub.(*ebiten.Image), optionsForMonster)
+	}
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -218,23 +224,29 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ms, err := animatedobjects.InitMonsters(2, 16, 40, 16)
+	var Monsters [](*animatedobjects.Monster)
 
-	if err != nil {
-		log.Fatal(err)
+	for i := 0; i < 1; i++ {
+		ms, err := animatedobjects.InitMonsters(2, 16, 35+i*2, 16)
+		if err != nil {
+			log.Fatal(err)
+		}
+		Monsters = append(Monsters, ms)
 	}
 
 	g := &Game{
 		Map: M,
 		MH:  mh,
-		MS:  ms,
+		MS:  Monsters,
 	}
 
 	ebiten.SetWindowSize(256*2, 256*2)
 	ebiten.SetWindowTitle("test of Gamemap")
 
 	g.MH.AsePlayer.Play("stop")
-	g.MS.AsePlayer.Play("stop")
+	for _, monster := range g.MS {
+		monster.AsePlayer.Play("stop")
+	}
 
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)

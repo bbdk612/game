@@ -18,29 +18,31 @@ import (
 
 // Game struct contains a game objects
 type Game struct {
-	Bullets          [](*animatedobjects.Bullet)
-	CurrentRoom      *gamemap.GameMap
-	RoomList         [](*gamemap.GameMap)
-	MapOptions       *gamemap.GameMapOptions
-	RD               *gamemap.RoomData
-	MiniMapPlan      [10][10]int
-	CurrentRoomTiles []int
-	MH               *animatedobjects.MainHero
-	UI               *ui.UI
-	MM               *menu.MainMenu
-	PM               *menu.PauseMenu
-	DS               *menu.DeathScreen
-	MenuRoll         time.Time
+	Bullets              [](*animatedobjects.Bullet)
+	CurrentRoom          *gamemap.GameMap
+	RoomList             [](*gamemap.GameMap)
+	MapOptions           *gamemap.GameMapOptions
+	RD                   *gamemap.RoomData
+	MiniMapPlan          [10][10]int
+	CurrentRoomIDMiniMap int
+	CurrentRoomTiles     []int
+	MH                   *animatedobjects.MainHero
+	UI                   *ui.UI
+	MM                   *menu.MainMenu
+	PM                   *menu.PauseMenu
+	DS                   *menu.DeathScreen
+	MenuRoll             time.Time
 }
 
 // this function do all things for start game
 func (g *Game) startGame() {
 	g.MM.MenuStartGame()
 	//generate map
-	g.CurrentRoom, g.MiniMapPlan, g.RoomList = g.CurrentRoom.GenerateMap(10, 0, 0, 0)
+	g.CurrentRoom, g.MiniMapPlan, g.RoomList = g.CurrentRoom.GenerateMap(10, 2, 1, 3)
 	fmt.Println("good: ", g.CurrentRoom.RoomID)
+	fmt.Println("good Mini map: ", g.MiniMapPlan)
 	//set start room
-	g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
+	g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 	g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 	g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
 	//set main hero properties
@@ -86,7 +88,7 @@ func (g *Game) Update() error {
 							g.MH.AsePlayer.Play("walk")
 							if g.MH.GetTileCoor()%16 == 0 {
 								g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("left")
-								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
+								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 								g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 								g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
 								g.MH.SetTileCoor(g.MH.GetTileCoor() + 14)
@@ -98,7 +100,7 @@ func (g *Game) Update() error {
 							g.MH.AsePlayer.Play("walk")
 							if (g.MH.GetTileCoor()+1)%16 == 0 {
 								g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("right")
-								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
+								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 								g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 								g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
 								g.MH.SetTileCoor(g.MH.GetTileCoor() - 14)
@@ -110,7 +112,7 @@ func (g *Game) Update() error {
 							g.MH.AsePlayer.Play("walk")
 							if _, y := g.MH.GetCoordinates(); y == 0 {
 								g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("top")
-								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
+								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 								g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 								g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
 								x, _ := g.MH.GetCoordinates()
@@ -123,7 +125,7 @@ func (g *Game) Update() error {
 							g.MH.AsePlayer.Play("walk")
 							if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
 								g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("down")
-								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/commonrooms.json")
+								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 								g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 								g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
 								x, _ := g.MH.GetCoordinates()
@@ -343,13 +345,29 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			startmmX, startmmY := g.UI.MiniM.GetMiniMapStartCoordinate()
 			mmX := startmmX
 			mmY := startmmY
+			currroomX, currroomY := g.CurrentRoom.GetCurrentRoomCoordinate()
 			for i := 0; i < len(g.MiniMapPlan); i++ {
 				mmX = startmmX
 				for j := 0; j < len(g.MiniMapPlan); j++ {
 					opMiniM := &ebiten.DrawImageOptions{}
 					opMiniM.GeoM.Translate(float64(mmX), float64(mmY))
 					if g.MiniMapPlan[j][i] != 0 {
-						screen.DrawImage(g.UI.MiniM.CommonRoomImage, opMiniM)
+						if j == currroomX && i == currroomY {
+							screen.DrawImage(g.UI.MiniM.CurrentRoomImage, opMiniM)
+						} else {
+							if (g.MiniMapPlan[j][i] > 100 && g.MiniMapPlan[j][i] < 200) || (g.MiniMapPlan[j][i] > 500 && g.MiniMapPlan[j][i] < 600) {
+								screen.DrawImage(g.UI.MiniM.CommonRoomImage, opMiniM)
+							}
+							if g.MiniMapPlan[j][i] > 200 && g.MiniMapPlan[j][i] < 300 {
+								screen.DrawImage(g.UI.MiniM.ChestRoomImage, opMiniM)
+							}
+							if g.MiniMapPlan[j][i] > 300 && g.MiniMapPlan[j][i] < 400 {
+								screen.DrawImage(g.UI.MiniM.BossRoomImage, opMiniM)
+							}
+							if g.MiniMapPlan[j][i] > 400 && g.MiniMapPlan[j][i] < 500 {
+								screen.DrawImage(g.UI.MiniM.ShopRoomImage, opMiniM)
+							}
+						}
 					}
 					mmX = mmX + 9
 				}

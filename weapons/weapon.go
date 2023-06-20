@@ -70,7 +70,6 @@ func (w *Weapon) Shoot(directionX, directionY int, tilesize int) ([](*Bullet), e
 		currTime := time.Now()
 		if currTime.Sub(w.rollbackTime).Milliseconds() >= rollbk {
 			w.rollbackTime = time.Now()
-			w.CurrentAmmo -= 1
 
 			switch w.WeaponType {
 			case "rifle":
@@ -80,6 +79,7 @@ func (w *Weapon) Shoot(directionX, directionY int, tilesize int) ([](*Bullet), e
 					return nil, err
 				}
 
+				w.CurrentAmmo -= 1
 				bullets := [](*Bullet){bullet}
 				return bullets, nil
 
@@ -97,6 +97,7 @@ func (w *Weapon) Shoot(directionX, directionY int, tilesize int) ([](*Bullet), e
 						return nil, err
 					}
 
+					w.CurrentAmmo -= 1
 					bullets = append(bullets, bullet)
 					angle -= dAngle
 

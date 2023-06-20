@@ -14,11 +14,12 @@ import (
 	"game/gamemap"
 	"game/menu"
 	"game/ui"
+	"game/weapons"
 )
 
 // Game struct contains a game objects
 type Game struct {
-	Bullets  [](*animatedobjects.Bullet)
+	Bullets  [](*weapons.Bullet)
 	Map      *gamemap.GameMap
 	MH       *animatedobjects.MainHero
 	UI       *ui.UI
@@ -142,13 +143,13 @@ func (g *Game) Update() error {
 				cursorX, cursorY := ebiten.CursorPosition()
 				g.MH.GetCurrentWeapon().CalculateAngle(cursorX, cursorY)
 				if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
-					bull, err := g.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
+					bull, err := g.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, 16)
 					if err != nil {
 						log.Fatal(err)
 					}
 
 					if bull != nil {
-						g.Bullets = append(g.Bullets, bull)
+						g.Bullets = append(g.Bullets, bull...)
 					}
 				}
 

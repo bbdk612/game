@@ -3,6 +3,8 @@ package animatedobjects
 import (
 	// "fmt"
 
+	"game/weapons"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/solarlune/goaseprite"
@@ -15,7 +17,7 @@ type MainHero struct {
 	AsePlayer      *goaseprite.Player
 	Health         int
 	Image          *ebiten.Image
-	Weapons        [2](*Weapon)
+	Weapons        [2](*weapons.Weapon)
 	step           int
 	currentWeapon  int
 }
@@ -131,7 +133,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) bool {
 	}
 }
 
-func (mh *MainHero) GetCurrentWeapon() *Weapon {
+func (mh *MainHero) GetCurrentWeapon() *weapons.Weapon {
 	return mh.Weapons[mh.currentWeapon]
 }
 
@@ -158,8 +160,8 @@ func InitMainHero(tilecoordinate int, tilesize int, xCount int, step int) (*Main
 	var x int = (tilecoordinate % xCount) * tilesize
 	var y int = (tilecoordinate / xCount) * tilesize
 
-	startWeapon, err := InitNewWeapon(x+8, y+8, "./assets/startWeapon.png")
-	var weapons [2](*Weapon)
+	startWeapon, err := weapons.InitNewWeapon(x+8, y+8, "./weapons/assets/shotgun.json")
+	var weapons [2](*weapons.Weapon)
 	weapons[0] = startWeapon
 	if err != nil {
 		return nil, err

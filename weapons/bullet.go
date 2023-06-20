@@ -1,9 +1,6 @@
-package animatedobjects
+package weapons
 
 import (
-	"fmt"
-	"math"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/solarlune/goaseprite"

@@ -14,11 +14,11 @@ import (
 	"game/gamemap"
 	"game/menu"
 	"game/ui"
+	"game/weapons"
 )
 
 // Game struct contains a game objects
 type Game struct {
-	Bullets          [](*animatedobjects.Bullet)
 	CurrentRoom      *gamemap.GameMap
 	RoomList         [](*gamemap.GameMap)
 	MapOptions       *gamemap.GameMapOptions
@@ -30,6 +30,7 @@ type Game struct {
 	MM               *menu.MainMenu
 	PM               *menu.PauseMenu
 	MenuRoll         time.Time
+	Bullets          [](*weapons.Bullet)
 }
 
 // IsMoveKeyPressed checks on pressing a moving Key
@@ -148,13 +149,13 @@ func (g *Game) Update() error {
 				cursorX, cursorY := ebiten.CursorPosition()
 				g.MH.GetCurrentWeapon().CalculateAngle(cursorX, cursorY)
 				if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
-					bull, err := g.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, "./assets/bullet.json", 16)
+					bull, err := g.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, 16)
 					if err != nil {
 						log.Fatal(err)
 					}
 
 					if bull != nil {
-						g.Bullets = append(g.Bullets, bull)
+						g.Bullets = append(g.Bullets, bull...)
 					}
 				}
 
@@ -338,7 +339,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	mh, err := animatedobjects.InitMainHero(34, 16, 16, 4)
+	mh, err := animatedobjects.InitMainHero(34, 16, 16, 2)
 
 	if err != nil {
 		log.Fatal(err)

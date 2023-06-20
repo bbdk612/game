@@ -5,6 +5,8 @@ import (
 	"math"
 	"math/rand"
 
+	"/weapons"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/solarlune/goaseprite"
@@ -16,6 +18,21 @@ type Chest struct {
 	ChestFile      *goaseprite.File
 	ChestImage     *ebiten.Image
 	tilecoordinate int
+}
+
+func (ch *Chest) randomItem() string {
+	itemsArr := []string{
+		"heal",
+		"gun",
+		"shotgun",
+	}
+
+	number := rand.Intn(len(itemsArr))
+	return itemsArr[number]
+}
+
+func (ch *Chest) randomShotgun() *weapons.Weapon {
+
 }
 
 func (ch *Chest) Open(items []string) {

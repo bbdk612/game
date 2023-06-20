@@ -19,7 +19,7 @@ type Heal struct {
 	health    int
 }
 
-func (h *Heal) Use(mh *ao.MainHero) {
+func (h *Heal) PickUp(mh *ao.MainHero) {
 	mh.Health += h.health
 }
 

@@ -16,6 +16,7 @@ type MainHero struct {
 	Sprite         *goaseprite.File
 	AsePlayer      *goaseprite.Player
 	Health         int
+	MaxHealth      int
 	Image          *ebiten.Image
 	Weapons        [2](*weapons.Weapon)
 	step           int
@@ -47,6 +48,7 @@ func (mh *MainHero) Damage() int {
 
 func (mh *MainHero) Heal(heal int) int {
 	mh.Health += heal
+	mh.Health %= mh.MaxHealth
 	return mh.Health
 }
 

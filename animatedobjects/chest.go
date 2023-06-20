@@ -62,7 +62,6 @@ func InitNewChest(jsonPath string, tilecoordinate int) (*Chest, error) {
 	}
 
 	chest.ChestPlayer = chest.ChestFile.CreatePlayer()
-
 	img, _, err := ebitenutil.NewImageFromFile(chest.ChestFile.ImagePath)
 	if err != nil {
 		return nil, err

@@ -77,7 +77,7 @@ func (g *Game) Update() error {
 								g.MH.SetTileCoor(g.MH.GetTileCoor() + 15)
 							}
 						} else if g.MH.CanIGo("left", g.Map.GetCurrentChunk()) {
-							g.MH.Move("left", g.Map.GetCurrentChunk())
+							g.MH.Move("left", g.Map.GetCurrentChunk(), Coordinates)
 						}
 					}
 					if ebiten.IsKeyPressed(ebiten.KeyD) {
@@ -88,7 +88,7 @@ func (g *Game) Update() error {
 								g.MH.SetTileCoor(g.MH.GetTileCoor() - 15)
 							}
 						} else {
-							g.MH.Move("right", g.Map.GetCurrentChunk())
+							g.MH.Move("right", g.Map.GetCurrentChunk(), Coordinates)
 						}
 					}
 					if ebiten.IsKeyPressed(ebiten.KeyW) {
@@ -99,7 +99,7 @@ func (g *Game) Update() error {
 								g.MH.SetTileCoor(256 - (g.MH.GetTileCoor() - 2))
 							}
 						} else {
-							g.MH.Move("top", g.Map.GetCurrentChunk())
+							g.MH.Move("top", g.Map.GetCurrentChunk(), Coordinates)
 						}
 					}
 					if ebiten.IsKeyPressed(ebiten.KeyS) {
@@ -111,7 +111,7 @@ func (g *Game) Update() error {
 								g.MH.SetCoordinates(x, 0)
 							}
 						} else {
-							g.MH.Move("down", g.Map.GetCurrentChunk())
+							g.MH.Move("down", g.Map.GetCurrentChunk(), Coordinates)
 						}
 					}
 

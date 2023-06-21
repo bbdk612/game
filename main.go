@@ -26,6 +26,7 @@ type Game struct {
 	MM       *menu.MainMenu
 	PM       *menu.PauseMenu
 	MenuRoll time.Time
+	Enemies  [](*animatedobjects.Monster)
 }
 
 // IsMoveKeyPressed checks on pressing a moving Key
@@ -157,6 +158,19 @@ func (g *Game) Update() error {
 					g.MH.Health = 6
 				}
 
+				x, y := g.MH.GetCoordinates()
+				for _, monster := range g.Enemies {
+					bullets := monster.Actions(float64(x), float64(y), g.Map.GetCurrentChunk())
+
+					g.Bullets = append(g.Bullets, bullets...)
+
+					monster.AsePlayer.Update(float32(1.0 / 60.0))
+					// if i == 0 {
+					// 	s, p := monster.GetCoordinates()
+					// 	fmt.Println(monster.Route, s, p)
+					// }
+				}
+
 			}
 		} else {
 			currTime := time.Now()
@@ -273,6 +287,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			//WeaponBar
 			wpbX, wpbY := g.UI.WpBar.GetWpbStartCoordinate()
 			text.Draw(screen, g.UI.WpBar.GetAmmo(g.MH.GetCurrentWeapon().GetAmmo()), g.UI.WpBar.AmmoFont, wpbX, wpbY, color.White)
+			for _, monster := range g.Enemies {
+				optionsForMonster := &ebiten.DrawImageOptions{}
+				opForMonstWeap := &ebiten.DrawImageOptions{}
+				MSx, MSy := monster.GetCoordinates()
+				optionsForMonster.GeoM.Translate(MSx, MSy)
+				MSsub := monster.Image.SubImage(image.Rect(monster.AsePlayer.CurrentFrameCoords()))
+				screen.DrawImage(MSsub.(*ebiten.Image), optionsForMonster)
+
+				weapx, weapy := monster.Weapon.GetOCoordinates()
+				opForMonstWeap.GeoM.Rotate(monster.Weapon.GetAngle())
+				opForMonstWeap.GeoM.Translate(float64(weapx), float64(weapy))
+				screen.DrawImage(monster.Weapon.Image, opForMonstWeap)
+			}
 		} else {
 			//Main menu
 			stX, stY, extX, extY := g.PM.GetPauseMStartCoordinate()
@@ -390,6 +417,18 @@ func main() {
 		fmt.Println(err)
 	}
 
+	enemies := [](*animatedobjects.Monster){}
+
+	for i := 0; i < 3; i++ {
+		en, er := animatedobjects.InitMonsters(2, 16, 43+16*i, 16)
+		if er != nil {
+			log.Fatal(er)
+		}
+		en.AsePlayer.Play("stop")
+		enemies = append(enemies, en)
+
+	}
+
 	mh, err := animatedobjects.InitMainHero(34, 16, 16, 4)
 
 	if err != nil {
@@ -414,11 +453,12 @@ func main() {
 		log.Fatal(err)
 	}
 	g := &Game{
-		Map: M,
-		MH:  mh,
-		UI:  ui,
-		MM:  Menu,
-		PM:  pauseM,
+		Map:     M,
+		MH:      mh,
+		UI:      ui,
+		MM:      Menu,
+		PM:      pauseM,
+		Enemies: enemies,
 	}
 	ebiten.SetWindowSize(256*3, 256*3)
 	ebiten.SetWindowTitle("test of Gamemap")

@@ -118,8 +118,11 @@ func (ms *Monster) CanIGo(direction Vector, chunk []int) (bool, bool) {
 
 func (ms *Monster) Actions(MHx, MHy float64, chunk []int) [](*weapons.Bullet) {
 	ms.DoesHeSeeMH(MHx, MHy)
+	ms.Weapon.CalculateAngle(int(MHx), int(MHy))
 	direction := Vector{MHx - ms.Position.x, MHy - ms.Position.y}
 	direction.Normalize()
+
+	ms.AsePlayer.Play("walk")
 	if ms.SeeMH {
 		MoveX, MoveY := ms.CanIGo(direction, chunk)
 		dist := distance(ms.Position.x, MHx, ms.Position.y, MHy)
@@ -130,6 +133,7 @@ func (ms *Monster) Actions(MHx, MHy float64, chunk []int) [](*weapons.Bullet) {
 			if MoveY {
 				ms.Position.y += direction.y * ms.Step
 			}
+			ms.Weapon.ChangePosition(int(ms.Position.x)+8, int(ms.Position.y)+8)
 		} else {
 			Bullets, err := ms.Weapon.Shoot(int(MHx), int(MHy), 16)
 			if err != nil {
@@ -179,7 +183,8 @@ func InitMonsters(step int, tilesize int, tilecoordinate int, xCount int) (*Mons
 
 	var x float64 = float64((tilecoordinate % xCount) * tilesize)
 	var y float64 = float64((tilecoordinate / xCount) * tilesize)
-	weapon, err := weapons.InitNewWeapon(int(x+8), int(y+8), "./weapons/assets/shotgun.json")
+	weapon, err := weapons.InitNewWeapon(int(x)+8, int(y)+8, "./weapons/assets/enemy.json")
+	weapon.CurrentAmmo = int(math.Inf(1))
 	monster := &Monster{
 		SeeMH:    false,
 		Step:     float64(step),

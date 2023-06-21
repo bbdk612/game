@@ -187,21 +187,8 @@ func (g *Game) Update() error {
 					if ebiten.IsKeyPressed(ebiten.KeyK) {
 						g.MH.Health = 0
 					}
+
 				}
-
-				cursorX, cursorY := ebiten.CursorPosition()
-				g.MH.GetCurrentWeapon().CalculateAngle(cursorX, cursorY)
-				if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
-					bull, err := g.MH.GetCurrentWeapon().Shoot(cursorX, cursorY, 16)
-					if err != nil {
-						log.Fatal(err)
-					}
-
-					if bull != nil {
-						g.Bullets = append(g.Bullets, bull...)
-					}
-				}
-
 			} else {
 				currTime := time.Now()
 				dur, err := time.ParseDuration("300ms")

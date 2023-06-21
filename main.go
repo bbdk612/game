@@ -22,11 +22,13 @@ type Game struct {
 	Bullets  [](*weapons.Bullet)
 	GM       *gamemap.GameMap
 	MH       *animatedobjects.MainHero
+	MS       [](*animatedobjects.Monster)
 	UI       *ui.UI
 	MM       *menu.MainMenu
 	PM       *menu.PauseMenu
 	DS       *menu.DeathScreen
 	MenuRoll time.Time
+	Enemies  [](*animatedobjects.Monster)
 }
 
 // this function do all things for start game
@@ -63,6 +65,15 @@ func (g *Game) Update() error {
 				if g.MH.Health <= 0 {
 					g.DS.InDeathScreen = true
 				}
+				x, y := g.MH.GetCoordinates()
+				var Coordinates [][]float64
+				Coordinates = append(Coordinates, []float64{float64(x), float64(y)})
+				for _, monster := range g.MS {
+					if monster != nil {
+						MSx, MSy := monster.GetCoordinates()
+						Coordinates = append(Coordinates, []float64{MSx, MSy})
+					}
+				}
 				currTime := time.Now()
 				dur, err := time.ParseDuration("300ms")
 				if err != nil {
@@ -83,7 +94,7 @@ func (g *Game) Update() error {
 								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles = g.GM.CurrentRoom.ChangeCurrentRoom("left")
 								g.MH.SetTileCoor(g.MH.GetTileCoor() + 14)
 							} else {
-								g.MH.Move("left", g.GM.RD.GetCurrentRoomTileMap())
+								g.MH.Move("left", g.GM.RD.GetCurrentRoomTileMap(), Coordinates)
 							}
 						}
 						if ebiten.IsKeyPressed(ebiten.KeyD) {
@@ -92,7 +103,7 @@ func (g *Game) Update() error {
 								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles = g.GM.CurrentRoom.ChangeCurrentRoom("right")
 								g.MH.SetTileCoor(g.MH.GetTileCoor() - 14)
 							} else {
-								g.MH.Move("right", g.GM.RD.GetCurrentRoomTileMap())
+								g.MH.Move("right", g.GM.RD.GetCurrentRoomTileMap(), Coordinates)
 							}
 						}
 						if ebiten.IsKeyPressed(ebiten.KeyW) {
@@ -102,7 +113,7 @@ func (g *Game) Update() error {
 								x, _ := g.MH.GetCoordinates()
 								g.MH.SetCoordinates(x, 224)
 							} else {
-								g.MH.Move("top", g.GM.RD.GetCurrentRoomTileMap())
+								g.MH.Move("top", g.GM.RD.GetCurrentRoomTileMap(), Coordinates)
 							}
 						}
 						if ebiten.IsKeyPressed(ebiten.KeyS) {
@@ -112,7 +123,7 @@ func (g *Game) Update() error {
 								x, _ := g.MH.GetCoordinates()
 								g.MH.SetCoordinates(x, 16)
 							} else {
-								g.MH.Move("down", g.GM.RD.GetCurrentRoomTileMap())
+								g.MH.Move("down", g.GM.RD.GetCurrentRoomTileMap(), Coordinates)
 							}
 						}
 					} else {
@@ -129,22 +140,38 @@ func (g *Game) Update() error {
 					}
 					for i, bullet := range g.Bullets {
 						if bullet != nil {
-							mhX, mhY := g.MH.GetCoordinates()
 							bullX, bullY := bullet.GetCoordinates()
-							if (bullX >= float64(mhX)) && (bullY >= float64(mhY)) {
-								if (bullX <= float64(mhX+16)) && (bullY <= float64(mhY+16)) {
+							for j, coordinate := range Coordinates {
+								if (bullX >= coordinate[0]) && (bullY >= coordinate[1]) {
+									if (bullX <= coordinate[0]+16) && (bullY <= coordinate[1]+16) {
+										var remBull bool = false
+										if j == 0 {
+											g.MH.Damage()
+											remBull = true
+
+										} else if g.MS[j-1] != nil {
+											fmt.Println(bullet.Damage)
+											g.MS[j-1].Damage(bullet.Damage)
+											remBull = true
+											if g.MS[j-1].Health <= 0 {
+												g.MS[j-1] = nil
+											}
+										}
+
+										if remBull {
+											bullet = nil
+											g.Bullets[i] = nil
+										}
+
+										break
+									}
+								}
+								if g.GM.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
 									bullet = nil
 									g.Bullets[i] = nil
-									g.MH.Damage()
-									continue
+									break
 								}
 							}
-							if g.GM.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
-								bullet = nil
-								g.Bullets[i] = nil
-								continue
-							}
-
 						}
 					}
 
@@ -158,6 +185,15 @@ func (g *Game) Update() error {
 
 						if bull != nil {
 							g.Bullets = append(g.Bullets, bull...)
+						}
+					}
+					for _, monster := range g.MS {
+						if monster != nil {
+							bullets := monster.Actions(float64(x), float64(y), g.GM.CurrentRoomTiles, Coordinates)
+
+							g.Bullets = append(g.Bullets, bullets...)
+
+							monster.AsePlayer.Update(float32(1.0 / 60.0))
 						}
 					}
 
@@ -292,6 +328,23 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				//WeaponBar
 				wpbX, wpbY := g.UI.WpBar.GetWpbStartCoordinate()
 				text.Draw(screen, g.UI.WpBar.GetAmmo(g.MH.GetCurrentWeapon().GetAmmo()), g.UI.WpBar.AmmoFont, wpbX, wpbY, color.White)
+
+				text.Draw(screen, g.UI.WpBar.GetAmmo(g.MH.GetCurrentWeapon().GetAmmo()), g.UI.WpBar.AmmoFont, wpbX, wpbY, color.White)
+				for _, monster := range g.MS {
+					if monster != nil {
+						optionsForMonster := &ebiten.DrawImageOptions{}
+						opForMonstWeap := &ebiten.DrawImageOptions{}
+						MSx, MSy := monster.GetCoordinates()
+						optionsForMonster.GeoM.Translate(MSx, MSy)
+						MSsub := monster.Image.SubImage(image.Rect(monster.AsePlayer.CurrentFrameCoords()))
+						screen.DrawImage(MSsub.(*ebiten.Image), optionsForMonster)
+
+						weapx, weapy := monster.Weapon.GetOCoordinates()
+						opForMonstWeap.GeoM.Rotate(monster.Weapon.GetAngle())
+						opForMonstWeap.GeoM.Translate(float64(weapx), float64(weapy))
+						screen.DrawImage(monster.Weapon.Image, opForMonstWeap)
+					}
+				}
 			} else {
 				//DeathScreen
 				stX, stY := g.DS.GetDathScreenStartCoordinate()
@@ -381,6 +434,18 @@ func main() {
 		fmt.Println(err)
 	}
 
+	enemies := [](*animatedobjects.Monster){}
+
+	for i := 0; i < 3; i++ {
+		en, er := animatedobjects.InitMonsters(2, 16, 43+16*i, 16)
+		if er != nil {
+			log.Fatal(er)
+		}
+		en.AsePlayer.Play("stop")
+		enemies = append(enemies, en)
+
+	}
+
 	mh, err := animatedobjects.InitMainHero(34, 16, 16, 2)
 
 	if err != nil {
@@ -408,10 +473,12 @@ func main() {
 
 	if err != nil {
 		log.Fatal(err)
+
 	}
 	g := &Game{
 		GM: M,
 		MH: mh,
+		MS: enemies,
 		UI: ui,
 		MM: Menu,
 		PM: pauseM,

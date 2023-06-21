@@ -4,6 +4,7 @@ import (
 	// "fmt"
 
 	"game/weapons"
+	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -141,19 +142,47 @@ func (mh *MainHero) GetCurrentWeapon() *weapons.Weapon {
 	return mh.Weapons[mh.currentWeapon]
 }
 
-func (mh *MainHero) Move(direction string, chunk []int) {
+func (mh *MainHero) Move(direction string, chunk []int, coords [][]float64) {
 	if mh.CanIGo(direction, chunk) {
 		switch direction {
 		case "left":
+			for _, i := range coords[1:] {
+				distX := math.Abs(float64(mh.x-mh.step) - i[0])
+				distY := math.Abs(float64(mh.y) - i[1])
+				if distX < 20 && distY < 20 {
+					return
+				}
+			}
 			mh.SetCoordinates(mh.x-mh.step, mh.y)
 
 		case "right":
+			for _, i := range coords[1:] {
+				distX := math.Abs(float64(mh.x+mh.step) - i[0])
+				distY := math.Abs(float64(mh.y) - i[1])
+				if distX < 20 && distY < 20 {
+					return
+				}
+			}
 			mh.SetCoordinates(mh.x+mh.step, mh.y)
 
 		case "top":
+			for _, i := range coords[1:] {
+				distX := math.Abs(float64(mh.x) - i[0])
+				distY := math.Abs(float64(mh.y-mh.step) - i[1])
+				if distX < 20 && distY < 20 {
+					return
+				}
+			}
 			mh.SetCoordinates(mh.x, mh.y-mh.step)
 
 		case "down":
+			for _, i := range coords[1:] {
+				distX := math.Abs(float64(mh.x) - i[0])
+				distY := math.Abs(float64(mh.y+mh.step) - i[1])
+				if distX < 20 && distY < 20 {
+					return
+				}
+			}
 			mh.SetCoordinates(mh.x, mh.y+mh.step)
 		}
 

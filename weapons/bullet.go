@@ -9,6 +9,7 @@ import (
 type Bullet struct {
 	a, b      float64
 	X, Y      float64
+	Damage    int
 	Sprite    *goaseprite.File
 	AsePlayer *goaseprite.Player
 	Image     *ebiten.Image
@@ -33,10 +34,11 @@ func (b *Bullet) Move() {
 	b.X, b.Y = b.CalculateNextStep(b.X, b.Y, b.a, b.b, b.step)
 }
 
-func InitNewBullet(a, b float64, step float64, startWeaponPositonX, startWeaponPositonY float64, spriteJSONPath string, tilesize int) (*Bullet, error) {
+func InitNewBullet(a, b float64, step float64, damage int, startWeaponPositonX, startWeaponPositonY float64, spriteJSONPath string, tilesize int) (*Bullet, error) {
 	bullet := &Bullet{
 		a:      a,
 		b:      b,
+		Damage: damage,
 		X:      startWeaponPositonX,
 		Y:      startWeaponPositonY,
 		Sprite: goaseprite.Open(spriteJSONPath),

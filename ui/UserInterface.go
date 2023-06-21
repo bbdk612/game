@@ -15,7 +15,7 @@ func InitUI() (*UI, error) {
 	if err != nil {
 		return nil, err
 	}
-	miniM, err := InitMiniMap("./gamemap/assets/common.png", "./gamemap/assets/shop.png", "./gamemap/assets/chest.png", "./gamemap/assets/boss.png")
+	miniM, err := InitMiniMap("./gamemap/assets/common.png", "./gamemap/assets/shop.png", "./gamemap/assets/chest.png", "./gamemap/assets/boss.png", "./gamemap/assets/current.png")
 	if err != nil {
 		return nil, err
 	}

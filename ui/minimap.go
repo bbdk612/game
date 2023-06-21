@@ -8,11 +8,12 @@ import (
 )
 
 type MiniMap struct {
-	startX, startY  int
-	CommonRoomImage *ebiten.Image
-	ShopRoomImage   *ebiten.Image
-	ChestRoomImage  *ebiten.Image
-	BossRoomImage   *ebiten.Image
+	startX, startY   int
+	CommonRoomImage  *ebiten.Image
+	ShopRoomImage    *ebiten.Image
+	ChestRoomImage   *ebiten.Image
+	BossRoomImage    *ebiten.Image
+	CurrentRoomImage *ebiten.Image
 }
 
 func DecodeImage(imagePath string) (*ebiten.Image, error) {
@@ -32,7 +33,7 @@ func DecodeImage(imagePath string) (*ebiten.Image, error) {
 	return Image, err
 }
 
-func InitMiniMap(CommonRoomimagePath, ShopRoomimagePath, ChestRoomimagePath, BossRoomimagePath string) (*MiniMap, error) {
+func InitMiniMap(CommonRoomimagePath, ShopRoomimagePath, ChestRoomimagePath, BossRoomimagePath, CurrentRoomimagePath string) (*MiniMap, error) {
 	//common room image
 	commonRoomImage, err := DecodeImage(CommonRoomimagePath)
 
@@ -57,14 +58,21 @@ func InitMiniMap(CommonRoomimagePath, ShopRoomimagePath, ChestRoomimagePath, Bos
 	if err != nil {
 		return nil, err
 	}
+	//current room image
+	currentRoomImage, err := DecodeImage(CurrentRoomimagePath)
+
+	if err != nil {
+		return nil, err
+	}
 
 	mm := &MiniMap{
-		startX:          10,
-		startY:          240,
-		CommonRoomImage: commonRoomImage,
-		ShopRoomImage:   shopRoomImage,
-		ChestRoomImage:  chestRoomImage,
-		BossRoomImage:   bossRoomImage,
+		startX:           10,
+		startY:           240,
+		CommonRoomImage:  commonRoomImage,
+		ShopRoomImage:    shopRoomImage,
+		ChestRoomImage:   chestRoomImage,
+		BossRoomImage:    bossRoomImage,
+		CurrentRoomImage: currentRoomImage,
 	}
 
 	return mm, nil

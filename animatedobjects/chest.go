@@ -5,7 +5,7 @@ import (
 	"math"
 	"math/rand"
 
-	"/weapons"
+	// "game/weapons"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -31,9 +31,9 @@ func (ch *Chest) randomItem() string {
 	return itemsArr[number]
 }
 
-func (ch *Chest) randomShotgun() *weapons.Weapon {
+// func (ch *Chest) randomShotgun() *weapons.Weapon {
 
-}
+// }
 
 func (ch *Chest) Open(items []string) {
 	if !ch.opened {

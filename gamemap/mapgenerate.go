@@ -22,6 +22,12 @@ type Neighbors struct {
 func (GM *GameMap) GetCurrentRoomID() int {
 	return GM.RoomID
 }
+
+func (GM *GameMap) GetCurrentRoomCoordinate() (int, int) {
+	stX := GM.MapX
+	stY := GM.MapY
+	return stX, stY
+}
 func (GM *GameMap) ChangeCurrentRoom(direction string) *GameMap {
 	switch direction {
 	case "left":
@@ -114,16 +120,22 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			Minimap[i][j] = 0
 		}
 	}
-	//currentPointX := rand.Intn(5) + 2
-	//currentPointY := rand.Intn(5) + 2
-	currentPointX := 5
-	currentPointY := 5
-	Minimap[currentPointX][currentPointY] = 101
 	potencial := [](*Neighbors){}
 	numberOfRooms := numberOfBossRooms + numberOfChestRooms + numberOfCommonRooms + numberOfShopRooms
 	//get ID List
 	CommonRoomsIDList := GetRoomIDList("./gamemap/assets/commonrooms.json")
-	IDList := GetRoomIDList("./gamemap/assets/commonrooms.json")
+	ChestRoomsIDList := GetRoomIDList("./gamemap/assets/treasurerooms.json")
+	BossRoomsIDList := GetRoomIDList("./gamemap/assets/bossrooms.json")
+	ShopRoomsIDList := GetRoomIDList("./gamemap/assets/shoprooms.json")
+	StartRoomsIDList := GetRoomIDList("./gamemap/assets/startrooms.json")
+
+	//currentPointX := rand.Intn(5) + 2
+	//currentPointY := rand.Intn(5) + 2
+	currentPointX := 5
+	currentPointY := 5
+	randstartroom := rand.Intn(len(StartRoomsIDList))
+	startRoomID := StartRoomsIDList[randstartroom]
+	Minimap[currentPointX][currentPointY] = startRoomID
 	for i := 0; i < numberOfRooms; i++ {
 		//fmt.Println(currentPointX)
 		//fmt.Println(currentPointY)
@@ -176,19 +188,19 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			numberOfCommonRooms = numberOfCommonRooms - 1
 		} else {
 			if numberOfChestRooms != 0 {
-				rand2 := rand.Intn(len(IDList))
-				Minimap[currentPointX][currentPointY] = IDList[rand2]
+				rand2 := rand.Intn(len(ChestRoomsIDList))
+				Minimap[currentPointX][currentPointY] = ChestRoomsIDList[rand2]
 				numberOfChestRooms = numberOfChestRooms - 1
 			} else {
 				if numberOfShopRooms != 0 {
-					rand2 := rand.Intn(len(IDList))
-					Minimap[currentPointX][currentPointY] = IDList[rand2]
+					rand2 := rand.Intn(len(ShopRoomsIDList))
+					Minimap[currentPointX][currentPointY] = ShopRoomsIDList[rand2]
 					numberOfShopRooms = numberOfShopRooms - 1
 				} else {
 
 					if numberOfBossRooms != 0 {
-						rand2 := rand.Intn(len(IDList))
-						Minimap[currentPointX][currentPointY] = IDList[rand2]
+						rand2 := rand.Intn(len(BossRoomsIDList))
+						Minimap[currentPointX][currentPointY] = ShopRoomsIDList[rand2]
 						numberOfBossRooms = numberOfBossRooms - 1
 
 					}
@@ -232,7 +244,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 	}
 	StartRoom := &GameMap{}
 	for i := 0; i < len(GameRoomList); i++ {
-		if GameRoomList[i].RoomID == 101 {
+		if GameRoomList[i].RoomID == startRoomID {
 			StartRoom = GameRoomList[i]
 		}
 	}

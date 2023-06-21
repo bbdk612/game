@@ -83,7 +83,7 @@
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.x-dev",
-  "image": "chest.png",
+  "image": "./assets/chest.png",
   "format": "RGBA8888",
   "size": { "w": 320, "h": 16 },
   "scale": "1",

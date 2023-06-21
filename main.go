@@ -35,7 +35,7 @@ type Game struct {
 func (g *Game) startGame() {
 	g.MM.MenuStartGame()
 	//generate map
-	g.GM.CurrentRoom, g.GM.MiniMapPlan, g.GM.RoomList = g.GM.CurrentRoom.GenerateMap(12, 1, 1, 1)
+	g.GM.CurrentRoom, g.GM.MiniMapPlan, g.GM.RoomList = g.GM.CurrentRoom.GenerateMap(12, 1, 1, 2)
 	//set start room
 	g.GM.RD = gamemap.JsonFileDecodeCurrentRoom(g.GM.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 	g.GM.CurrentRoomTiles = g.GM.RD.GetCurrentRoomTileMap()
@@ -274,7 +274,6 @@ func (g *Game) Update() error {
 			}
 		}
 	}
-
 	g.MH.AsePlayer.Update(float32(1.0 / 60.0))
 	return nil
 }
@@ -418,6 +417,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				mmY = mmY - 9
 			}
 		}
+		chestX, chestY := g.GM.CurrentRoom.Chest.GetCoordinates()
+		optionsForChest := &ebiten.DrawImageOptions{}
+
+		optionsForChest.GeoM.Translate(float64(chestX), float64(chestY))
+		subChest := g.GM.CurrentRoom.Chest.ChestImage.SubImage(image.Rect(g.GM.CurrentRoom.Chest.ChestPlayer.CurrentFrameCoords()))
+		screen.DrawImage(subChest.(*ebiten.Image), optionsForChest)
 	} else {
 		//Main menu
 		stX, stY, extX, extY := g.MM.GetMainMStartCoordinate()

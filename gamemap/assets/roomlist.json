@@ -165,7 +165,8 @@
              0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         "Id":201,
         "NumberOfMonsters":0,
-        "MonsterStartTiles":[]
+        "MonsterStartTiles":[],
+        "WeHaveChest":true
         },
         {
         "Data":[0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,
@@ -186,7 +187,8 @@
              0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         "Id":202,
         "NumberOfMonsters":0,
-        "MonsterStartTiles":[]
+        "MonsterStartTiles":[],
+        "WeHaveChest":true
         },
         {
         "Data":[0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,

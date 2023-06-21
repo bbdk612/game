@@ -13,6 +13,7 @@ type RoomData struct {
 	Id                int
 	NumberOfMonsters  int
 	MonsterStartTiles []int
+	WeHaveChest       bool
 }
 
 func SpawnMonsters(RD *RoomData) []*animatedobjects.Monster {
@@ -37,9 +38,17 @@ func (GR *GameRoom) ChangeCurrentRoom(direction string) (*GameRoom, *RoomData, [
 		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
 		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
 		ListOfMonsters := [](*animatedobjects.Monster){}
+		if RD.WeHaveChest {
+			ch, err := animatedobjects.InitNewChest("./assets/chest.json", 135)
+			if err != nil {
+				log.Fatal(err)
+			}
+			CurrentRoom.Chest = ch
+			fmt.Println("Chest good: ", CurrentRoom.Chest)
+		}
 		if !(CurrentRoom.RoomIsCleaned) {
 			if RD.NumberOfMonsters > 0 {
-				ListOfMonsters = SpawnMonsters(RD)
+				//ListOfMonsters = SpawnMonsters(RD)
 				CurrentRoomTiles = CurrentRoom.ChangeDoorsState(CurrentRoomTiles, 4)
 			} else {
 				CurrentRoom.RoomIsCleaned = true
@@ -53,9 +62,17 @@ func (GR *GameRoom) ChangeCurrentRoom(direction string) (*GameRoom, *RoomData, [
 		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
 		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
 		ListOfMonsters := [](*animatedobjects.Monster){}
+		if RD.WeHaveChest {
+			ch, err := animatedobjects.InitNewChest("./assets/chest.json", 135)
+			if err != nil {
+				log.Fatal(err)
+			}
+			CurrentRoom.Chest = ch
+			fmt.Println("Chest good: ", CurrentRoom.Chest)
+		}
 		if !(CurrentRoom.RoomIsCleaned) {
 			if RD.NumberOfMonsters > 0 {
-				ListOfMonsters = SpawnMonsters(RD)
+				//ListOfMonsters = SpawnMonsters(RD)
 				CurrentRoomTiles = CurrentRoom.ChangeDoorsState(CurrentRoomTiles, 4)
 			} else {
 				CurrentRoom.RoomIsCleaned = true
@@ -69,9 +86,17 @@ func (GR *GameRoom) ChangeCurrentRoom(direction string) (*GameRoom, *RoomData, [
 		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
 		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
 		ListOfMonsters := [](*animatedobjects.Monster){}
+		if RD.WeHaveChest {
+			ch, err := animatedobjects.InitNewChest("./assets/chest.json", 135)
+			if err != nil {
+				log.Fatal(err)
+			}
+			CurrentRoom.Chest = ch
+			fmt.Println("Chest good: ", CurrentRoom.Chest)
+		}
 		if !(CurrentRoom.RoomIsCleaned) {
 			if RD.NumberOfMonsters > 0 {
-				ListOfMonsters = SpawnMonsters(RD)
+				//ListOfMonsters = SpawnMonsters(RD)
 				CurrentRoomTiles = CurrentRoom.ChangeDoorsState(CurrentRoomTiles, 4)
 			} else {
 				CurrentRoom.RoomIsCleaned = true
@@ -85,9 +110,17 @@ func (GR *GameRoom) ChangeCurrentRoom(direction string) (*GameRoom, *RoomData, [
 		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
 		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
 		ListOfMonsters := [](*animatedobjects.Monster){}
+		if RD.WeHaveChest {
+			ch, err := animatedobjects.InitNewChest("./assets/chest.json", 135)
+			if err != nil {
+				log.Fatal(err)
+			}
+			CurrentRoom.Chest = ch
+			fmt.Println("Chest good: ", CurrentRoom.Chest)
+		}
 		if !(CurrentRoom.RoomIsCleaned) {
 			if RD.NumberOfMonsters > 0 {
-				ListOfMonsters = SpawnMonsters(RD)
+				//ListOfMonsters = SpawnMonsters(RD)
 				CurrentRoomTiles = CurrentRoom.ChangeDoorsState(CurrentRoomTiles, 4)
 			} else {
 				GR.RoomIsCleaned = true

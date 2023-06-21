@@ -2,6 +2,7 @@ package gamemap
 
 import (
 	"fmt"
+	"game/animatedobjects"
 	"math/rand"
 )
 
@@ -10,6 +11,7 @@ type GameRoom struct {
 	MapY             int
 	RoomID           int
 	RoomIsCleaned    bool
+	Chest            *animatedobjects.Chest
 	LeftDestination  *GameRoom
 	UpDestination    *GameRoom
 	RightDestination *GameRoom

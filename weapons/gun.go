@@ -17,7 +17,7 @@ func gunShoot(damage int, oX, oY float64, directionX, directionY float64, sprite
 	a = deltaY / deltaX
 	if a == 0 {
 		if deltaX < 0 {
-			bullet, err := InitNewBullet(a, 0, step, damage, startX+8, startY, "./assets/bullet.json", 16)
+			bullet, err := InitNewBullet(a, 0, step, damage, startX+10, startY, "./assets/bullet.json", 16)
 			if err != nil {
 				return nil, err
 			}
@@ -28,7 +28,7 @@ func gunShoot(damage int, oX, oY float64, directionX, directionY float64, sprite
 			fmt.Println("shoot")
 			return bullet, nil
 		} else {
-			bullet, err := InitNewBullet(a, 0, -step, damage, startX-8, startY, "./assets/bullet.json", 16)
+			bullet, err := InitNewBullet(a, 0, -step, damage, startX-10, startY, "./assets/bullet.json", 16)
 			if err != nil {
 				return nil, err
 			}
@@ -42,9 +42,9 @@ func gunShoot(damage int, oX, oY float64, directionX, directionY float64, sprite
 		var bullet *Bullet
 		var err error
 		if a > 0 {
-			bullet, err = InitNewBullet(a, b, (-step), damage, startX, startY-8, "./assets/bullet.json", 16)
+			bullet, err = InitNewBullet(a, b, (-step), damage, startX, startY-10, "./assets/bullet.json", 16)
 		} else {
-			bullet, err = InitNewBullet(a, b, step, damage, startX, startY+8, "./assets/bullet.json", 16)
+			bullet, err = InitNewBullet(a, b, step, damage, startX, startY+10, "./assets/bullet.json", 16)
 		}
 		if err != nil {
 			return nil, err
@@ -60,9 +60,9 @@ func gunShoot(damage int, oX, oY float64, directionX, directionY float64, sprite
 			var bullet *Bullet
 			var err error
 			if deltaY > 0 {
-				bullet, err = InitNewBullet(a, b, (-step), damage, startX-8, startY, "./assets/bullet.json", 16)
+				bullet, err = InitNewBullet(a, b, (-step), damage, startX-10, startY, "./assets/bullet.json", 16)
 			} else {
-				bullet, err = InitNewBullet(a, b, step, damage, startX+8, startY, "./assets/bullet.json", 16)
+				bullet, err = InitNewBullet(a, b, step, damage, startX+10, startY, "./assets/bullet.json", 16)
 			}
 			if err != nil {
 				return nil, err
@@ -78,9 +78,9 @@ func gunShoot(damage int, oX, oY float64, directionX, directionY float64, sprite
 			var bullet *Bullet
 			var err error
 			if deltaX > 0 {
-				bullet, err = InitNewBullet(a, b, (-step), damage, startX, startY-8, "./assets/bullet.json", 16)
+				bullet, err = InitNewBullet(a, b, (-step), damage, startX, startY-10, "./assets/bullet.json", 16)
 			} else {
-				bullet, err = InitNewBullet(a, b, step, damage, startX, startY+8, "./assets/bullet.json", 16)
+				bullet, err = InitNewBullet(a, b, step, damage, startX, startY+10, "./assets/bullet.json", 16)
 			}
 			if err != nil {
 				return nil, err
@@ -100,9 +100,9 @@ func gunShoot(damage int, oX, oY float64, directionX, directionY float64, sprite
 			var bullet *Bullet
 			var err error
 			if deltaY > 0 {
-				bullet, err = InitNewBullet(a, b, (step), damage, startX+8, startY, "./assets/bullet.json", 16)
+				bullet, err = InitNewBullet(a, b, (step), damage, startX+10, startY, "./assets/bullet.json", 16)
 			} else {
-				bullet, err = InitNewBullet(a, b, (-step), damage, startX-8, startY, "./assets/bullet.json", 16)
+				bullet, err = InitNewBullet(a, b, (-step), damage, startX-10, startY, "./assets/bullet.json", 16)
 			}
 			if err != nil {
 				return nil, err
@@ -118,9 +118,9 @@ func gunShoot(damage int, oX, oY float64, directionX, directionY float64, sprite
 			var bullet *Bullet
 			var err error
 			if deltaX > 0 {
-				bullet, err = InitNewBullet(a, b, (step), damage, startX, startY+8, "./assets/bullet.json", 16)
+				bullet, err = InitNewBullet(a, b, (step), damage, startX, startY+10, "./assets/bullet.json", 16)
 			} else {
-				bullet, err = InitNewBullet(a, b, (-step), damage, startX, startY-8, "./assets/bullet.json", 16)
+				bullet, err = InitNewBullet(a, b, (-step), damage, startX, startY-10, "./assets/bullet.json", 16)
 			}
 			if err != nil {
 				return nil, err

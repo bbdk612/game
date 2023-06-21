@@ -92,7 +92,42 @@ func (g *Game) Update() error {
 				if err != nil {
 					return err
 				}
+				for i, bullet := range g.Bullets {
+					if bullet != nil {
+						bullX, bullY := bullet.GetCoordinates()
+						for j, coordinate := range Coordinates {
+							if (bullX >= coordinate[0]) && (bullY >= coordinate[1]) {
+								if (bullX <= coordinate[0]+16) && (bullY <= coordinate[1]+16) {
+									var remBull bool = false
+									if j == 0 {
+										g.MH.Damage()
+										remBull = true
 
+									} else if g.MS[j-1] != nil {
+										fmt.Println(bullet.Damage)
+										g.MS[j-1].Damage(bullet.Damage)
+										remBull = true
+										if g.MS[j-1].Health <= 0 {
+											g.MS[j-1] = nil
+										}
+									}
+
+									if remBull {
+										bullet = nil
+										g.Bullets[i] = nil
+									}
+
+									break
+								}
+							}
+							if g.GM.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
+								bullet = nil
+								g.Bullets[i] = nil
+								break
+							}
+						}
+					}
+				}
 				rlbck := dur.Milliseconds()
 
 				if time.Duration(time.Duration(currTime.Sub(g.MenuRoll))).Milliseconds() > rlbck {
@@ -149,42 +184,6 @@ func (g *Game) Update() error {
 						if bullet != nil {
 							bullet.AsePlayer.Play("fly")
 							bullet.Move()
-						}
-					}
-					for i, bullet := range g.Bullets {
-						if bullet != nil {
-							bullX, bullY := bullet.GetCoordinates()
-							for j, coordinate := range Coordinates {
-								if (bullX >= coordinate[0]) && (bullY >= coordinate[1]) {
-									if (bullX <= coordinate[0]+16) && (bullY <= coordinate[1]+16) {
-										var remBull bool = false
-										if j == 0 {
-											g.MH.Damage()
-											remBull = true
-
-										} else if g.MS[j-1] != nil {
-											fmt.Println(bullet.Damage)
-											g.MS[j-1].Damage(bullet.Damage)
-											remBull = true
-											if g.MS[j-1].Health <= 0 {
-												g.MS[j-1] = nil
-											}
-										}
-
-										if remBull {
-											bullet = nil
-											g.Bullets[i] = nil
-										}
-
-										break
-									}
-								}
-								if g.GM.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
-									bullet = nil
-									g.Bullets[i] = nil
-									break
-								}
-							}
 						}
 					}
 

@@ -5,7 +5,7 @@ import (
 	"math"
 	"math/rand"
 
-	"chestdev/items"
+	"game/items"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"

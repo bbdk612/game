@@ -49,8 +49,8 @@ func (ds *DeathScreen) GetDathScreenStartCoordinate() (int, int) {
 }
 
 func (ds *DeathScreen) ReturnToMMIsActive(cursorX, cursorY int) bool {
-	if cursorX > ds.ReturnToMMbuttonX && cursorY > ds.ReturnToMMbuttonY {
-		if cursorX < ds.ReturnToMMbuttonY+80 && cursorY < ds.ReturnToMMbuttonY+16 {
+	if cursorX > ds.ReturnToMMbuttonX+36 && cursorY > ds.ReturnToMMbuttonY+15 {
+		if cursorX < ds.ReturnToMMbuttonY+36+80 && cursorY < ds.ReturnToMMbuttonY+15+16 {
 			ds.ReturnToMMButtonPlayer.Play("Active")
 			return true
 		}

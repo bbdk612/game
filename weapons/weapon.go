@@ -97,12 +97,12 @@ func (w *Weapon) Shoot(directionX, directionY int, tilesize int) ([](*Bullet), e
 						return nil, err
 					}
 
-					w.CurrentAmmo -= 1
 					bullets = append(bullets, bullet)
 					angle -= dAngle
 
 				}
 
+				w.CurrentAmmo -= 1
 				return bullets, nil
 
 			default:

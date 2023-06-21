@@ -40,6 +40,7 @@ func (g *Game) startGame() {
 	g.GM.RD = gamemap.JsonFileDecodeCurrentRoom(g.GM.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 	g.GM.CurrentRoomTiles = g.GM.RD.GetCurrentRoomTileMap()
 	g.GM.CurrentRoomTiles = g.GM.CurrentRoom.DeleteDoors(g.GM.CurrentRoomTiles)
+	g.MS = [](*animatedobjects.Monster){}
 	//set main hero properties
 	g.MH.Health = g.MH.MaxHealth
 	g.MenuRoll = time.Now()
@@ -64,6 +65,20 @@ func (g *Game) Update() error {
 			if !(g.DS.InDeathScreen) {
 				if g.MH.Health <= 0 {
 					g.DS.InDeathScreen = true
+				}
+				MonsterInRoom := false
+				for i := 0; i < len(g.MS); i++ {
+					if !(g.MS[i] == nil) {
+						MonsterInRoom = true
+						fmt.Println("Monsters Live", g.MS)
+						break
+					}
+				}
+				if !MonsterInRoom {
+					g.MS = [](*animatedobjects.Monster){}
+					g.GM.CurrentRoom.RoomIsCleaned = true
+					g.GM.CurrentRoom.ChangeDoorsState(g.GM.CurrentRoomTiles, 1)
+					fmt.Println("Monsters Died: ")
 				}
 				x, y := g.MH.GetCoordinates()
 				var Coordinates [][]float64
@@ -91,7 +106,7 @@ func (g *Game) Update() error {
 						if ebiten.IsKeyPressed(ebiten.KeyA) {
 							g.MH.AsePlayer.Play("walk")
 							if g.MH.GetTileCoor()%16 == 0 {
-								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles = g.GM.CurrentRoom.ChangeCurrentRoom("left")
+								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("left")
 								g.MH.SetTileCoor(g.MH.GetTileCoor() + 14)
 							} else {
 								g.MH.Move("left", g.GM.RD.GetCurrentRoomTileMap(), Coordinates)
@@ -100,7 +115,7 @@ func (g *Game) Update() error {
 						if ebiten.IsKeyPressed(ebiten.KeyD) {
 							g.MH.AsePlayer.Play("walk")
 							if (g.MH.GetTileCoor()+1)%16 == 0 {
-								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles = g.GM.CurrentRoom.ChangeCurrentRoom("right")
+								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("right")
 								g.MH.SetTileCoor(g.MH.GetTileCoor() - 14)
 							} else {
 								g.MH.Move("right", g.GM.RD.GetCurrentRoomTileMap(), Coordinates)
@@ -109,7 +124,7 @@ func (g *Game) Update() error {
 						if ebiten.IsKeyPressed(ebiten.KeyW) {
 							g.MH.AsePlayer.Play("walk")
 							if _, y := g.MH.GetCoordinates(); y == 0 {
-								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles = g.GM.CurrentRoom.ChangeCurrentRoom("top")
+								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("top")
 								x, _ := g.MH.GetCoordinates()
 								g.MH.SetCoordinates(x, 224)
 							} else {
@@ -119,7 +134,7 @@ func (g *Game) Update() error {
 						if ebiten.IsKeyPressed(ebiten.KeyS) {
 							g.MH.AsePlayer.Play("walk")
 							if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
-								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles = g.GM.CurrentRoom.ChangeCurrentRoom("down")
+								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("down")
 								x, _ := g.MH.GetCoordinates()
 								g.MH.SetCoordinates(x, 16)
 							} else {
@@ -436,15 +451,14 @@ func main() {
 
 	enemies := [](*animatedobjects.Monster){}
 
-	for i := 0; i < 3; i++ {
-		en, er := animatedobjects.InitMonsters(2, 16, 43+16*i, 16)
-		if er != nil {
-			log.Fatal(er)
-		}
-		en.AsePlayer.Play("stop")
-		enemies = append(enemies, en)
-
-	}
+	//	for i := 0; i < 3; i++ {
+	//		en, er := animatedobjects.InitMonsters(2, 16, 43+16*i, 16)
+	//		if er != nil {
+	//			log.Fatal(er)
+	//		}
+	//		en.AsePlayer.Play("stop")
+	//		enemies = append(enemies, en)
+	//	}
 
 	mh, err := animatedobjects.InitMainHero(34, 16, 16, 2)
 

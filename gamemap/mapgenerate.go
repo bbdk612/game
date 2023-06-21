@@ -9,6 +9,7 @@ type GameRoom struct {
 	MapX             int
 	MapY             int
 	RoomID           int
+	RoomIsCleaned    bool
 	LeftDestination  *GameRoom
 	UpDestination    *GameRoom
 	RightDestination *GameRoom
@@ -17,90 +18,6 @@ type GameRoom struct {
 type Neighbors struct {
 	X int
 	Y int
-}
-
-func (GR *GameRoom) GetCurrentRoomID() int {
-	return GR.RoomID
-}
-
-func (GR *GameRoom) GetCurrentRoomCoordinate() (int, int) {
-	stX := GR.MapX
-	stY := GR.MapY
-	return stX, stY
-}
-func (GR *GameRoom) ChangeCurrentRoom(direction string) (*GameRoom, *RoomData, []int) {
-	switch direction {
-	case "left":
-		CurrentRoom := GR.LeftDestination
-		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
-		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
-		return CurrentRoom, RD, CurrentRoomTiles
-
-	case "right":
-		CurrentRoom := GR.RightDestination
-		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
-		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
-		return CurrentRoom, RD, CurrentRoomTiles
-
-	case "top":
-		CurrentRoom := GR.UpDestination
-		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
-		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
-		return CurrentRoom, RD, CurrentRoomTiles
-
-	case "down":
-		CurrentRoom := GR.DownDestination
-		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
-		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
-		return CurrentRoom, RD, CurrentRoomTiles
-	}
-	return nil, nil, nil
-}
-
-func (GR *GameRoom) DeleteDoors(currentRoom []int) []int {
-	//delete doors
-	if GR.LeftDestination == nil {
-		currentRoom[112] = 0
-		currentRoom[128] = 0
-	}
-	if GR.UpDestination == nil {
-		currentRoom[7] = 0
-		currentRoom[8] = 0
-	}
-	if GR.RightDestination == nil {
-		currentRoom[127] = 0
-		currentRoom[143] = 0
-	}
-	if GR.DownDestination == nil {
-		currentRoom[247] = 0
-		currentRoom[248] = 0
-	}
-	return currentRoom
-}
-
-func (GR *GameRoom) ChangeDoorsState(currentRoom []int, doorState int) []int {
-	//change state
-	if !(GR.LeftDestination == nil) {
-		currentRoom[112] = doorState
-		currentRoom[128] = doorState
-	}
-	if !(GR.UpDestination == nil) {
-		currentRoom[7] = doorState
-		currentRoom[8] = doorState
-	}
-	if !(GR.RightDestination == nil) {
-		currentRoom[127] = doorState
-		currentRoom[143] = doorState
-	}
-	if !(GR.DownDestination == nil) {
-		currentRoom[247] = doorState
-		currentRoom[248] = doorState
-	}
-	return currentRoom
 }
 
 func (GR *GameRoom) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) (*GameRoom, [10][10]int, [](*GameRoom)) {
@@ -205,9 +122,10 @@ func (GR *GameRoom) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOf
 		for j := 0; j < 10; j++ {
 			if Minimap[i][j] != 0 {
 				NewRoom := &GameRoom{
-					MapX:   i,
-					MapY:   j,
-					RoomID: Minimap[i][j],
+					MapX:          i,
+					MapY:          j,
+					RoomID:        Minimap[i][j],
+					RoomIsCleaned: false,
 				}
 				GameRoomList = append(GameRoomList, NewRoom)
 			}
@@ -237,6 +155,7 @@ func (GR *GameRoom) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOf
 	for i := 0; i < len(GameRoomList); i++ {
 		if GameRoomList[i].RoomID == startRoomID {
 			StartRoom = GameRoomList[i]
+			StartRoom.RoomIsCleaned = true
 		}
 	}
 	return StartRoom, Minimap, GameRoomList

@@ -2,7 +2,6 @@ package ui
 
 import (
 	"fmt"
-	"image"
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -25,19 +24,12 @@ func (wb *WeaponBar) GetWpbStartCoordinate() (int, int) {
 }
 
 func InitWeaponBar(imagePath string) (*WeaponBar, error) {
-	weaponBarFile, err := os.Open(imagePath)
+	//health bar image
+	weaponBarImage, err := DecodeImage(imagePath)
 
 	if err != nil {
 		return nil, err
 	}
-
-	weaponBarFileDecoded, _, err := image.Decode(weaponBarFile)
-
-	if err != nil {
-		return nil, err
-	}
-
-	weaponBarImage := ebiten.NewImageFromImage(weaponBarFileDecoded)
 
 	fontBytes, err := os.ReadFile("./assets/font.ttf")
 	if err != nil {

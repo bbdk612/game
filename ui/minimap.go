@@ -1,9 +1,6 @@
 package ui
 
 import (
-	"image"
-	"os"
-
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -14,23 +11,6 @@ type MiniMap struct {
 	ChestRoomImage   *ebiten.Image
 	BossRoomImage    *ebiten.Image
 	CurrentRoomImage *ebiten.Image
-}
-
-func DecodeImage(imagePath string) (*ebiten.Image, error) {
-	imageFile, err := os.Open(imagePath)
-
-	if err != nil {
-		return nil, err
-	}
-
-	imageFileDecoded, _, err := image.Decode(imageFile)
-
-	if err != nil {
-		return nil, err
-	}
-
-	Image := ebiten.NewImageFromImage(imageFileDecoded)
-	return Image, err
 }
 
 func InitMiniMap(CommonRoomimagePath, ShopRoomimagePath, ChestRoomimagePath, BossRoomimagePath, CurrentRoomimagePath string) (*MiniMap, error) {

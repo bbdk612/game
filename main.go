@@ -39,15 +39,13 @@ type Game struct {
 func (g *Game) startGame() {
 	g.MM.MenuStartGame()
 	//generate map
-	g.CurrentRoom, g.MiniMapPlan, g.RoomList = g.CurrentRoom.GenerateMap(10, 2, 1, 3)
-	fmt.Println("good: ", g.CurrentRoom.RoomID)
-	fmt.Println("good Mini map: ", g.MiniMapPlan)
+	g.CurrentRoom, g.MiniMapPlan, g.RoomList = g.CurrentRoom.GenerateMap(12, 1, 1, 1)
 	//set start room
 	g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 	g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
 	g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
 	//set main hero properties
-	g.MH.Health = 6
+	g.MH.Health = g.MH.MaxHealth
 	g.MenuRoll = time.Now()
 }
 
@@ -88,10 +86,7 @@ func (g *Game) Update() error {
 						if ebiten.IsKeyPressed(ebiten.KeyA) {
 							g.MH.AsePlayer.Play("walk")
 							if g.MH.GetTileCoor()%16 == 0 {
-								g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("left")
-								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-								g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-								g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+								g.CurrentRoom, g.RD, g.CurrentRoomTiles = g.CurrentRoom.ChangeCurrentRoom("left")
 								g.MH.SetTileCoor(g.MH.GetTileCoor() + 14)
 							} else {
 								g.MH.Move("left", g.RD.GetCurrentRoomTileMap())
@@ -100,10 +95,7 @@ func (g *Game) Update() error {
 						if ebiten.IsKeyPressed(ebiten.KeyD) {
 							g.MH.AsePlayer.Play("walk")
 							if (g.MH.GetTileCoor()+1)%16 == 0 {
-								g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("right")
-								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-								g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-								g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+								g.CurrentRoom, g.RD, g.CurrentRoomTiles = g.CurrentRoom.ChangeCurrentRoom("right")
 								g.MH.SetTileCoor(g.MH.GetTileCoor() - 14)
 							} else {
 								g.MH.Move("right", g.RD.GetCurrentRoomTileMap())
@@ -112,10 +104,7 @@ func (g *Game) Update() error {
 						if ebiten.IsKeyPressed(ebiten.KeyW) {
 							g.MH.AsePlayer.Play("walk")
 							if _, y := g.MH.GetCoordinates(); y == 0 {
-								g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("top")
-								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-								g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-								g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+								g.CurrentRoom, g.RD, g.CurrentRoomTiles = g.CurrentRoom.ChangeCurrentRoom("top")
 								x, _ := g.MH.GetCoordinates()
 								g.MH.SetCoordinates(x, 224)
 							} else {
@@ -125,10 +114,7 @@ func (g *Game) Update() error {
 						if ebiten.IsKeyPressed(ebiten.KeyS) {
 							g.MH.AsePlayer.Play("walk")
 							if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
-								g.CurrentRoom = g.CurrentRoom.ChangeCurrentRoom("down")
-								g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-								g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-								g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+								g.CurrentRoom, g.RD, g.CurrentRoomTiles = g.CurrentRoom.ChangeCurrentRoom("down")
 								x, _ := g.MH.GetCoordinates()
 								g.MH.SetCoordinates(x, 16)
 							} else {
@@ -201,7 +187,6 @@ func (g *Game) Update() error {
 				if time.Duration(time.Duration(currTime.Sub(g.MenuRoll))).Milliseconds() > rlbck {
 					cursorX, cursorY := ebiten.CursorPosition()
 					if g.DS.ReturnToMMIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-						//charX, charY := g.MH.GetCoordinates()
 						g.DS.DeathScreenReturnToMMGame(g.MM)
 						g.MenuRoll = time.Now()
 					}
@@ -219,12 +204,10 @@ func (g *Game) Update() error {
 			if time.Duration(time.Duration(currTime.Sub(g.MenuRoll))).Milliseconds() > rlbck {
 				cursorX, cursorY := ebiten.CursorPosition()
 				if g.PM.ContinueIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-					//charX, charY := g.MH.GetCoordinates()
 					g.PM.PauseMenuContinueGame()
 					g.MenuRoll = time.Now()
 				}
 				if g.PM.ExitToMMIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-					//charX, charY := g.MH.GetCoordinates()
 					g.PM.PauseMenuExitToMMGame(g.MM)
 					g.MenuRoll = time.Now()
 				}
@@ -245,7 +228,6 @@ func (g *Game) Update() error {
 				g.startGame()
 			}
 			if g.MM.ExitIsActive(cursorX, cursorY) && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-				//charX, charY := g.MH.GetCoordinates()
 				g.MM.MenuExitGame()
 			}
 		}
@@ -346,9 +328,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			screen.DrawImage(subExitMM.(*ebiten.Image), opForExitToMMButton)
 
 			//Mini Map
-			startmmX, startmmY := g.UI.MiniM.GetMiniMapStartCoordinate()
-			mmX := startmmX
-			mmY := startmmY
+			mmX, mmY := g.UI.MiniM.GetMiniMapStartCoordinate()
+			startmmX := mmX
 			currroomX, currroomY := g.CurrentRoom.GetCurrentRoomCoordinate()
 			for i := 0; i < len(g.MiniMapPlan); i++ {
 				mmX = startmmX

@@ -179,7 +179,7 @@ func InitMainHero(tilecoordinate int, tilesize int, xCount int, step int) (*Main
 		Weapons:        weapons,
 		currentWeapon:  0,
 		step:           step,
-		Health:         6,
+		MaxHealth:      6,
 	}
 
 	mainhero.AsePlayer = mainhero.Sprite.CreatePlayer()

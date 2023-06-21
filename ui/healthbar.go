@@ -1,9 +1,6 @@
 package ui
 
 import (
-	"image"
-	"os"
-
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -14,19 +11,12 @@ type HealthBar struct {
 }
 
 func InitHealthBar(imagePath string) (*HealthBar, error) {
-	healthBarFile, err := os.Open(imagePath)
+	//health bar image
+	healthBarImage, err := DecodeImage(imagePath)
 
 	if err != nil {
 		return nil, err
 	}
-
-	healthBarFileDecoded, _, err := image.Decode(healthBarFile)
-
-	if err != nil {
-		return nil, err
-	}
-
-	healthBarImage := ebiten.NewImageFromImage(healthBarFileDecoded)
 
 	hpB := &HealthBar{
 		startX: 5,

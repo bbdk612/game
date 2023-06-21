@@ -1,9 +1,33 @@
 package ui
 
+import (
+	"image"
+	"os"
+
+	"github.com/hajimehoshi/ebiten/v2"
+)
+
 type UI struct {
 	HpBar *HealthBar
 	WpBar *WeaponBar
 	MiniM *MiniMap
+}
+
+func DecodeImage(imagePath string) (*ebiten.Image, error) {
+	imageFile, err := os.Open(imagePath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	imageFileDecoded, _, err := image.Decode(imageFile)
+
+	if err != nil {
+		return nil, err
+	}
+
+	Image := ebiten.NewImageFromImage(imageFileDecoded)
+	return Image, err
 }
 
 func InitUI() (*UI, error) {

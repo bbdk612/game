@@ -289,11 +289,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				// UI
 				//HeathBar
 				hpbX, hpbY := g.UI.HpBar.GetHpbStartCoordinate()
+				opHPBar := &ebiten.DrawImageOptions{}
+				opHPBar.GeoM.Translate(float64(hpbX), float64(hpbY))
 				for i := 0; i < g.MH.Health; i++ {
-					opHPBar := &ebiten.DrawImageOptions{}
-					opHPBar.GeoM.Translate(float64(hpbX), float64(hpbY))
+					opHPBar.GeoM.Translate(float64(10), float64(0))
 					screen.DrawImage(g.UI.HpBar.Image, opHPBar)
-					hpbX = hpbX + 10
 				}
 				//WeaponBar
 				wpbX, wpbY := g.UI.WpBar.GetWpbStartCoordinate()

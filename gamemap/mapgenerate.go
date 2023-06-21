@@ -200,7 +200,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 
 					if numberOfBossRooms != 0 {
 						rand2 := rand.Intn(len(BossRoomsIDList))
-						Minimap[currentPointX][currentPointY] = ShopRoomsIDList[rand2]
+						Minimap[currentPointX][currentPointY] = BossRoomsIDList[rand2]
 						numberOfBossRooms = numberOfBossRooms - 1
 
 					}

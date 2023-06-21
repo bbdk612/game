@@ -38,7 +38,7 @@ type Game struct {
 func (g *Game) startGame() {
 	g.MM.MenuStartGame()
 	//generate map
-	g.CurrentRoom, g.MiniMapPlan, g.RoomList = g.CurrentRoom.GenerateMap(10, 2, 1, 3)
+	g.CurrentRoom, g.MiniMapPlan, g.RoomList = g.CurrentRoom.GenerateMap(30, 2, 2, 2)
 	fmt.Println("good: ", g.CurrentRoom.RoomID)
 	fmt.Println("good Mini map: ", g.MiniMapPlan)
 	//set start room

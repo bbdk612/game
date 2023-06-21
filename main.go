@@ -41,6 +41,7 @@ func (g *Game) startGame() {
 	g.GM.CurrentRoomTiles = g.GM.RD.GetCurrentRoomTileMap()
 	g.GM.CurrentRoomTiles = g.GM.CurrentRoom.DeleteDoors(g.GM.CurrentRoomTiles)
 	g.MS = [](*animatedobjects.Monster){}
+	g.Bullets = [](*weapons.Bullet){}
 	//set main hero propertiesgo
 	g.MH.Health = g.MH.MaxHealth
 	g.MenuRoll = time.Now()
@@ -214,6 +215,9 @@ func (g *Game) Update() error {
 					}
 					if ebiten.IsKeyPressed(ebiten.KeyK) {
 						g.MH.Health = 0
+					}
+					if !(g.GM.CurrentRoom.Chest == nil) && (g.GM.CurrentRoom.Chest.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
+						g.GM.CurrentRoom.Chest.Open()
 					}
 
 				}
@@ -417,12 +421,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				mmY = mmY - 9
 			}
 		}
-		chestX, chestY := g.GM.CurrentRoom.Chest.GetCoordinates()
-		optionsForChest := &ebiten.DrawImageOptions{}
+		if !(g.GM.CurrentRoom.Chest == nil) {
+			chestX, chestY := g.GM.CurrentRoom.Chest.GetCoordinates()
+			optionsForChest := &ebiten.DrawImageOptions{}
 
-		optionsForChest.GeoM.Translate(float64(chestX), float64(chestY))
-		subChest := g.GM.CurrentRoom.Chest.ChestImage.SubImage(image.Rect(g.GM.CurrentRoom.Chest.ChestPlayer.CurrentFrameCoords()))
-		screen.DrawImage(subChest.(*ebiten.Image), optionsForChest)
+			optionsForChest.GeoM.Translate(float64(chestX), float64(chestY))
+			subChest := g.GM.CurrentRoom.Chest.ChestImage.SubImage(image.Rect(g.GM.CurrentRoom.Chest.ChestPlayer.CurrentFrameCoords()))
+			screen.DrawImage(subChest.(*ebiten.Image), optionsForChest)
+		}
 	} else {
 		//Main menu
 		stX, stY, extX, extY := g.MM.GetMainMStartCoordinate()
@@ -452,15 +458,6 @@ func main() {
 	}
 
 	enemies := [](*animatedobjects.Monster){}
-
-	//	for i := 0; i < 3; i++ {
-	//		en, er := animatedobjects.InitMonsters(100, 16, 43+16*i, 16)
-	//		if er != nil {
-	//			log.Fatal(er)
-	//		}
-	//		en.AsePlayer.Play("stop")
-	//		enemies = append(enemies, en)
-	//	}
 
 	mh, err := animatedobjects.InitMainHero(34, 16, 16, 2)
 

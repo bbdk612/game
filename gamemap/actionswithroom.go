@@ -8,6 +8,30 @@ import (
 	"os"
 )
 
+func SetCurrentRoom(CurrentRoom *GameRoom) (*GameRoom, *RoomData, []int, []*animatedobjects.Monster) {
+	RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
+	CurrentRoomTiles := RD.GetCurrentRoomTileMap()
+	CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
+	ListOfMonsters := [](*animatedobjects.Monster){}
+	if RD.WeHaveChest {
+		ch, err := animatedobjects.InitNewChest("./assets/chest.json", 135)
+		if err != nil {
+			log.Fatal(err)
+		}
+		CurrentRoom.Chest = ch
+		fmt.Println("Chest good: ", CurrentRoom.Chest)
+	}
+	if !(CurrentRoom.RoomIsCleaned) {
+		if RD.NumberOfMonsters > 0 {
+			//ListOfMonsters = SpawnMonsters(RD)
+			CurrentRoomTiles = CurrentRoom.ChangeDoorsState(CurrentRoomTiles, 4)
+		} else {
+			CurrentRoom.RoomIsCleaned = true
+		}
+	}
+	return CurrentRoom, RD, CurrentRoomTiles, ListOfMonsters
+}
+
 type RoomData struct {
 	Data              []int
 	Id                int
@@ -34,99 +58,19 @@ func (GR *GameRoom) ChangeCurrentRoom(direction string) (*GameRoom, *RoomData, [
 	switch direction {
 	case "left":
 		CurrentRoom := GR.LeftDestination
-		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
-		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
-		ListOfMonsters := [](*animatedobjects.Monster){}
-		if RD.WeHaveChest {
-			ch, err := animatedobjects.InitNewChest("./assets/chest.json", 135)
-			if err != nil {
-				log.Fatal(err)
-			}
-			CurrentRoom.Chest = ch
-			fmt.Println("Chest good: ", CurrentRoom.Chest)
-		}
-		if !(CurrentRoom.RoomIsCleaned) {
-			if RD.NumberOfMonsters > 0 {
-				//ListOfMonsters = SpawnMonsters(RD)
-				CurrentRoomTiles = CurrentRoom.ChangeDoorsState(CurrentRoomTiles, 4)
-			} else {
-				CurrentRoom.RoomIsCleaned = true
-			}
-		}
-		return CurrentRoom, RD, CurrentRoomTiles, ListOfMonsters
+		return SetCurrentRoom(CurrentRoom)
 
 	case "right":
 		CurrentRoom := GR.RightDestination
-		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
-		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
-		ListOfMonsters := [](*animatedobjects.Monster){}
-		if RD.WeHaveChest {
-			ch, err := animatedobjects.InitNewChest("./assets/chest.json", 135)
-			if err != nil {
-				log.Fatal(err)
-			}
-			CurrentRoom.Chest = ch
-			fmt.Println("Chest good: ", CurrentRoom.Chest)
-		}
-		if !(CurrentRoom.RoomIsCleaned) {
-			if RD.NumberOfMonsters > 0 {
-				//ListOfMonsters = SpawnMonsters(RD)
-				CurrentRoomTiles = CurrentRoom.ChangeDoorsState(CurrentRoomTiles, 4)
-			} else {
-				CurrentRoom.RoomIsCleaned = true
-			}
-		}
-		return CurrentRoom, RD, CurrentRoomTiles, ListOfMonsters
+		return SetCurrentRoom(CurrentRoom)
 
 	case "top":
 		CurrentRoom := GR.UpDestination
-		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
-		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
-		ListOfMonsters := [](*animatedobjects.Monster){}
-		if RD.WeHaveChest {
-			ch, err := animatedobjects.InitNewChest("./assets/chest.json", 135)
-			if err != nil {
-				log.Fatal(err)
-			}
-			CurrentRoom.Chest = ch
-			fmt.Println("Chest good: ", CurrentRoom.Chest)
-		}
-		if !(CurrentRoom.RoomIsCleaned) {
-			if RD.NumberOfMonsters > 0 {
-				//ListOfMonsters = SpawnMonsters(RD)
-				CurrentRoomTiles = CurrentRoom.ChangeDoorsState(CurrentRoomTiles, 4)
-			} else {
-				CurrentRoom.RoomIsCleaned = true
-			}
-		}
-		return CurrentRoom, RD, CurrentRoomTiles, ListOfMonsters
+		return SetCurrentRoom(CurrentRoom)
 
 	case "down":
 		CurrentRoom := GR.DownDestination
-		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
-		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
-		ListOfMonsters := [](*animatedobjects.Monster){}
-		if RD.WeHaveChest {
-			ch, err := animatedobjects.InitNewChest("./assets/chest.json", 135)
-			if err != nil {
-				log.Fatal(err)
-			}
-			CurrentRoom.Chest = ch
-			fmt.Println("Chest good: ", CurrentRoom.Chest)
-		}
-		if !(CurrentRoom.RoomIsCleaned) {
-			if RD.NumberOfMonsters > 0 {
-				//ListOfMonsters = SpawnMonsters(RD)
-				CurrentRoomTiles = CurrentRoom.ChangeDoorsState(CurrentRoomTiles, 4)
-			} else {
-				GR.RoomIsCleaned = true
-			}
-		}
-		return CurrentRoom, RD, CurrentRoomTiles, ListOfMonsters
+		return SetCurrentRoom(CurrentRoom)
 	}
 	return nil, nil, nil, nil
 }

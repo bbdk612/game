@@ -20,6 +20,7 @@ type Monster struct {
 	Image     *ebiten.Image
 	Route     []Vector
 	Weapon    *weapons.Weapon
+	Health    int
 }
 
 type Vector struct {
@@ -61,11 +62,6 @@ func (ms *Monster) CanIGo(direction Vector, chunk []int, coords [][]float64) (bo
 			if dist < 16 {
 				return MoveX, MoveY
 			}
-			// if x >= coordins[0] && y >= coordins[1] {
-			// 	if x < coordins[0]+16 && y < coordins[1]+16 {
-			// 		return MoveX, MoveY
-			// 	}
-			// }
 		}
 	}
 	if direction.x < 0 {
@@ -210,6 +206,7 @@ func InitMonsters(step int, tilesize int, tilecoordinate int, xCount int) (*Mons
 			{x: float64(rand.Intn(208-32) + 32), y: float64(rand.Intn(208-32) + 32)},
 		},
 		Weapon: weapon,
+		Health: 100,
 	}
 	monster.AsePlayer = monster.Sprite.CreatePlayer()
 

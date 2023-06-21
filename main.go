@@ -41,7 +41,7 @@ func (g *Game) startGame() {
 	g.GM.CurrentRoomTiles = g.GM.RD.GetCurrentRoomTileMap()
 	g.GM.CurrentRoomTiles = g.GM.CurrentRoom.DeleteDoors(g.GM.CurrentRoomTiles)
 	g.MS = [](*animatedobjects.Monster){}
-	//set main hero properties
+	//set main hero propertiesgo
 	g.MH.Health = g.MH.MaxHealth
 	g.MenuRoll = time.Now()
 }
@@ -70,7 +70,6 @@ func (g *Game) Update() error {
 				for i := 0; i < len(g.MS); i++ {
 					if !(g.MS[i] == nil) {
 						MonsterInRoom = true
-						fmt.Println("Monsters Live", g.MS)
 						break
 					}
 				}
@@ -78,7 +77,6 @@ func (g *Game) Update() error {
 					g.MS = [](*animatedobjects.Monster){}
 					g.GM.CurrentRoom.RoomIsCleaned = true
 					g.GM.CurrentRoom.ChangeDoorsState(g.GM.CurrentRoomTiles, 1)
-					fmt.Println("Monsters Died: ")
 				}
 				x, y := g.MH.GetCoordinates()
 				var Coordinates [][]float64

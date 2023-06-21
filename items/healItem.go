@@ -2,8 +2,6 @@ package items
 
 import (
 	"encoding/json"
-	"fmt"
-	ao "game/animatedobjects"
 	"image"
 	"math"
 	"os"
@@ -11,19 +9,19 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-type Heal struct {
-	Name      string
+type Item struct {
+	Type      string
 	Image     *ebiten.Image
+	JsonPath  string
 	ImagePath string
 	X, Y      float64
-	health    int
 }
 
-func (h *Heal) PickUp(mh *ao.MainHero) {
-	mh.Health += h.health
+func (h *Item) PickUp() (string, string) {
+	return h.Type, h.JsonPath
 }
 
-func (h *Heal) InActiveArea(MHx, MHy int) bool {
+func (h *Item) InActiveArea(MHx, MHy int) bool {
 	var MHCenterX float64 = float64(MHx + 8)
 	var MHCenterY float64 = float64(MHy + 8)
 
@@ -32,23 +30,24 @@ func (h *Heal) InActiveArea(MHx, MHy int) bool {
 
 	var distance float64 = math.Pow(MHCenterX-ItemCenterX, 2) + math.Pow(MHCenterY-ItemCenterY, 2)
 
-	if distance <= 256 {
+	if distance <= 625 {
 		return true
 	}
 
 	return false
 }
 
-func (h *Heal) InitHealItem(JSONPath string, x, y float64) (*Heal, error) {
+func InitItem(Type string, JSONPath string, x, y float64) (*Item, error) {
 	data, err := os.ReadFile(JSONPath)
 
 	if err != nil {
 		return nil, err
 	}
 
-	heal := &Heal{}
+	heal := &Item{}
 	jsonErr := json.Unmarshal(data, heal)
-
+	heal.JsonPath = JSONPath
+	heal.Type = Type
 	if jsonErr != nil {
 		return nil, jsonErr
 	}
@@ -69,6 +68,5 @@ func (h *Heal) InitHealItem(JSONPath string, x, y float64) (*Heal, error) {
 
 	image := ebiten.NewImageFromImage(imageDecoded)
 	heal.Image = image
-	fmt.Println(heal)
 	return heal, nil
 }

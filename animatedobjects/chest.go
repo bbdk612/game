@@ -1,11 +1,11 @@
 package animatedobjects
 
 import (
-	"fmt"
+	"log"
 	"math"
 	"math/rand"
 
-	// "game/weapons"
+	"chestdev/items"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -13,7 +13,8 @@ import (
 )
 
 type Chest struct {
-	opened         bool
+	Opened         bool
+	x, y           int
 	ChestPlayer    *goaseprite.Player
 	ChestFile      *goaseprite.File
 	ChestImage     *ebiten.Image
@@ -21,31 +22,49 @@ type Chest struct {
 }
 
 func (ch *Chest) randomItem() string {
-	itemsArr := []string{
+	items := []string{
 		"heal",
 		"gun",
 		"shotgun",
 	}
 
-	number := rand.Intn(len(itemsArr))
-	return itemsArr[number]
+	return items[rand.Intn(len(items))]
 }
 
-// func (ch *Chest) randomShotgun() *weapons.Weapon {
-
-// }
-
-func (ch *Chest) Open(items []string) {
-	if !ch.opened {
-		number := rand.Intn(len(items))
-		fmt.Println(items[number])
-		ch.opened = true
+func (ch *Chest) Open() *items.Item {
+	if !ch.Opened {
+		ch.Opened = true
 		ch.ChestPlayer.Play("open")
-		stopIt := func() {
+		ch.ChestPlayer.OnLoop = func() {
 			ch.ChestPlayer.Play("stop")
 		}
-		ch.ChestPlayer.OnLoop = stopIt
+		r := ch.randomItem()
+		var jsonPath string
+		switch r {
+		case "heal":
+			jsonPath = "./items/smallHeal.json"
+		case "gun":
+			jsonPath = "./weapons/assets/gun.json"
+		case "shotgun":
+			jsonPath = "./weapons/assets/shotgun.json"
+		}
+
+		spawnX, spawnY := ch.spawnCoordinates()
+
+		i, err := items.InitItem(r, jsonPath, float64(spawnX), float64(spawnY))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		return i
 	}
+	return nil
+
+}
+
+func (ch *Chest) spawnCoordinates() (int, int) {
+	x, y := ch.GetCoordinates()
+	return x + 12, y + 4
 }
 
 func (ch *Chest) GetCoordinates() (int, int) {
@@ -73,7 +92,7 @@ func (ch *Chest) InActiveZone(x, y int) bool {
 
 func InitNewChest(jsonPath string, tilecoordinate int) (*Chest, error) {
 	chest := &Chest{
-		opened:         false,
+		Opened:         false,
 		ChestFile:      goaseprite.Open(jsonPath),
 		tilecoordinate: tilecoordinate,
 	}

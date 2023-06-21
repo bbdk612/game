@@ -163,7 +163,7 @@ func distance(x1, x2, y1, y2 float64) float64 {
 	return dist
 }
 
-func InitMonsters(step int, tilesize int, tilecoordinate int, xCount int) (*Monster, error) {
+func InitMonsters(health int, tilesize int, tilecoordinate int, xCount int) (*Monster, error) {
 
 	var x float64 = float64((tilecoordinate % xCount) * tilesize)
 	var y float64 = float64((tilecoordinate / xCount) * tilesize)
@@ -171,7 +171,7 @@ func InitMonsters(step int, tilesize int, tilecoordinate int, xCount int) (*Mons
 	weapon.CurrentAmmo = int(math.Inf(1))
 	monster := &Monster{
 		SeeMH:    false,
-		Step:     float64(step),
+		Step:     2,
 		Position: Vector{x: x, y: y},
 		Sprite:   goaseprite.Open("./assets/mainhero.json"),
 		Route: []Vector{
@@ -181,7 +181,7 @@ func InitMonsters(step int, tilesize int, tilecoordinate int, xCount int) (*Mons
 			{x: float64(rand.Intn(208-32) + 32), y: float64(rand.Intn(208-32) + 32)},
 		},
 		Weapon: weapon,
-		Health: 100,
+		Health: health,
 	}
 	monster.AsePlayer = monster.Sprite.CreatePlayer()
 

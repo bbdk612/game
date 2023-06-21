@@ -449,7 +449,7 @@ func main() {
 	enemies := [](*animatedobjects.Monster){}
 
 	//	for i := 0; i < 3; i++ {
-	//		en, er := animatedobjects.InitMonsters(2, 16, 43+16*i, 16)
+	//		en, er := animatedobjects.InitMonsters(100, 16, 43+16*i, 16)
 	//		if er != nil {
 	//			log.Fatal(er)
 	//		}

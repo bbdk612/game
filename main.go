@@ -51,6 +51,14 @@ func (g *Game) Update() error {
 				return err
 			}
 
+			x, y := g.MH.GetCoordinates()
+			var Coordinates [][]float64
+			Coordinates = append(Coordinates, []float64{float64(x), float64(y)})
+			for _, monster := range g.Enemies {
+				MSx, MSy := monster.GetCoordinates()
+				Coordinates = append(Coordinates, []float64{MSx, MSy})
+			}
+
 			rlbck := dur.Milliseconds()
 
 			if time.Duration(time.Duration(currTime.Sub(g.MenuRoll))).Milliseconds() > rlbck {
@@ -158,9 +166,8 @@ func (g *Game) Update() error {
 					g.MH.Health = 6
 				}
 
-				x, y := g.MH.GetCoordinates()
 				for _, monster := range g.Enemies {
-					bullets := monster.Actions(float64(x), float64(y), g.Map.GetCurrentChunk())
+					bullets := monster.Actions(float64(x), float64(y), g.Map.GetCurrentChunk(), Coordinates)
 
 					g.Bullets = append(g.Bullets, bullets...)
 

@@ -1,7 +1,6 @@
 package animatedobjects
 
 import (
-	"fmt"
 	"game/weapons"
 	"log"
 	"math"
@@ -51,9 +50,24 @@ func (ms *Monster) TileCoordinate(tilesize int, x float64, y float64) int {
 	return TileCoor
 }
 
-func (ms *Monster) CanIGo(direction Vector, chunk []int) (bool, bool) {
+func (ms *Monster) CanIGo(direction Vector, chunk []int, coords [][]float64) (bool, bool) {
 	MoveX, MoveY := false, false
 	Tile := ms.TileCoordinate(16, ms.Position.x, ms.Position.y)
+	x := ms.Position.x + direction.x*ms.Step
+	y := ms.Position.y + direction.y*ms.Step
+	for _, coordins := range coords {
+		if ms.Position.x != coordins[0] && ms.Position.y != coordins[1] {
+			dist := distance(coordins[0], x, coordins[1], y)
+			if dist < 16 {
+				return MoveX, MoveY
+			}
+			// if x >= coordins[0] && y >= coordins[1] {
+			// 	if x < coordins[0]+16 && y < coordins[1]+16 {
+			// 		return MoveX, MoveY
+			// 	}
+			// }
+		}
+	}
 	if direction.x < 0 {
 		if int(ms.Position.x)%16 != 0 {
 			if int(ms.Position.y)%16 != 0 {
@@ -112,11 +126,10 @@ func (ms *Monster) CanIGo(direction Vector, chunk []int) (bool, bool) {
 			return MoveX, MoveY
 		}
 	}
-	fmt.Println(chunk[Tile], chunk[Tile+16], chunk[Tile-1], chunk[Tile-1+16], chunk[Tile+1], chunk[Tile+1+16])
 	return MoveX, MoveY
 }
 
-func (ms *Monster) Actions(MHx, MHy float64, chunk []int) [](*weapons.Bullet) {
+func (ms *Monster) Actions(MHx, MHy float64, chunk []int, Coords [][]float64) [](*weapons.Bullet) {
 	ms.DoesHeSeeMH(MHx, MHy)
 	ms.Weapon.CalculateAngle(int(MHx), int(MHy))
 	direction := Vector{MHx - ms.Position.x, MHy - ms.Position.y}
@@ -124,7 +137,7 @@ func (ms *Monster) Actions(MHx, MHy float64, chunk []int) [](*weapons.Bullet) {
 
 	ms.AsePlayer.Play("walk")
 	if ms.SeeMH {
-		MoveX, MoveY := ms.CanIGo(direction, chunk)
+		MoveX, MoveY := ms.CanIGo(direction, chunk, Coords)
 		dist := distance(ms.Position.x, MHx, ms.Position.y, MHy)
 		if dist > 70 {
 			if MoveX {

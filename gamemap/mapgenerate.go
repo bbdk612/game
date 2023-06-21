@@ -5,54 +5,54 @@ import (
 	"math/rand"
 )
 
-type GameMap struct {
+type GameRoom struct {
 	MapX             int
 	MapY             int
 	RoomID           int
-	LeftDestination  *GameMap
-	UpDestination    *GameMap
-	RightDestination *GameMap
-	DownDestination  *GameMap
+	LeftDestination  *GameRoom
+	UpDestination    *GameRoom
+	RightDestination *GameRoom
+	DownDestination  *GameRoom
 }
 type Neighbors struct {
 	X int
 	Y int
 }
 
-func (GM *GameMap) GetCurrentRoomID() int {
-	return GM.RoomID
+func (GR *GameRoom) GetCurrentRoomID() int {
+	return GR.RoomID
 }
 
-func (GM *GameMap) GetCurrentRoomCoordinate() (int, int) {
-	stX := GM.MapX
-	stY := GM.MapY
+func (GR *GameRoom) GetCurrentRoomCoordinate() (int, int) {
+	stX := GR.MapX
+	stY := GR.MapY
 	return stX, stY
 }
-func (GM *GameMap) ChangeCurrentRoom(direction string) (*GameMap, *RoomData, []int) {
+func (GR *GameRoom) ChangeCurrentRoom(direction string) (*GameRoom, *RoomData, []int) {
 	switch direction {
 	case "left":
-		CurrentRoom := GM.LeftDestination
+		CurrentRoom := GR.LeftDestination
 		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
 		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
 		return CurrentRoom, RD, CurrentRoomTiles
 
 	case "right":
-		CurrentRoom := GM.RightDestination
+		CurrentRoom := GR.RightDestination
 		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
 		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
 		return CurrentRoom, RD, CurrentRoomTiles
 
 	case "top":
-		CurrentRoom := GM.UpDestination
+		CurrentRoom := GR.UpDestination
 		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
 		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
 		return CurrentRoom, RD, CurrentRoomTiles
 
 	case "down":
-		CurrentRoom := GM.DownDestination
+		CurrentRoom := GR.DownDestination
 		RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 		CurrentRoomTiles := RD.GetCurrentRoomTileMap()
 		CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
@@ -61,49 +61,49 @@ func (GM *GameMap) ChangeCurrentRoom(direction string) (*GameMap, *RoomData, []i
 	return nil, nil, nil
 }
 
-func (gm *GameMap) DeleteDoors(currentRoom []int) []int {
+func (GR *GameRoom) DeleteDoors(currentRoom []int) []int {
 	//delete doors
-	if gm.LeftDestination == nil {
+	if GR.LeftDestination == nil {
 		currentRoom[112] = 0
 		currentRoom[128] = 0
 	}
-	if gm.UpDestination == nil {
+	if GR.UpDestination == nil {
 		currentRoom[7] = 0
 		currentRoom[8] = 0
 	}
-	if gm.RightDestination == nil {
+	if GR.RightDestination == nil {
 		currentRoom[127] = 0
 		currentRoom[143] = 0
 	}
-	if gm.DownDestination == nil {
+	if GR.DownDestination == nil {
 		currentRoom[247] = 0
 		currentRoom[248] = 0
 	}
 	return currentRoom
 }
 
-func (gm *GameMap) ChangeDoorsState(currentRoom []int, doorState int) []int {
+func (GR *GameRoom) ChangeDoorsState(currentRoom []int, doorState int) []int {
 	//change state
-	if !(gm.LeftDestination == nil) {
+	if !(GR.LeftDestination == nil) {
 		currentRoom[112] = doorState
 		currentRoom[128] = doorState
 	}
-	if !(gm.UpDestination == nil) {
+	if !(GR.UpDestination == nil) {
 		currentRoom[7] = doorState
 		currentRoom[8] = doorState
 	}
-	if !(gm.RightDestination == nil) {
+	if !(GR.RightDestination == nil) {
 		currentRoom[127] = doorState
 		currentRoom[143] = doorState
 	}
-	if !(gm.DownDestination == nil) {
+	if !(GR.DownDestination == nil) {
 		currentRoom[247] = doorState
 		currentRoom[248] = doorState
 	}
 	return currentRoom
 }
 
-func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) (*GameMap, [10][10]int, [](*GameMap)) {
+func (GR *GameRoom) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfShopRooms, numberOfChestRooms int) (*GameRoom, [10][10]int, [](*GameRoom)) {
 	//minimap generation
 	Minimap := [10][10]int{}
 	for i := 0; i < 10; i++ {
@@ -200,11 +200,11 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 		}
 	}
 	//map GenerateMap
-	GameRoomList := [](*GameMap){}
+	GameRoomList := [](*GameRoom){}
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 10; j++ {
 			if Minimap[i][j] != 0 {
-				NewRoom := &GameMap{
+				NewRoom := &GameRoom{
 					MapX:   i,
 					MapY:   j,
 					RoomID: Minimap[i][j],
@@ -233,7 +233,7 @@ func (gm *GameMap) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOfS
 			}
 		}
 	}
-	StartRoom := &GameMap{}
+	StartRoom := &GameRoom{}
 	for i := 0; i < len(GameRoomList); i++ {
 		if GameRoomList[i].RoomID == startRoomID {
 			StartRoom = GameRoomList[i]

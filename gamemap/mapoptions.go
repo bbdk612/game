@@ -7,13 +7,20 @@ import (
 	"os"
 )
 
-type GameMapOptions struct {
+type GameMap struct {
 	TileSize                  int
 	ScreenWidth, ScreenHeight int
 	tileset                   *ebiten.Image
+	CurrentRoom               *GameRoom
+	RoomList                  [](*GameRoom)
+	MapOptions                *GameMap
+	RD                        *RoomData
+	MiniMapPlan               [10][10]int
+	CurrentRoomIDMiniMap      int
+	CurrentRoomTiles          []int
 }
 
-func (GM *GameMapOptions) GetTile(tileNumber int) *ebiten.Image {
+func (GM *GameMap) GetTile(tileNumber int) *ebiten.Image {
 	w := GM.tileset.Bounds().Dx()
 	tileXCount := w / GM.TileSize
 
@@ -23,7 +30,7 @@ func (GM *GameMapOptions) GetTile(tileNumber int) *ebiten.Image {
 	return GM.tileset.SubImage(image.Rect(tileStartX, tileStartY, tileStartX+GM.TileSize, tileStartY+GM.TileSize)).(*ebiten.Image)
 }
 
-func InitGameMap(tilesetImgPath string, screenWidth, screenHeight int) (*GameMapOptions, error) {
+func InitGameMap(tilesetImgPath string, screenWidth, screenHeight int) (*GameMap, error) {
 	tilesetFile, err := os.Open(tilesetImgPath)
 	if err != nil {
 		return nil, err
@@ -37,7 +44,7 @@ func InitGameMap(tilesetImgPath string, screenWidth, screenHeight int) (*GameMap
 
 	tilesImage := ebiten.NewImageFromImage(tileset)
 
-	GM := &GameMapOptions{
+	GM := &GameMap{
 		TileSize:     16,
 		ScreenWidth:  screenWidth,
 		ScreenHeight: screenHeight,

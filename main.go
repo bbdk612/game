@@ -19,31 +19,25 @@ import (
 
 // Game struct contains a game objects
 type Game struct {
-	Bullets              [](*weapons.Bullet)
-	CurrentRoom          *gamemap.GameMap
-	RoomList             [](*gamemap.GameMap)
-	MapOptions           *gamemap.GameMapOptions
-	RD                   *gamemap.RoomData
-	MiniMapPlan          [10][10]int
-	CurrentRoomIDMiniMap int
-	CurrentRoomTiles     []int
-	MH                   *animatedobjects.MainHero
-	UI                   *ui.UI
-	MM                   *menu.MainMenu
-	PM                   *menu.PauseMenu
-	DS                   *menu.DeathScreen
-	MenuRoll             time.Time
+	Bullets  [](*weapons.Bullet)
+	GM       *gamemap.GameMap
+	MH       *animatedobjects.MainHero
+	UI       *ui.UI
+	MM       *menu.MainMenu
+	PM       *menu.PauseMenu
+	DS       *menu.DeathScreen
+	MenuRoll time.Time
 }
 
 // this function do all things for start game
 func (g *Game) startGame() {
 	g.MM.MenuStartGame()
 	//generate map
-	g.CurrentRoom, g.MiniMapPlan, g.RoomList = g.CurrentRoom.GenerateMap(12, 1, 1, 1)
+	g.GM.CurrentRoom, g.GM.MiniMapPlan, g.GM.RoomList = g.GM.CurrentRoom.GenerateMap(12, 1, 1, 1)
 	//set start room
-	g.RD = gamemap.JsonFileDecodeCurrentRoom(g.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
-	g.CurrentRoomTiles = g.RD.GetCurrentRoomTileMap()
-	g.CurrentRoomTiles = g.CurrentRoom.DeleteDoors(g.CurrentRoomTiles)
+	g.GM.RD = gamemap.JsonFileDecodeCurrentRoom(g.GM.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
+	g.GM.CurrentRoomTiles = g.GM.RD.GetCurrentRoomTileMap()
+	g.GM.CurrentRoomTiles = g.GM.CurrentRoom.DeleteDoors(g.GM.CurrentRoomTiles)
 	//set main hero properties
 	g.MH.Health = g.MH.MaxHealth
 	g.MenuRoll = time.Now()
@@ -86,39 +80,39 @@ func (g *Game) Update() error {
 						if ebiten.IsKeyPressed(ebiten.KeyA) {
 							g.MH.AsePlayer.Play("walk")
 							if g.MH.GetTileCoor()%16 == 0 {
-								g.CurrentRoom, g.RD, g.CurrentRoomTiles = g.CurrentRoom.ChangeCurrentRoom("left")
+								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles = g.GM.CurrentRoom.ChangeCurrentRoom("left")
 								g.MH.SetTileCoor(g.MH.GetTileCoor() + 14)
 							} else {
-								g.MH.Move("left", g.RD.GetCurrentRoomTileMap())
+								g.MH.Move("left", g.GM.RD.GetCurrentRoomTileMap())
 							}
 						}
 						if ebiten.IsKeyPressed(ebiten.KeyD) {
 							g.MH.AsePlayer.Play("walk")
 							if (g.MH.GetTileCoor()+1)%16 == 0 {
-								g.CurrentRoom, g.RD, g.CurrentRoomTiles = g.CurrentRoom.ChangeCurrentRoom("right")
+								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles = g.GM.CurrentRoom.ChangeCurrentRoom("right")
 								g.MH.SetTileCoor(g.MH.GetTileCoor() - 14)
 							} else {
-								g.MH.Move("right", g.RD.GetCurrentRoomTileMap())
+								g.MH.Move("right", g.GM.RD.GetCurrentRoomTileMap())
 							}
 						}
 						if ebiten.IsKeyPressed(ebiten.KeyW) {
 							g.MH.AsePlayer.Play("walk")
 							if _, y := g.MH.GetCoordinates(); y == 0 {
-								g.CurrentRoom, g.RD, g.CurrentRoomTiles = g.CurrentRoom.ChangeCurrentRoom("top")
+								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles = g.GM.CurrentRoom.ChangeCurrentRoom("top")
 								x, _ := g.MH.GetCoordinates()
 								g.MH.SetCoordinates(x, 224)
 							} else {
-								g.MH.Move("top", g.RD.GetCurrentRoomTileMap())
+								g.MH.Move("top", g.GM.RD.GetCurrentRoomTileMap())
 							}
 						}
 						if ebiten.IsKeyPressed(ebiten.KeyS) {
 							g.MH.AsePlayer.Play("walk")
 							if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
-								g.CurrentRoom, g.RD, g.CurrentRoomTiles = g.CurrentRoom.ChangeCurrentRoom("down")
+								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles = g.GM.CurrentRoom.ChangeCurrentRoom("down")
 								x, _ := g.MH.GetCoordinates()
 								g.MH.SetCoordinates(x, 16)
 							} else {
-								g.MH.Move("down", g.RD.GetCurrentRoomTileMap())
+								g.MH.Move("down", g.GM.RD.GetCurrentRoomTileMap())
 							}
 						}
 					} else {
@@ -145,7 +139,7 @@ func (g *Game) Update() error {
 									continue
 								}
 							}
-							if g.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
+							if g.GM.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
 								bullet = nil
 								g.Bullets[i] = nil
 								continue
@@ -243,13 +237,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		if !(g.PM.InPauseMenu) {
 			if !(g.DS.InDeathScreen) {
 				//drawing a map
-				xCount := (g.MapOptions.ScreenWidth / g.MapOptions.TileSize)
+				xCount := (g.GM.ScreenWidth / g.GM.TileSize)
 
-				for tileCoordinate, tileNumber := range g.CurrentRoomTiles {
+				for tileCoordinate, tileNumber := range g.GM.CurrentRoomTiles {
 					options := &ebiten.DrawImageOptions{}
-					options.GeoM.Translate(float64((tileCoordinate%xCount)*g.MapOptions.TileSize), float64((tileCoordinate/xCount)*g.MapOptions.TileSize))
+					options.GeoM.Translate(float64((tileCoordinate%xCount)*g.GM.TileSize), float64((tileCoordinate/xCount)*g.GM.TileSize))
 
-					screen.DrawImage(g.MapOptions.GetTile(tileNumber), options)
+					screen.DrawImage(g.GM.GetTile(tileNumber), options)
 				}
 
 				// drawing a personage
@@ -330,26 +324,26 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			//Mini Map
 			mmX, mmY := g.UI.MiniM.GetMiniMapStartCoordinate()
 			startmmX := mmX
-			currroomX, currroomY := g.CurrentRoom.GetCurrentRoomCoordinate()
-			for i := 0; i < len(g.MiniMapPlan); i++ {
+			currroomX, currroomY := g.GM.CurrentRoom.GetCurrentRoomCoordinate()
+			for i := 0; i < len(g.GM.MiniMapPlan); i++ {
 				mmX = startmmX
-				for j := 0; j < len(g.MiniMapPlan); j++ {
+				for j := 0; j < len(g.GM.MiniMapPlan); j++ {
 					opMiniM := &ebiten.DrawImageOptions{}
 					opMiniM.GeoM.Translate(float64(mmX), float64(mmY))
-					if g.MiniMapPlan[j][i] != 0 {
+					if g.GM.MiniMapPlan[j][i] != 0 {
 						if j == currroomX && i == currroomY {
 							screen.DrawImage(g.UI.MiniM.CurrentRoomImage, opMiniM)
 						} else {
-							if (g.MiniMapPlan[j][i] > 100 && g.MiniMapPlan[j][i] < 200) || (g.MiniMapPlan[j][i] > 500 && g.MiniMapPlan[j][i] < 600) {
+							if (g.GM.MiniMapPlan[j][i] > 100 && g.GM.MiniMapPlan[j][i] < 200) || (g.GM.MiniMapPlan[j][i] > 500 && g.GM.MiniMapPlan[j][i] < 600) {
 								screen.DrawImage(g.UI.MiniM.CommonRoomImage, opMiniM)
 							}
-							if g.MiniMapPlan[j][i] > 200 && g.MiniMapPlan[j][i] < 300 {
+							if g.GM.MiniMapPlan[j][i] > 200 && g.GM.MiniMapPlan[j][i] < 300 {
 								screen.DrawImage(g.UI.MiniM.ChestRoomImage, opMiniM)
 							}
-							if g.MiniMapPlan[j][i] > 300 && g.MiniMapPlan[j][i] < 400 {
+							if g.GM.MiniMapPlan[j][i] > 300 && g.GM.MiniMapPlan[j][i] < 400 {
 								screen.DrawImage(g.UI.MiniM.BossRoomImage, opMiniM)
 							}
-							if g.MiniMapPlan[j][i] > 400 && g.MiniMapPlan[j][i] < 500 {
+							if g.GM.MiniMapPlan[j][i] > 400 && g.GM.MiniMapPlan[j][i] < 500 {
 								screen.DrawImage(g.UI.MiniM.ShopRoomImage, opMiniM)
 							}
 						}
@@ -376,7 +370,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
-	return g.MapOptions.ScreenWidth, g.MapOptions.ScreenHeight
+	return g.GM.ScreenWidth, g.GM.ScreenHeight
 }
 
 func main() {
@@ -416,12 +410,12 @@ func main() {
 		log.Fatal(err)
 	}
 	g := &Game{
-		MapOptions: M,
-		MH:         mh,
-		UI:         ui,
-		MM:         Menu,
-		PM:         pauseM,
-		DS:         deathS,
+		GM: M,
+		MH: mh,
+		UI: ui,
+		MM: Menu,
+		PM: pauseM,
+		DS: deathS,
 	}
 	ebiten.SetWindowSize(256*2, 256*2)
 	ebiten.SetWindowTitle("test of Gamemap")

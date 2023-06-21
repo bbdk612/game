@@ -3,8 +3,9 @@
   "ImagePath": "./assets/startWeapon.png",
   "CurrentAmmo": 30,
   "MaxAmmo": 30,
-  "NumberOfBullets": 3,
-  "DurationMS": "1000ms",
-  "WeaponType": "shotgun",
-  "SpreadAngle": 0.7853981633974483
+  "NumberOfBullets": 1,
+  "DurationMS": "800ms",
+  "WeaponType": "gun",
+  "SpreadAngle": 0.7853981633974483,
+  "Damage": 10
 }

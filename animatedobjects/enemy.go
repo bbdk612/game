@@ -46,6 +46,10 @@ func (ms *Monster) DoesHeSeeMH(x, y float64) {
 	}
 }
 
+func (ms *Monster) Damage(damage int) {
+	ms.Health -= damage
+}
+
 func (ms *Monster) TileCoordinate(tilesize int, x float64, y float64) int {
 	TileCoor := (int(x) / tilesize) + (int(y)/16)*16
 	return TileCoor
@@ -152,36 +156,7 @@ func (ms *Monster) Actions(MHx, MHy float64, chunk []int, Coords [][]float64) []
 		}
 	}
 	return nil
-	// else {
-	// 	ms.Patrol(chunk)
-	// }
 }
-
-// func (ms *Monster) Patrol(chunk []int) {
-// 	target := ms.Route[0]
-// 	direction := Vector{target.x - ms.Position.x, target.y - ms.Position.y}
-// 	direction.Normalize()
-// 	MoveX, MoveY := ms.CanIGo(direction, chunk)
-// 	if MoveX {
-// 		ms.Position.x += direction.x * ms.Step
-// 	}
-// 	if MoveY {
-// 		ms.Position.y += direction.y * ms.Step
-// 	}
-// 	fmt.Println(math.Abs(ms.Position.x-target.x), math.Abs(ms.Position.y-target.y), MoveX, MoveY)
-// 	if math.Abs(ms.Position.x-target.x) <= 20 && math.Abs(ms.Position.y-target.y) > 20 && !MoveY {
-// 		ms.Route = append(ms.Route[1:], ms.Route[0])
-// 	}
-// 	if math.Abs(ms.Position.x-target.x) > 20 && math.Abs(ms.Position.y-target.y) <= 20 && !MoveX {
-// 		ms.Route = append(ms.Route[1:], ms.Route[0])
-// 	}
-// 	if math.Abs(ms.Position.x-target.x) <= 20 && math.Abs(ms.Position.y-target.y) <= 20 {
-// 		ms.Route = append(ms.Route[1:], ms.Route[0])
-// 	}
-// 	if !MoveY && !MoveX {
-// 		ms.Route = append(ms.Route[1:], ms.Route[0])
-// 	}
-// }
 
 func distance(x1, x2, y1, y2 float64) float64 {
 	dist := math.Sqrt(math.Pow(x2-x1, 2) + math.Pow(y2-y1, 2))

@@ -55,8 +55,10 @@ func (g *Game) Update() error {
 			var Coordinates [][]float64
 			Coordinates = append(Coordinates, []float64{float64(x), float64(y)})
 			for _, monster := range g.Enemies {
-				MSx, MSy := monster.GetCoordinates()
-				Coordinates = append(Coordinates, []float64{MSx, MSy})
+				if monster != nil {
+					MSx, MSy := monster.GetCoordinates()
+					Coordinates = append(Coordinates, []float64{MSx, MSy})
+				}
 			}
 
 			rlbck := dur.Milliseconds()
@@ -130,20 +132,37 @@ func (g *Game) Update() error {
 				chunk := g.Map.GetCurrentChunk()
 				for i, bullet := range g.Bullets {
 					if bullet != nil {
-						mhX, mhY := g.MH.GetCoordinates()
 						bullX, bullY := bullet.GetCoordinates()
-						if (bullX >= float64(mhX)) && (bullY >= float64(mhY)) {
-							if (bullX <= float64(mhX+16)) && (bullY <= float64(mhY+16)) {
+						for j, coordinate := range Coordinates {
+							if (bullX >= coordinate[0]) && (bullY >= coordinate[1]) {
+								if (bullX <= coordinate[0]+16) && (bullY <= coordinate[1]+16) {
+									var remBull bool = false
+									if j == 0 {
+										g.MH.Damage()
+										remBull = true
+
+									} else if g.Enemies[j-1] != nil {
+										fmt.Println(bullet.Damage)
+										g.Enemies[j-1].Damage(bullet.Damage)
+										remBull = true
+										if g.Enemies[j-1].Health <= 0 {
+											g.Enemies[j-1] = nil
+										}
+									}
+
+									if remBull {
+										bullet = nil
+										g.Bullets[i] = nil
+									}
+
+									break
+								}
+							}
+							if chunk[bullet.GetCurrentTile(16)] != 1 {
 								bullet = nil
 								g.Bullets[i] = nil
-								g.MH.Damage()
-								continue
+								break
 							}
-						}
-						if chunk[bullet.GetCurrentTile(16)] != 1 {
-							bullet = nil
-							g.Bullets[i] = nil
-							continue
 						}
 
 					}
@@ -167,15 +186,13 @@ func (g *Game) Update() error {
 				}
 
 				for _, monster := range g.Enemies {
-					bullets := monster.Actions(float64(x), float64(y), g.Map.GetCurrentChunk(), Coordinates)
+					if monster != nil {
+						bullets := monster.Actions(float64(x), float64(y), g.Map.GetCurrentChunk(), Coordinates)
 
-					g.Bullets = append(g.Bullets, bullets...)
+						g.Bullets = append(g.Bullets, bullets...)
 
-					monster.AsePlayer.Update(float32(1.0 / 60.0))
-					// if i == 0 {
-					// 	s, p := monster.GetCoordinates()
-					// 	fmt.Println(monster.Route, s, p)
-					// }
+						monster.AsePlayer.Update(float32(1.0 / 60.0))
+					}
 				}
 
 			}
@@ -295,17 +312,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			wpbX, wpbY := g.UI.WpBar.GetWpbStartCoordinate()
 			text.Draw(screen, g.UI.WpBar.GetAmmo(g.MH.GetCurrentWeapon().GetAmmo()), g.UI.WpBar.AmmoFont, wpbX, wpbY, color.White)
 			for _, monster := range g.Enemies {
-				optionsForMonster := &ebiten.DrawImageOptions{}
-				opForMonstWeap := &ebiten.DrawImageOptions{}
-				MSx, MSy := monster.GetCoordinates()
-				optionsForMonster.GeoM.Translate(MSx, MSy)
-				MSsub := monster.Image.SubImage(image.Rect(monster.AsePlayer.CurrentFrameCoords()))
-				screen.DrawImage(MSsub.(*ebiten.Image), optionsForMonster)
+				if monster != nil {
+					optionsForMonster := &ebiten.DrawImageOptions{}
+					opForMonstWeap := &ebiten.DrawImageOptions{}
+					MSx, MSy := monster.GetCoordinates()
+					optionsForMonster.GeoM.Translate(MSx, MSy)
+					MSsub := monster.Image.SubImage(image.Rect(monster.AsePlayer.CurrentFrameCoords()))
+					screen.DrawImage(MSsub.(*ebiten.Image), optionsForMonster)
 
-				weapx, weapy := monster.Weapon.GetOCoordinates()
-				opForMonstWeap.GeoM.Rotate(monster.Weapon.GetAngle())
-				opForMonstWeap.GeoM.Translate(float64(weapx), float64(weapy))
-				screen.DrawImage(monster.Weapon.Image, opForMonstWeap)
+					weapx, weapy := monster.Weapon.GetOCoordinates()
+					opForMonstWeap.GeoM.Rotate(monster.Weapon.GetAngle())
+					opForMonstWeap.GeoM.Translate(float64(weapx), float64(weapy))
+					screen.DrawImage(monster.Weapon.Image, opForMonstWeap)
+				}
 			}
 		} else {
 			//Main menu

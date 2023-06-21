@@ -18,6 +18,7 @@ type Weapon struct {
 	endX, endY           int
 	CurrentAmmo, MaxAmmo int
 	NumberOfBullets      int
+	Damage               int
 	BulletSprite         string
 	rollbackTime         time.Time
 	DurationMS           string
@@ -74,7 +75,7 @@ func (w *Weapon) Shoot(directionX, directionY int, tilesize int) ([](*Bullet), e
 			switch w.WeaponType {
 			case "rifle":
 			case "gun":
-				bullet, err := gunShoot(float64(w.oX), float64(w.oY), float64(directionX), float64(directionY), w.BulletSprite, 16)
+				bullet, err := gunShoot(w.Damage, float64(w.oX), float64(w.oY), float64(directionX), float64(directionY), w.BulletSprite, 16)
 				if err != nil {
 					return nil, err
 				}
@@ -91,7 +92,7 @@ func (w *Weapon) Shoot(directionX, directionY int, tilesize int) ([](*Bullet), e
 					var endX float64 = (-math.Sin(angle) * float64(directionY-w.oY)) + (math.Cos(angle) * float64(directionX-w.oX)) + float64(w.oX)
 					var endY float64 = (math.Cos(angle) * float64(directionY-w.oY)) + (math.Sin(angle) * float64(directionX-w.oX)) + float64(w.oY)
 
-					bullet, err := gunShoot(float64(w.oX), float64(w.oY), endX, endY, w.BulletSprite, 16)
+					bullet, err := gunShoot(w.Damage, float64(w.oX), float64(w.oY), endX, endY, w.BulletSprite, 16)
 
 					if err != nil {
 						return nil, err

@@ -19,14 +19,15 @@ import (
 
 // Game struct contains a game objects
 type Game struct {
-	Bullets  [](*weapons.Bullet)
-	GM       *gamemap.GameMap
-	MH       *animatedobjects.MainHero
-	MS       [](*animatedobjects.Monster)
-	UI       *ui.UI
-	AllM     *menu.AllMenus
-	MenuRoll time.Time
-	Enemies  [](*animatedobjects.Monster)
+	Bullets      [](*weapons.Bullet)
+	GM           *gamemap.GameMap
+	MH           *animatedobjects.MainHero
+	MS           [](*animatedobjects.Monster)
+	UI           *ui.UI
+	AllM         *menu.AllMenus
+	MenuRoll     time.Time
+	Enemies      [](*animatedobjects.Monster)
+	LevelCounter int
 }
 
 // this function do all things for start game
@@ -41,6 +42,7 @@ func (g *Game) startGame() {
 	g.MS = [](*animatedobjects.Monster){}
 	g.Bullets = [](*weapons.Bullet){}
 	//set main hero propertiesgo
+	g.LevelCounter = 1
 	g.MH.Health = g.MH.MaxHealth
 	g.MenuRoll = time.Now()
 }
@@ -54,6 +56,7 @@ func (g *Game) GenerateNextLevel() {
 	g.GM.CurrentRoomTiles = g.GM.CurrentRoom.DeleteDoors(g.GM.CurrentRoomTiles)
 	g.MS = [](*animatedobjects.Monster){}
 	g.Bullets = [](*weapons.Bullet){}
+	g.LevelCounter = g.LevelCounter + 1
 	g.MenuRoll = time.Now()
 }
 
@@ -89,7 +92,7 @@ func (g *Game) Update() error {
 						if !MonsterInRoom && !g.GM.CurrentRoom.RoomIsCleaned {
 							g.MS = [](*animatedobjects.Monster){}
 							g.GM.CurrentRoom.RoomIsCleaned = true
-							if !g.GM.CurrentRoom.WayToNextLevel == nil {
+							if !(g.GM.CurrentRoom.WayToNextLevel == nil) {
 								g.GM.CurrentRoom.WayToNextLevel.SpawnWayNextLevel()
 							}
 							g.GM.CurrentRoom.ChangeDoorsState(g.GM.CurrentRoomTiles, 1)
@@ -242,6 +245,9 @@ func (g *Game) Update() error {
 						}
 						if !(g.GM.CurrentRoom.Chest == nil) && (g.GM.CurrentRoom.Chest.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
 							g.GM.CurrentRoom.Chest.Open()
+						}
+						if !(g.GM.CurrentRoom.WayToNextLevel == nil) && (g.GM.CurrentRoom.WayToNextLevel.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
+							animatedobjects.GoToNextLevel(g.AllM.VS)
 						}
 					}
 				} else {
@@ -535,11 +541,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	allM, err := menu.InitAllMenus()
+	if err != nil {
+		log.Fatal(err)
+	}
 	g := &Game{
-		GM: M,
-		MH: mh,
-		MS: enemies,
-		UI: ui,
+		GM:   M,
+		MH:   mh,
+		MS:   enemies,
+		UI:   ui,
+		AllM: allM,
 	}
 	ebiten.SetWindowSize(256*2, 256*2)
 	ebiten.SetWindowTitle("test of Gamemap")

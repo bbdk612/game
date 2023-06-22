@@ -74,6 +74,15 @@ func (w *Weapon) Shoot(directionX, directionY int, tilesize int) ([](*Bullet), e
 
 			switch w.WeaponType {
 			case "rifle":
+				bullet, err := gunShoot(w.Damage, float64(w.oX), float64(w.oY), float64(directionX), float64(directionY), w.BulletSprite, 16)
+				if err != nil {
+					return nil, err
+				}
+
+				w.CurrentAmmo -= 1
+				bullets := [](*Bullet){bullet}
+				return bullets, nil
+
 			case "gun":
 				bullet, err := gunShoot(w.Damage, float64(w.oX), float64(w.oY), float64(directionX), float64(directionY), w.BulletSprite, 16)
 				if err != nil {

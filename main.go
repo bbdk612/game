@@ -274,6 +274,10 @@ func (g *Game) Update() error {
 										mhX, mhY := g.MH.GetCoordinates()
 										g.MH.Weapons[1], err = weapons.InitNewWeapon(mhX+8, mhY+8, jsonpath)
 										g.GM.CurrentRoom.ItemsOnFloor[i] = nil
+									case "rifle":
+										mhX, mhY := g.MH.GetCoordinates()
+										g.MH.Weapons[2], err = weapons.InitNewWeapon(mhX+8, mhY+8, jsonpath)
+										g.GM.CurrentRoom.ItemsOnFloor[i] = nil
 									}
 								}
 								if g.GM.CurrentRoom.ItemsOnFloor[i] != nil {
@@ -308,6 +312,11 @@ func (g *Game) Update() error {
 							mhX, mhY := g.MH.GetCoordinates()
 							g.MH.Weapons[1].ChangePosition(mhX+8, mhY+8)
 							g.MH.CurrentWeapon = 1
+						}
+						if ebiten.IsKeyPressed(ebiten.Key3) && g.MH.Weapons[2] != nil {
+							mhX, mhY := g.MH.GetCoordinates()
+							g.MH.Weapons[2].ChangePosition(mhX+8, mhY+8)
+							g.MH.CurrentWeapon = 2
 						}
 					}
 				} else {

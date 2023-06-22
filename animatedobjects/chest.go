@@ -27,6 +27,7 @@ func (ch *Chest) randomItem() string {
 		"heal",
 		"gun",
 		"shotgun",
+		"rifle",
 	}
 
 	return items[rand.Intn(len(items))]
@@ -49,6 +50,8 @@ func (ch *Chest) Open() *items.Item {
 			jsonPath = "./assets/gun.json"
 		case "shotgun":
 			jsonPath = "./assets/shotgun.json"
+		case "rifle":
+			jsonPath = "./assets/rifle.json"
 		}
 
 		spawnX, spawnY := ch.spawnCoordinates()

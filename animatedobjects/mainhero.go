@@ -19,7 +19,7 @@ type MainHero struct {
 	Health         int
 	MaxHealth      int
 	Image          *ebiten.Image
-	Weapons        [2](*weapons.Weapon)
+	Weapons        [3](*weapons.Weapon)
 	step           int
 	CurrentWeapon  int
 }
@@ -194,7 +194,7 @@ func InitMainHero(tilecoordinate int, tilesize int, xCount int, step int) (*Main
 	var y int = (tilecoordinate / xCount) * tilesize
 
 	startWeapon, err := weapons.InitNewWeapon(x+8, y+8, "./weapons/assets/shotgun.json")
-	var weapons [2](*weapons.Weapon)
+	var weapons [3](*weapons.Weapon)
 	weapons[1] = startWeapon
 	if err != nil {
 		return nil, err

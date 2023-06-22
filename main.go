@@ -138,6 +138,14 @@ func (g *Game) Update() error {
 									} else if g.MS[j-1] != nil {
 										g.MS[j-1].Damage(bullet.Damage)
 										remBull = true
+										switch g.MS[j-1].AsePlayer.CurrentTag.Name {
+										case "left":
+											g.MS[j-1].AsePlayer.Play("leftdamage")
+
+										case "right":
+											g.MS[j-1].AsePlayer.Play("rightdamage")
+
+										}
 										if g.MS[j-1].Health <= 0 {
 											g.UI.PB.ScoreCounter += g.MS[j-1].Points
 											g.MS[j-1] = nil

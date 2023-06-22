@@ -195,7 +195,7 @@ func InitMainHero(tilecoordinate int, tilesize int, xCount int, step int) (*Main
 
 	startWeapon, err := weapons.InitNewWeapon(x+8, y+8, "./weapons/assets/shotgun.json")
 	var weapons [3](*weapons.Weapon)
-	weapons[1] = startWeapon
+	weapons[0] = startWeapon
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +206,7 @@ func InitMainHero(tilecoordinate int, tilesize int, xCount int, step int) (*Main
 		x:              x,
 		y:              y,
 		Weapons:        weapons,
-		CurrentWeapon:  1,
+		CurrentWeapon:  0,
 		step:           step,
 		MaxHealth:      6,
 	}

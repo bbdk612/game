@@ -1,0 +1,4 @@
+w,a,s,d- movement
+e- pick-up/open
+r- reload
+1,2,3- change weapon

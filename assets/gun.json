@@ -4,7 +4,7 @@
   "CurrentAmmo": 15,
   "MaxAmmo": 15,
   "NumberOfBullets": 1,
-  "DurationMS": "300ms",
+  "DurationMS": "500ms",
   "WeaponType": "gun",
   "SpreadAngle": 0.7853981633974483,
   "Damage": 35

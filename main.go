@@ -42,10 +42,20 @@ func (g *Game) startGame() {
 	g.GM.CurrentRoomTiles = g.GM.CurrentRoom.DeleteDoors(g.GM.CurrentRoomTiles)
 	g.MS = [](*animatedobjects.Monster){}
 	g.Bullets = [](*weapons.Bullet){}
-	//set main hero propertiesgo
+	//set main hero properties
 	g.UI.PB.LevelCounter = 1
 	g.MH.Health = g.MH.MaxHealth
 	g.MenuRoll = time.Now()
+	mhX, mhY := g.MH.GetCoordinates()
+	g.MH.Weapons = [3](*weapons.Weapon){}
+	var err error
+
+	g.MH.CurrentWeapon = 0
+	g.MH.Weapons[0], err = weapons.InitNewWeapon(mhX+8, mhY+8, "./assets/gun.json")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("all good")
 }
 
 func (g *Game) GenerateNextLevel() {
@@ -617,7 +627,7 @@ func main() {
 
 	enemies := [](*animatedobjects.Monster){}
 
-	mh, err := animatedobjects.InitMainHero(34, 16, 16, 2)
+	mh, err := animatedobjects.InitMainHero(120, 16, 16, 2)
 
 	if err != nil {
 		log.Fatal(err)

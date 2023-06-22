@@ -6,5 +6,6 @@
   "NumberOfBullets": 5,
   "DurationMS": "800ms",
   "WeaponType": "shotgun",
-  "SpreadAngle": 0.7853981633974483
+  "SpreadAngle": 0.7853981633974483,
+  "Damage": 12
 }

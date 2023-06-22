@@ -112,11 +112,7 @@ func (g *Game) Update() error {
 						}
 
 					}
-					currTime := time.Now()
-					dur, err := time.ParseDuration("300ms")
-					if err != nil {
-						return err
-					}
+
 					for i, bullet := range g.Bullets {
 						if bullet != nil {
 							bullX, bullY := bullet.GetCoordinates()
@@ -151,6 +147,12 @@ func (g *Game) Update() error {
 							}
 
 						}
+					}
+
+					currTime := time.Now()
+					dur, err := time.ParseDuration("300ms")
+					if err != nil {
+						return err
 					}
 					rlbck := dur.Milliseconds()
 
@@ -249,23 +251,14 @@ func (g *Game) Update() error {
 							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.Update(float32(1.0 / 60.0))
 						}
 						//opening chest
-						if g.GM.CurrentRoom.Chest != nil && (g.GM.CurrentRoom.Chest.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
-							g.GM.CurrentRoom.ItemsOnFloor = append(g.GM.CurrentRoom.ItemsOnFloor, g.GM.CurrentRoom.Chest.Open())
-							g.MenuRoll = time.Now()
-						}
+
 						//entering next level
-						if g.GM.CurrentRoom.WayToNextLevel != nil && (g.GM.CurrentRoom.WayToNextLevel.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) && (g.GM.CurrentRoom.WayToNextLevel.IsSpawned) {
-							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.Play("open")
-							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.OnLoop = func() {
-								animatedobjects.GoToNextLevel(g.AllM.VS)
-							}
-						}
-						//picking-up items
 						if g.GM.CurrentRoom.ItemsOnFloor != nil {
 							itemsInRoom := false
 							for i := 0; i < len(g.GM.CurrentRoom.ItemsOnFloor); i++ {
-								if (g.GM.CurrentRoom.ItemsOnFloor[i] != nil) && (g.GM.CurrentRoom.ItemsOnFloor[i].InActiveArea(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyQ)) {
+								if (g.GM.CurrentRoom.ItemsOnFloor[i] != nil) && (g.GM.CurrentRoom.ItemsOnFloor[i].InActiveArea(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
 									itemType, jsonpath := g.GM.CurrentRoom.ItemsOnFloor[i].PickUp()
+									g.MenuRoll = time.Now()
 									switch itemType {
 									case "heal":
 										if g.MH.Health < g.MH.MaxHealth {
@@ -292,6 +285,19 @@ func (g *Game) Update() error {
 								g.GM.CurrentRoom.ItemsOnFloor = nil
 							}
 						}
+						if g.GM.CurrentRoom.Chest != nil && (g.GM.CurrentRoom.Chest.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
+							g.GM.CurrentRoom.ItemsOnFloor = append(g.GM.CurrentRoom.ItemsOnFloor, g.GM.CurrentRoom.Chest.Open())
+							g.MenuRoll = time.Now()
+						}
+						if g.GM.CurrentRoom.WayToNextLevel != nil && (g.GM.CurrentRoom.WayToNextLevel.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) && (g.GM.CurrentRoom.WayToNextLevel.IsSpawned) {
+							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.Play("open")
+							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.OnLoop = func() {
+								animatedobjects.GoToNextLevel(g.AllM.VS)
+							}
+							g.MenuRoll = time.Now()
+						}
+						//picking-up items
+
 						//switchig weapon
 						if (ebiten.IsKeyPressed(ebiten.Key1)) && g.MH.Weapons[0] != nil {
 							mhX, mhY := g.MH.GetCoordinates()

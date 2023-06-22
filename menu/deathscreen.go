@@ -1,9 +1,13 @@
 package menu
 
 import (
+	"os"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/solarlune/goaseprite"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
 )
 
 type DeathScreen struct {
@@ -14,15 +18,33 @@ type DeathScreen struct {
 	ReturnToMMButtonImg    *ebiten.Image
 	ReturnToMMButtonFile   *goaseprite.File
 	ReturnToMMButtonPlayer *goaseprite.Player
+	Font                   font.Face
 }
 
 func InitDeathScreen(returnToMMbuttonJSONPath string) (*DeathScreen, error) {
+	fontBytes, err := os.ReadFile("./assets/font.ttf")
+	if err != nil {
+		return nil, err
+	}
+
+	fontParsed, err := opentype.Parse(fontBytes)
+
+	if err != nil {
+		return nil, err
+	}
+
+	fonta, err := opentype.NewFace(fontParsed, &opentype.FaceOptions{
+		Size:    10,
+		DPI:     150,
+		Hinting: font.HintingVertical,
+	})
 
 	DS := &DeathScreen{
 		InDeathScreen:        false,
 		ReturnToMMbuttonX:    48,
 		ReturnToMMbuttonY:    75,
 		ReturnToMMButtonFile: goaseprite.Open(returnToMMbuttonJSONPath),
+		Font:                 fonta,
 	}
 
 	DS.ReturnToMMButtonPlayer = DS.ReturnToMMButtonFile.CreatePlayer()

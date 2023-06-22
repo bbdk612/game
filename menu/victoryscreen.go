@@ -1,9 +1,13 @@
 package menu
 
 import (
+	"os"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/solarlune/goaseprite"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
 )
 
 type VictoryScreen struct {
@@ -14,15 +18,33 @@ type VictoryScreen struct {
 	GoToNextLevelButtonImg    *ebiten.Image
 	GoToNextLevelButtonFile   *goaseprite.File
 	GoToNextLevelButtonPlayer *goaseprite.Player
+	Font                      font.Face
 }
 
 func InitVictoryScreen(goToNextLevelbuttonJSONPath string) (*VictoryScreen, error) {
+	fontBytes, err := os.ReadFile("./assets/font.ttf")
+	if err != nil {
+		return nil, err
+	}
+
+	fontParsed, err := opentype.Parse(fontBytes)
+
+	if err != nil {
+		return nil, err
+	}
+
+	fonta, err := opentype.NewFace(fontParsed, &opentype.FaceOptions{
+		Size:    10,
+		DPI:     150,
+		Hinting: font.HintingVertical,
+	})
 
 	VS := &VictoryScreen{
 		InVictoryScreen:         false,
 		GoToNextLevelbuttonX:    48,
 		GoToNextLevelbuttonY:    75,
 		GoToNextLevelButtonFile: goaseprite.Open(goToNextLevelbuttonJSONPath),
+		Font:                    fonta,
 	}
 
 	VS.GoToNextLevelButtonPlayer = VS.GoToNextLevelButtonFile.CreatePlayer()

@@ -397,6 +397,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 					wpbX, wpbY := g.UI.WpBar.GetWpbStartCoordinate()
 					text.Draw(screen, g.UI.WpBar.GetAmmo(g.MH.GetCurrentWeapon().GetAmmo()), g.UI.WpBar.AmmoFont, wpbX, wpbY, color.White)
 
+					// Level Bar
+
+					lbx, lby := g.UI.LB.GetCoordinates()
+					text.Draw(screen, g.UI.LB.Magic(g.LevelCounter), g.UI.LB.Font, lbx, lby, color.White)
+
 					text.Draw(screen, g.UI.WpBar.GetAmmo(g.MH.GetCurrentWeapon().GetAmmo()), g.UI.WpBar.AmmoFont, wpbX, wpbY, color.White)
 					for _, monster := range g.MS {
 						if monster != nil {
@@ -441,7 +446,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 					subGoNextLevel := g.AllM.VS.GoToNextLevelButtonImg.SubImage(image.Rect(g.AllM.VS.GoToNextLevelButtonPlayer.CurrentFrameCoords()))
 					screen.DrawImage(subGoNextLevel.(*ebiten.Image), opForGoNextLevelButton)
 
-					text.Draw(screen, fmt.Sprintf("You've reached level %d", g.LevelCounter), g.UI.WpBar.AmmoFont, stX+10, stY, color.White)
+					text.Draw(screen, fmt.Sprintf("You've reached level %d", g.LevelCounter), g.AllM.VS.Font, stX+10, stY, color.White)
 
 				}
 			} else {
@@ -454,7 +459,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				subReturnMM := g.AllM.DS.ReturnToMMButtonImg.SubImage(image.Rect(g.AllM.DS.ReturnToMMButtonPlayer.CurrentFrameCoords()))
 				screen.DrawImage(subReturnMM.(*ebiten.Image), opForReturnToMMButton)
 
-				text.Draw(screen, "You Died", g.UI.WpBar.AmmoFont, stX+50, stY, color.White)
+				text.Draw(screen, "You Died", g.AllM.DS.Font, stX+50, stY, color.White)
 
 			}
 

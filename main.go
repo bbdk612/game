@@ -12,6 +12,7 @@ import (
 
 	"game/animatedobjects"
 	"game/gamemap"
+	"game/items"
 	"game/menu"
 	"game/ui"
 	"game/weapons"
@@ -235,7 +236,7 @@ func (g *Game) Update() error {
 							g.MH.Health = 6
 						}
 						if ebiten.IsKeyPressed(ebiten.KeyK) {
-							g.MH.Health = 0
+							g.MH.Health = g.MH.Health - 1
 						}
 						if g.GM.CurrentRoom.Chest != nil {
 							//fmt.Println("Chest good update: ", g.GM.CurrentRoom.Chest)
@@ -245,13 +246,37 @@ func (g *Game) Update() error {
 							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.Update(float32(1.0 / 60.0))
 						}
 						if g.GM.CurrentRoom.Chest != nil && (g.GM.CurrentRoom.Chest.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
-							g.GM.CurrentRoom.Chest.Open()
+							g.GM.CurrentRoom.ItemsOnFloor = append(g.GM.CurrentRoom.ItemsOnFloor, g.GM.CurrentRoom.Chest.Open())
 							g.MenuRoll = time.Now()
 						}
 						if g.GM.CurrentRoom.WayToNextLevel != nil && (g.GM.CurrentRoom.WayToNextLevel.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
 							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.Play("open")
 							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.OnLoop = func() {
 								animatedobjects.GoToNextLevel(g.AllM.VS)
+							}
+						}
+
+						if g.GM.CurrentRoom.ItemsOnFloor != nil {
+							itemsInRoom := false
+							for i := 0; i < len(g.GM.CurrentRoom.ItemsOnFloor); i++ {
+								if (g.GM.CurrentRoom.ItemsOnFloor[i] != nil) && (g.GM.CurrentRoom.ItemsOnFloor[i].InActiveArea(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
+									itemType, jsonpath := g.GM.CurrentRoom.ItemsOnFloor[i].PickUp()
+									Item := &items.ItemData{}
+									switch itemType {
+									case "heal":
+										Item = items.JsonFileDecodeItem(jsonpath)
+									}
+									if !(Item.Health+g.MH.Health > g.MH.MaxHealth) {
+										g.MH.Health = Item.Health + g.MH.Health
+										g.GM.CurrentRoom.ItemsOnFloor[i] = nil
+									}
+								}
+								if g.GM.CurrentRoom.ItemsOnFloor != nil {
+									itemsInRoom = true
+								}
+							}
+							if itemsInRoom {
+								g.GM.CurrentRoom.ItemsOnFloor = [](*items.Item){}
 							}
 						}
 					}
@@ -436,6 +461,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 						subWNL := g.GM.CurrentRoom.WayToNextLevel.WNLImage.SubImage(image.Rect(g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.CurrentFrameCoords()))
 						screen.DrawImage(subWNL.(*ebiten.Image), optionsForWNL)
 					}
+					//drawing items
+					//if g.GM.CurrentRoom.ItemsOnFloor != nil {
+					//	for i := 0; i < len(g.GM.CurrentRoom.ItemsOnFloor); i++ {
+					//		if g.GM.CurrentRoom.ItemsOnFloor[i] != nil {
+					//		}
+					//	}
+					//}
 				} else {
 					//VictoryScreen
 					stX, stY := g.AllM.VS.GetVictoryScreenStartCoordinate()
@@ -446,7 +478,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 					subGoNextLevel := g.AllM.VS.GoToNextLevelButtonImg.SubImage(image.Rect(g.AllM.VS.GoToNextLevelButtonPlayer.CurrentFrameCoords()))
 					screen.DrawImage(subGoNextLevel.(*ebiten.Image), opForGoNextLevelButton)
 
-					text.Draw(screen, fmt.Sprintf("You've reached level %d", g.LevelCounter), g.AllM.VS.Font, stX+10, stY, color.White)
+					text.Draw(screen, fmt.Sprintf("You've reached level %d", g.LevelCounter+1), g.AllM.VS.Font, stX+10, stY, color.White)
 
 				}
 			} else {

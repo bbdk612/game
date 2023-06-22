@@ -1,5 +1,12 @@
+[
 {
     "Name": "Small Heal",
     "ImagePath": "./assets/smallHeal.png",
     "Health": 1
+},
+{
+    "Name": "Medium Heal",
+    "ImagePath": "./assets/smallHeal.png",
+    "Health": 2
 }
+]

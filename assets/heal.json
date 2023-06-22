@@ -1,5 +1,6 @@
 {
-  "Name": "Small Heal",
-  "ImagePath": "./assets/healthchip.png",
-  "Health": 1
+    "Name": "Small Heal",
+    "ImagePath": "./assets/healthchip.png",
+    "Health": 1
 }
+

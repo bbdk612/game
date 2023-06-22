@@ -1,8 +1,8 @@
 package gamemap
 
 import (
-	"fmt"
 	"game/animatedobjects"
+	"game/items"
 	"math/rand"
 )
 
@@ -13,6 +13,7 @@ type GameRoom struct {
 	RoomIsCleaned    bool
 	Chest            *animatedobjects.Chest
 	WayToNextLevel   *animatedobjects.WayToNextlevel
+	ItemsOnFloor     []*items.Item
 	LeftDestination  *GameRoom
 	UpDestination    *GameRoom
 	RightDestination *GameRoom
@@ -48,8 +49,6 @@ func (GR *GameRoom) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOf
 	startRoomID := StartRoomsIDList[randstartroom]
 	Minimap[currentPointX][currentPointY] = startRoomID
 	for i := 0; i < numberOfRooms; i++ {
-		//fmt.Println(currentPointX)
-		//fmt.Println(currentPointY)
 		//Left potencial
 		if (currentPointX > 0) && (Minimap[currentPointX-1][currentPointY] == 0) {
 			potencialNeighbor := &Neighbors{
@@ -57,7 +56,6 @@ func (GR *GameRoom) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOf
 				Y: currentPointY,
 			}
 			potencial = append(potencial, potencialNeighbor)
-			//fmt.Println("Left")
 		}
 		//Up potencial
 		if (currentPointY < 9) && (Minimap[currentPointX][currentPointY+1] == 0) {
@@ -66,7 +64,6 @@ func (GR *GameRoom) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOf
 				Y: currentPointY + 1,
 			}
 			potencial = append(potencial, potencialNeighbor)
-			//fmt.Println("Up")
 		}
 		//Right potencial
 		if (currentPointX < 9) && (Minimap[currentPointX+1][currentPointY] == 0) {
@@ -75,7 +72,6 @@ func (GR *GameRoom) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOf
 				Y: currentPointY,
 			}
 			potencial = append(potencial, potencialNeighbor)
-			//fmt.Println("Right")
 		}
 		//Down potencial
 		if (currentPointY > 0) && (Minimap[currentPointX][currentPointY-1] == 0) {
@@ -84,11 +80,8 @@ func (GR *GameRoom) GenerateMap(numberOfCommonRooms, numberOfBossRooms, numberOf
 				Y: currentPointY - 1,
 			}
 			potencial = append(potencial, potencialNeighbor)
-			//fmt.Println("Down")
 		}
-		//fmt.Println(IDList)
 		//Choose New Point
-		fmt.Println(len(potencial))
 		rand1 := rand.Intn(len(potencial)-2) + 1
 		currentPointX = potencial[rand1].X
 		currentPointY = potencial[rand1].Y

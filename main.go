@@ -52,6 +52,8 @@ func (g *Game) startGame() {
 
 	g.MH.CurrentWeapon = 0
 	g.MH.Weapons[0], err = weapons.InitNewWeapon(mhX+8, mhY+8, "./assets/gun.json")
+	g.MH.Weapons[1], err = weapons.InitNewWeapon(mhX+8, mhY+8, "./assets/shotgun.json")
+	g.MH.Weapons[2], err = weapons.InitNewWeapon(mhX+8, mhY+8, "./assets/rifle.json")
 	if err != nil {
 		fmt.Println(err)
 	}

@@ -69,6 +69,7 @@ func (ms *Monster) CanIGo(direction Vector, chunk []int, coords [][]float64) (bo
 		}
 	}
 	if direction.x < 0 {
+		ms.AsePlayer.Play("left")
 		if int(ms.Position.x)%16 != 0 {
 			if int(ms.Position.y)%16 != 0 {
 				if (chunk[Tile] == 1) && (chunk[Tile+16] == 1) {
@@ -86,6 +87,7 @@ func (ms *Monster) CanIGo(direction Vector, chunk []int, coords [][]float64) (bo
 			MoveX = true
 		}
 	} else if direction.x > 0 {
+		ms.AsePlayer.Play("right")
 		if int(ms.Position.y)%16 != 0 {
 			if (chunk[Tile+1] == 1) && (chunk[Tile+1+16] == 1) {
 				MoveX = true
@@ -135,7 +137,7 @@ func (ms *Monster) Actions(MHx, MHy float64, chunk []int, Coords [][]float64) []
 	direction := Vector{MHx - ms.Position.x, MHy - ms.Position.y}
 	direction.Normalize()
 
-	ms.AsePlayer.Play("walk")
+	ms.AsePlayer.Play("left")
 	if ms.SeeMH {
 		MoveX, MoveY := ms.CanIGo(direction, chunk, Coords)
 		dist := distance(ms.Position.x, MHx, ms.Position.y, MHy)
@@ -173,7 +175,7 @@ func InitMonsters(health int, tilesize int, tilecoordinate int, xCount int) (*Mo
 		SeeMH:    false,
 		Step:     2,
 		Position: Vector{x: x, y: y},
-		Sprite:   goaseprite.Open("./assets/mainhero.json"),
+		Sprite:   goaseprite.Open("./assets/Enemy.json"),
 		Route: []Vector{
 			{x: float64(rand.Intn(208-32) + 32), y: float64(rand.Intn(208-32) + 32)},
 			{x: float64(rand.Intn(208-32) + 32), y: float64(rand.Intn(208-32) + 32)},

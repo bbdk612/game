@@ -81,10 +81,10 @@ func (g *Game) Update() error {
 					if g.MH.Health <= 0 {
 						g.AllM.DS.InDeathScreen = true
 					}
-					if !(g.MS == nil) {
+					if g.MS != nil {
 						MonsterInRoom := false
 						for i := 0; i < len(g.MS); i++ {
-							if !(g.MS[i] == nil) {
+							if g.MS[i] != nil {
 								MonsterInRoom = true
 								break
 							}
@@ -92,7 +92,7 @@ func (g *Game) Update() error {
 						if !MonsterInRoom && !g.GM.CurrentRoom.RoomIsCleaned {
 							g.MS = [](*animatedobjects.Monster){}
 							g.GM.CurrentRoom.RoomIsCleaned = true
-							if !(g.GM.CurrentRoom.WayToNextLevel == nil) {
+							if g.GM.CurrentRoom.WayToNextLevel != nil {
 								g.GM.CurrentRoom.WayToNextLevel.SpawnWayNextLevel()
 							}
 							g.GM.CurrentRoom.ChangeDoorsState(g.GM.CurrentRoomTiles, 1)
@@ -157,7 +157,7 @@ func (g *Game) Update() error {
 
 						if IsMoveKeyPressed() {
 							if ebiten.IsKeyPressed(ebiten.KeyA) {
-								g.MH.AsePlayer.Play("walk")
+								g.MH.AsePlayer.Play("walkleft")
 								if g.MH.GetTileCoor()%16 == 0 {
 									g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("left")
 									g.Bullets = [](*weapons.Bullet){}
@@ -167,7 +167,7 @@ func (g *Game) Update() error {
 								}
 							}
 							if ebiten.IsKeyPressed(ebiten.KeyD) {
-								g.MH.AsePlayer.Play("walk")
+								g.MH.AsePlayer.Play("walkright")
 								if (g.MH.GetTileCoor()+1)%16 == 0 {
 									g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("right")
 									g.Bullets = [](*weapons.Bullet){}
@@ -177,7 +177,6 @@ func (g *Game) Update() error {
 								}
 							}
 							if ebiten.IsKeyPressed(ebiten.KeyW) {
-								g.MH.AsePlayer.Play("walk")
 								if _, y := g.MH.GetCoordinates(); y == 0 {
 									g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("top")
 									g.Bullets = [](*weapons.Bullet){}
@@ -188,7 +187,6 @@ func (g *Game) Update() error {
 								}
 							}
 							if ebiten.IsKeyPressed(ebiten.KeyS) {
-								g.MH.AsePlayer.Play("walk")
 								if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
 									g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("down")
 									g.Bullets = [](*weapons.Bullet){}
@@ -199,7 +197,7 @@ func (g *Game) Update() error {
 								}
 							}
 						} else {
-							g.MH.AsePlayer.Play("stop")
+							g.MH.AsePlayer.Play("wait")
 						}
 						if ebiten.IsKeyPressed(ebiten.KeyR) {
 							g.MH.GetCurrentWeapon().Reload()
@@ -239,15 +237,22 @@ func (g *Game) Update() error {
 						if ebiten.IsKeyPressed(ebiten.KeyK) {
 							g.MH.Health = 0
 						}
-						if !(g.GM.CurrentRoom.Chest == nil) {
+						if g.GM.CurrentRoom.Chest != nil {
 							//fmt.Println("Chest good update: ", g.GM.CurrentRoom.Chest)
-							g.GM.CurrentRoom.Chest.ChestPlayer.Update(1 / 60)
+							g.GM.CurrentRoom.Chest.ChestPlayer.Update(float32(1.0 / 60.0))
 						}
-						if !(g.GM.CurrentRoom.Chest == nil) && (g.GM.CurrentRoom.Chest.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
+						if g.GM.CurrentRoom.WayToNextLevel != nil {
+							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.Update(float32(1.0 / 60.0))
+						}
+						if g.GM.CurrentRoom.Chest != nil && (g.GM.CurrentRoom.Chest.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
 							g.GM.CurrentRoom.Chest.Open()
+							g.MenuRoll = time.Now()
 						}
-						if !(g.GM.CurrentRoom.WayToNextLevel == nil) && (g.GM.CurrentRoom.WayToNextLevel.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
-							animatedobjects.GoToNextLevel(g.AllM.VS)
+						if g.GM.CurrentRoom.WayToNextLevel != nil && (g.GM.CurrentRoom.WayToNextLevel.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
+							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.Play("open")
+							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.OnLoop = func() {
+								animatedobjects.GoToNextLevel(g.AllM.VS)
+							}
 						}
 					}
 				} else {
@@ -409,7 +414,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 						}
 					}
 					//drawing chest
-					if !(g.GM.CurrentRoom.Chest == nil) {
+					if g.GM.CurrentRoom.Chest != nil {
 						chestX, chestY := g.GM.CurrentRoom.Chest.GetCoordinates()
 						optionsForChest := &ebiten.DrawImageOptions{}
 
@@ -418,7 +423,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 						screen.DrawImage(subChest.(*ebiten.Image), optionsForChest)
 					}
 					//drawing way to nest level
-					if !(g.GM.CurrentRoom.WayToNextLevel == nil) {
+					if g.GM.CurrentRoom.WayToNextLevel != nil {
 						wnlX, wnlY := g.GM.CurrentRoom.WayToNextLevel.GetCoordinates()
 						optionsForWNL := &ebiten.DrawImageOptions{}
 
@@ -436,7 +441,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 					subGoNextLevel := g.AllM.VS.GoToNextLevelButtonImg.SubImage(image.Rect(g.AllM.VS.GoToNextLevelButtonPlayer.CurrentFrameCoords()))
 					screen.DrawImage(subGoNextLevel.(*ebiten.Image), opForGoNextLevelButton)
 
-					text.Draw(screen, "You go to next Level", g.UI.WpBar.AmmoFont, stX+50, stY, color.White)
+					text.Draw(screen, fmt.Sprintf("You've reached level %d", g.LevelCounter), g.UI.WpBar.AmmoFont, stX+10, stY, color.White)
 
 				}
 			} else {
@@ -555,7 +560,7 @@ func main() {
 	ebiten.SetWindowSize(256*2, 256*2)
 	ebiten.SetWindowTitle("test of Gamemap")
 	g.MH.AsePlayer.PlaySpeed = 0.5
-	g.MH.AsePlayer.Play("stop")
+	g.MH.AsePlayer.Play("wait")
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
 	}

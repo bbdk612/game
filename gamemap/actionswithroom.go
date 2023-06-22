@@ -27,6 +27,7 @@ func SetCurrentRoom(CurrentRoom *GameRoom) (*GameRoom, *RoomData, []int, []*anim
 		if err != nil {
 			log.Fatal(err)
 		}
+		ch.ChestPlayer.Play("wait")
 		CurrentRoom.Chest = ch
 	}
 	if RD.WeHaveWayToNextLevel {
@@ -34,11 +35,12 @@ func SetCurrentRoom(CurrentRoom *GameRoom) (*GameRoom, *RoomData, []int, []*anim
 		if err != nil {
 			log.Fatal(err)
 		}
+		wnl.WNLPlayer.Play("wait")
 		CurrentRoom.WayToNextLevel = wnl
 	}
 	if !(CurrentRoom.RoomIsCleaned) {
 		if RD.NumberOfMonsters > 0 {
-			//ListOfMonsters = SpawnMonsters(RD)
+			ListOfMonsters = SpawnMonsters(RD)
 			CurrentRoomTiles = CurrentRoom.ChangeDoorsState(CurrentRoomTiles, 4)
 		} else {
 			CurrentRoom.RoomIsCleaned = true
@@ -55,7 +57,7 @@ func SpawnMonsters(RD *RoomData) []*animatedobjects.Monster {
 		if er != nil {
 			log.Fatal(er)
 		}
-		ms.AsePlayer.Play("stop")
+		ms.AsePlayer.Play("left")
 		ListOfMonsters = append(ListOfMonsters, ms)
 	}
 	return ListOfMonsters

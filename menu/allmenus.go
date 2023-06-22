@@ -29,7 +29,7 @@ func InitAllMenus() (*AllMenus, error) {
 		log.Fatal(err)
 
 	}
-	victoryS, err := InitVictoryScreen("./assets/exitToMM.json")
+	victoryS, err := InitVictoryScreen("./assets/gonext.json")
 
 	if err != nil {
 		log.Fatal(err)

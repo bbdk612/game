@@ -22,9 +22,8 @@ func (wnl *WayToNextlevel) SpawnWayNextLevel() {
 	wnl.IsSpawned = true
 }
 
-func GoToNextLevel(vs *menu.VictoryScreen) *menu.VictoryScreen {
+func GoToNextLevel(vs *menu.VictoryScreen) {
 	vs.InVictoryScreen = true
-	return vs
 }
 func (wnl *WayToNextlevel) GetCoordinates() (int, int) {
 	var x int = ((wnl.tilecoordinate % 16) * 16)

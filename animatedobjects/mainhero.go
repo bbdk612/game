@@ -201,7 +201,7 @@ func InitMainHero(tilecoordinate int, tilesize int, xCount int, step int) (*Main
 	}
 
 	mainhero := &MainHero{
-		Sprite:         goaseprite.Open("./assets/mainhero.json"),
+		Sprite:         goaseprite.Open("./assets/mainheroNew.json"),
 		tilecoordinate: tilecoordinate,
 		x:              x,
 		y:              y,

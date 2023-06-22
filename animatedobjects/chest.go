@@ -44,7 +44,7 @@ func (ch *Chest) Open() *items.Item {
 		var jsonPath string
 		switch r {
 		case "heal":
-			jsonPath = "./items/smallHeal.json"
+			jsonPath = "./assets/heal.json"
 		case "gun":
 			jsonPath = "./assets/gun.json"
 		case "shotgun":

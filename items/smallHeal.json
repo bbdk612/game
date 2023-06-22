@@ -1,12 +1,12 @@
 [
-{
+  {
     "Name": "Small Heal",
-    "ImagePath": "./assets/smallHeal.png",
+    "ImagePath": "./assets/healchip.png",
     "Health": 1
-},
-{
+  },
+  {
     "Name": "Medium Heal",
-    "ImagePath": "./assets/smallHeal.png",
+    "ImagePath": "./assets/healchip.png",
     "Health": 2
-}
+  }
 ]

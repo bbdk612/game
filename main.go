@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"math"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -106,7 +107,10 @@ func (g *Game) Update() error {
 						if monster != nil {
 							MSx, MSy := monster.GetCoordinates()
 							Coordinates = append(Coordinates, []float64{MSx, MSy})
+						} else {
+							Coordinates = append(Coordinates, []float64{0, 0})
 						}
+
 					}
 					currTime := time.Now()
 					dur, err := time.ParseDuration("300ms")
@@ -116,30 +120,32 @@ func (g *Game) Update() error {
 					for i, bullet := range g.Bullets {
 						if bullet != nil {
 							bullX, bullY := bullet.GetCoordinates()
+							fmt.Println(Coordinates)
+							fmt.Println(g.MS)
 							for j, coordinate := range Coordinates {
-								if (bullX >= coordinate[0]) && (bullY >= coordinate[1]) {
-									if (bullX <= coordinate[0]+16) && (bullY <= coordinate[1]+16) {
-										var remBull bool = false
-										if j == 0 {
-											g.MH.Damage()
-											remBull = true
+								fmt.Println(len(coordinate))
+								distance := math.Pow(float64(((bullX+2)-(coordinate[0]+8))), 2) + math.Pow(float64((bullY+2)-(coordinate[1]+8)), 2)
+								if distance <= 64 {
+									var remBull bool = false
+									if j == 0 {
+										g.MH.Damage()
+										remBull = true
 
-										} else if g.MS[j-1] != nil {
-											fmt.Println(bullet.Damage)
-											g.MS[j-1].Damage(bullet.Damage)
-											remBull = true
-											if g.MS[j-1].Health <= 0 {
-												g.MS[j-1] = nil
-											}
+									} else if g.MS[j-1] != nil {
+										fmt.Println(bullet.Damage)
+										g.MS[j-1].Damage(bullet.Damage)
+										remBull = true
+										if g.MS[j-1].Health <= 0 {
+											g.MS[j-1] = nil
 										}
+									}
 
-										if remBull {
-											bullet = nil
-											g.Bullets[i] = nil
-										}
-
+									if remBull {
+										bullet = nil
+										g.Bullets[i] = nil
 										break
 									}
+
 								}
 								if g.GM.CurrentRoomTiles[bullet.GetCurrentTile(16)] != 1 {
 									bullet = nil
@@ -147,6 +153,7 @@ func (g *Game) Update() error {
 									break
 								}
 							}
+
 						}
 					}
 					rlbck := dur.Milliseconds()

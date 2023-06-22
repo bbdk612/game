@@ -1,37 +1,86 @@
-{ "frames": {
-   "bullet 0.aseprite": {
-    "frame": { "x": 0, "y": 0, "w": 4, "h": 4 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 4, "h": 4 },
-    "sourceSize": { "w": 4, "h": 4 },
-    "duration": 100
-   },
-   "bullet 1.aseprite": {
-    "frame": { "x": 4, "y": 0, "w": 4, "h": 4 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 4, "h": 4 },
-    "sourceSize": { "w": 4, "h": 4 },
-    "duration": 100
-   }
- },
- "meta": {
-  "app": "http://www.aseprite.org/",
-  "version": "1.2.40-dev",
-  "image": "./assets/bullet.png",
-  "format": "RGBA8888",
-  "size": { "w": 8, "h": 4 },
-  "scale": "1",
-  "frameTags": [
-   { "name": "start", "from": 0, "to": 0, "direction": "forward" },
-   { "name": "fly", "from": 1, "to": 1, "direction": "forward" }
-  ],
-  "layers": [
-   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" },
-   { "name": "Layer 2", "opacity": 255, "blendMode": "normal" }
-  ],
-  "slices": [
-  ]
- }
+{
+  "frames": {
+    "Sprite-0002 0.": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 5
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 5
+      },
+      "sourceSize": {
+        "w": 5,
+        "h": 5
+      },
+      "duration": 100
+    },
+    "Sprite-0002 1.": {
+      "frame": {
+        "x": 5,
+        "y": 0,
+        "w": 5,
+        "h": 5
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 5
+      },
+      "sourceSize": {
+        "w": 5,
+        "h": 5
+      },
+      "duration": 100
+    }
+  },
+  "meta": {
+    "app": "https://www.aseprite.org/",
+    "version": "1.3-rc2-dev",
+    "image": "./assets/Bullet.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 10,
+      "h": 5
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "fly",
+        "from": 0,
+        "to": 0,
+        "direction": "forward",
+        "color": "#000000ff"
+      },
+      {
+        "name": "start",
+        "from": 1,
+        "to": 1,
+        "direction": "forward",
+        "color": "#000000ff"
+      }
+    ],
+    "layers": [
+      {
+        "name": "Layer 1",
+        "opacity": 255,
+        "blendMode": "normal"
+      },
+      {
+        "name": "Layer 2",
+        "opacity": 255,
+        "blendMode": "normal"
+      }
+    ],
+    "slices": []
+  }
 }

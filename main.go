@@ -120,10 +120,7 @@ func (g *Game) Update() error {
 					for i, bullet := range g.Bullets {
 						if bullet != nil {
 							bullX, bullY := bullet.GetCoordinates()
-							fmt.Println(Coordinates)
-							fmt.Println(g.MS)
 							for j, coordinate := range Coordinates {
-								fmt.Println(len(coordinate))
 								distance := math.Pow(float64(((bullX+2)-(coordinate[0]+8))), 2) + math.Pow(float64((bullY+2)-(coordinate[1]+8)), 2)
 								if distance <= 64 {
 									var remBull bool = false
@@ -132,7 +129,6 @@ func (g *Game) Update() error {
 										remBull = true
 
 									} else if g.MS[j-1] != nil {
-										fmt.Println(bullet.Damage)
 										g.MS[j-1].Damage(bullet.Damage)
 										remBull = true
 										if g.MS[j-1].Health <= 0 {
@@ -252,39 +248,60 @@ func (g *Game) Update() error {
 						if g.GM.CurrentRoom.WayToNextLevel != nil {
 							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.Update(float32(1.0 / 60.0))
 						}
+						//opening chest
 						if g.GM.CurrentRoom.Chest != nil && (g.GM.CurrentRoom.Chest.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
 							g.GM.CurrentRoom.ItemsOnFloor = append(g.GM.CurrentRoom.ItemsOnFloor, g.GM.CurrentRoom.Chest.Open())
 							g.MenuRoll = time.Now()
 						}
-						if g.GM.CurrentRoom.WayToNextLevel != nil && (g.GM.CurrentRoom.WayToNextLevel.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
+						//entering next level
+						if g.GM.CurrentRoom.WayToNextLevel != nil && (g.GM.CurrentRoom.WayToNextLevel.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) && (g.GM.CurrentRoom.WayToNextLevel.IsSpawned) {
 							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.Play("open")
 							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.OnLoop = func() {
 								animatedobjects.GoToNextLevel(g.AllM.VS)
 							}
 						}
-
+						//picking-up items
 						if g.GM.CurrentRoom.ItemsOnFloor != nil {
 							itemsInRoom := false
 							for i := 0; i < len(g.GM.CurrentRoom.ItemsOnFloor); i++ {
-								if (g.GM.CurrentRoom.ItemsOnFloor[i] != nil) && (g.GM.CurrentRoom.ItemsOnFloor[i].InActiveArea(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
+								if (g.GM.CurrentRoom.ItemsOnFloor[i] != nil) && (g.GM.CurrentRoom.ItemsOnFloor[i].InActiveArea(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyQ)) {
 									itemType, jsonpath := g.GM.CurrentRoom.ItemsOnFloor[i].PickUp()
-									Item := &items.ItemData{}
 									switch itemType {
 									case "heal":
-										Item = items.JsonFileDecodeItem(jsonpath)
-									}
-									if !(Item.Health+g.MH.Health > g.MH.MaxHealth) {
-										g.MH.Health = Item.Health + g.MH.Health
+										if g.MH.Health < g.MH.MaxHealth {
+											Item := &items.ItemData{}
+											Item = items.JsonFileDecodeItem(jsonpath)
+											g.MH.Health = Item.Health + g.MH.Health
+											g.GM.CurrentRoom.ItemsOnFloor[i] = nil
+										}
+									case "gun":
+										mhX, mhY := g.MH.GetCoordinates()
+										g.MH.Weapons[0], err = weapons.InitNewWeapon(mhX+8, mhY+8, jsonpath)
+										g.GM.CurrentRoom.ItemsOnFloor[i] = nil
+									case "shotgun":
+										mhX, mhY := g.MH.GetCoordinates()
+										g.MH.Weapons[1], err = weapons.InitNewWeapon(mhX+8, mhY+8, jsonpath)
 										g.GM.CurrentRoom.ItemsOnFloor[i] = nil
 									}
 								}
-								if g.GM.CurrentRoom.ItemsOnFloor != nil {
+								if g.GM.CurrentRoom.ItemsOnFloor[i] != nil {
 									itemsInRoom = true
 								}
 							}
-							if itemsInRoom {
-								g.GM.CurrentRoom.ItemsOnFloor = [](*items.Item){}
+							if !itemsInRoom {
+								g.GM.CurrentRoom.ItemsOnFloor = nil
 							}
+						}
+						//switchig weapon
+						if (ebiten.IsKeyPressed(ebiten.Key1)) && g.MH.Weapons[0] != nil {
+							mhX, mhY := g.MH.GetCoordinates()
+							g.MH.Weapons[0].ChangePosition(mhX+8, mhY+8)
+							g.MH.CurrentWeapon = 0
+						}
+						if ebiten.IsKeyPressed(ebiten.Key2) && g.MH.Weapons[1] != nil {
+							mhX, mhY := g.MH.GetCoordinates()
+							g.MH.Weapons[1].ChangePosition(mhX+8, mhY+8)
+							g.MH.CurrentWeapon = 1
 						}
 					}
 				} else {
@@ -460,7 +477,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 						screen.DrawImage(subChest.(*ebiten.Image), optionsForChest)
 					}
 					//drawing way to nest level
-					if g.GM.CurrentRoom.WayToNextLevel != nil {
+					if g.GM.CurrentRoom.WayToNextLevel != nil && (g.GM.CurrentRoom.WayToNextLevel.IsSpawned) {
 						wnlX, wnlY := g.GM.CurrentRoom.WayToNextLevel.GetCoordinates()
 						optionsForWNL := &ebiten.DrawImageOptions{}
 
@@ -469,12 +486,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 						screen.DrawImage(subWNL.(*ebiten.Image), optionsForWNL)
 					}
 					//drawing items
-					//if g.GM.CurrentRoom.ItemsOnFloor != nil {
-					//	for i := 0; i < len(g.GM.CurrentRoom.ItemsOnFloor); i++ {
-					//		if g.GM.CurrentRoom.ItemsOnFloor[i] != nil {
-					//		}
-					//	}
-					//}
+					if g.GM.CurrentRoom.ItemsOnFloor != nil {
+						for i := 0; i < len(g.GM.CurrentRoom.ItemsOnFloor); i++ {
+							if g.GM.CurrentRoom.ItemsOnFloor[i] != nil {
+								optionsForItem := &ebiten.DrawImageOptions{}
+								optionsForItem.GeoM.Translate(g.GM.CurrentRoom.ItemsOnFloor[i].X, g.GM.CurrentRoom.ItemsOnFloor[i].Y)
+								screen.DrawImage(g.GM.CurrentRoom.ItemsOnFloor[i].Image, optionsForItem)
+							}
+						}
+					}
 				} else {
 					//VictoryScreen
 					stX, stY := g.AllM.VS.GetVictoryScreenStartCoordinate()

@@ -21,7 +21,7 @@ type MainHero struct {
 	Image          *ebiten.Image
 	Weapons        [2](*weapons.Weapon)
 	step           int
-	currentWeapon  int
+	CurrentWeapon  int
 }
 
 func (mh *MainHero) calculateTilecoordinate(tilesize int) {
@@ -139,7 +139,7 @@ func (mh *MainHero) CanIGo(direction string, chunk []int) bool {
 }
 
 func (mh *MainHero) GetCurrentWeapon() *weapons.Weapon {
-	return mh.Weapons[mh.currentWeapon]
+	return mh.Weapons[mh.CurrentWeapon]
 }
 
 func (mh *MainHero) Move(direction string, chunk []int, coords [][]float64) {
@@ -195,7 +195,7 @@ func InitMainHero(tilecoordinate int, tilesize int, xCount int, step int) (*Main
 
 	startWeapon, err := weapons.InitNewWeapon(x+8, y+8, "./weapons/assets/shotgun.json")
 	var weapons [2](*weapons.Weapon)
-	weapons[0] = startWeapon
+	weapons[1] = startWeapon
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +206,7 @@ func InitMainHero(tilecoordinate int, tilesize int, xCount int, step int) (*Main
 		x:              x,
 		y:              y,
 		Weapons:        weapons,
-		currentWeapon:  0,
+		CurrentWeapon:  1,
 		step:           step,
 		MaxHealth:      6,
 	}

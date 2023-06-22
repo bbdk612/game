@@ -40,8 +40,7 @@ func (ch *Chest) Open() *items.Item {
 		ch.ChestPlayer.OnLoop = func() {
 			ch.ChestPlayer.Play("stop")
 		}
-		//r := ch.randomItem()
-		r := "heal"
+		r := ch.randomItem()
 		var jsonPath string
 		switch r {
 		case "heal":

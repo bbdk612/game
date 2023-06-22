@@ -21,15 +21,14 @@ import (
 
 // Game struct contains a game objects
 type Game struct {
-	Bullets      [](*weapons.Bullet)
-	GM           *gamemap.GameMap
-	MH           *animatedobjects.MainHero
-	MS           [](*animatedobjects.Monster)
-	UI           *ui.UI
-	AllM         *menu.AllMenus
-	MenuRoll     time.Time
-	Enemies      [](*animatedobjects.Monster)
-	LevelCounter int
+	Bullets  [](*weapons.Bullet)
+	GM       *gamemap.GameMap
+	MH       *animatedobjects.MainHero
+	MS       [](*animatedobjects.Monster)
+	UI       *ui.UI
+	AllM     *menu.AllMenus
+	MenuRoll time.Time
+	Enemies  [](*animatedobjects.Monster)
 }
 
 // this function do all things for start game

@@ -11,7 +11,7 @@ type UI struct {
 	HpBar *HealthBar
 	WpBar *WeaponBar
 	MiniM *MiniMap
-	LB    *LevelBar
+	PB    *ProgressBar
 }
 
 func DecodeImage(imagePath string) (*ebiten.Image, error) {
@@ -45,13 +45,16 @@ func InitUI() (*UI, error) {
 		return nil, err
 	}
 
-	lb, err := InitLevelBar()
+	pb, err := InitProgressBar()
 
+	if err != nil {
+		return nil, err
+	}
 	useri := &UI{
 		HpBar: hpBar,
 		WpBar: wpBar,
 		MiniM: miniM,
-		LB:    lb,
+		PB:    pb,
 	}
 	return useri, nil
 }

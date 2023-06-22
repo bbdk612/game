@@ -19,6 +19,8 @@
         "Id":301,
         "NumberOfMonsters":1,
         "MonsterStartTiles":[168],
+        "MonsterType":["Boss"],
+        "MonsterScore":[500],
         "WeHaveWayToNextLevel": true
         },
         {
@@ -41,6 +43,8 @@
         "Id":302,
         "NumberOfMonsters":1,
         "MonsterStartTiles":[168],
+        "MonsterType":["Boss"],
+        "MonsterScore":[500],
         "WeHaveWayToNextLevel": true
         }
 ]

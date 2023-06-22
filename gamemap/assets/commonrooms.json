@@ -17,8 +17,10 @@
              0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
              0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         "Id":101,
-        "NumberOfMonsters":2,
-        "MonsterStartTiles":[120,152]
+        "NumberOfMonsters":3,
+        "MonsterStartTiles":[120,152,104],
+        "MonsterType":["CommonEnemy","CommonEnemy","CommonEnemy"],
+        "MonsterScore":[100,100,100]
         },
         {
         "Data":[0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,
@@ -38,8 +40,10 @@
              0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
              0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         "Id":102,
-        "NumberOfMonsters":2,
-        "MonsterStartTiles":[35,204]
+        "NumberOfMonsters":3,
+        "MonsterStartTiles":[35,204,119],
+        "MonsterType":["CommonEnemy","CommonEnemy","CommonEnemy"],
+        "MonsterScore":[100,100,100]
         },
         {
         "Data":[0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,
@@ -59,8 +63,10 @@
              0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
              0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         "Id":103,
-        "NumberOfMonsters":2,
-        "MonsterStartTiles":[35,220]
+        "NumberOfMonsters":3,
+        "MonsterStartTiles":[35,220,116],
+        "MonsterType":["CommonEnemy","CommonEnemy","CommonEnemy"],
+        "MonsterScore":[100,100,100]
         },
         {
         "Data":[0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,
@@ -80,7 +86,9 @@
              0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
              0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         "Id":104,
-        "NumberOfMonsters":2,
-        "MonsterStartTiles":[35,220]
+        "NumberOfMonsters":3,
+        "MonsterStartTiles":[35,220,119],
+        "MonsterType":["CommonEnemy","CommonEnemy","CommonEnemy"],
+        "MonsterScore":[100,100,100]
         }
 ]

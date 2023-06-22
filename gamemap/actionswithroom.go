@@ -13,6 +13,8 @@ type RoomData struct {
 	Id                   int
 	NumberOfMonsters     int
 	MonsterStartTiles    []int
+	MonsterType          []string
+	MonsterScore         []int
 	WeHaveChest          bool
 	WeHaveWayToNextLevel bool
 }
@@ -53,7 +55,7 @@ func SpawnMonsters(RD *RoomData) []*animatedobjects.Monster {
 	ListOfMonsters := [](*animatedobjects.Monster){}
 	ListOfMonsters = nil
 	for i := 0; i < RD.NumberOfMonsters; i++ {
-		ms, er := animatedobjects.InitMonsters(RD.MonsterStartTiles[i])
+		ms, er := animatedobjects.InitMonsters(RD.MonsterStartTiles[i], RD.MonsterType[i], RD.MonsterScore[i])
 		if er != nil {
 			log.Fatal(er)
 		}

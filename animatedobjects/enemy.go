@@ -166,11 +166,23 @@ func distance(x1, x2, y1, y2 float64) float64 {
 	return dist
 }
 
-func InitMonsters(health int, tilesize int, tilecoordinate int, xCount int, sprite string, points int) (*Monster, error) {
+func InitMonsters(tilecoordinate int, EnemyType string, points int) (*Monster, error) {
 
-	var x float64 = float64((tilecoordinate % xCount) * tilesize)
-	var y float64 = float64((tilecoordinate / xCount) * tilesize)
-	weapon, err := weapons.InitNewWeapon(int(x)+8, int(y)+8, "./weapons/assets/enemy.json")
+	var x float64 = float64((tilecoordinate % 16) * 16)
+	var y float64 = float64((tilecoordinate / 16) * 16)
+	var sprite string
+	var health int
+	var weapon *weapons.Weapon
+	switch EnemyType {
+	case "CommonEnemy":
+		weapon, _ = weapons.InitNewWeapon(int(x)+8, int(y)+8, "./weapons/assets/enemy.json")
+		sprite = "./assets/Enemy.json"
+		health = 100
+	case "Boss":
+		weapon, _ = weapons.InitNewWeapon(int(x)+8, int(y)+8, "./assets/shotgun.json")
+		sprite = "./assets/Boss.json"
+		health = 300
+	}
 	weapon.CurrentAmmo = int(math.Inf(1))
 	monster := &Monster{
 		SeeMH:    false,

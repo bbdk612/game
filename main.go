@@ -43,7 +43,7 @@ func (g *Game) startGame() {
 	g.MS = [](*animatedobjects.Monster){}
 	g.Bullets = [](*weapons.Bullet){}
 	//set main hero propertiesgo
-	g.LevelCounter = 1
+	g.UI.PB.LevelCounter = 1
 	g.MH.Health = g.MH.MaxHealth
 	g.MenuRoll = time.Now()
 }
@@ -57,7 +57,7 @@ func (g *Game) GenerateNextLevel() {
 	g.GM.CurrentRoomTiles = g.GM.CurrentRoom.DeleteDoors(g.GM.CurrentRoomTiles)
 	g.MS = [](*animatedobjects.Monster){}
 	g.Bullets = [](*weapons.Bullet){}
-	g.LevelCounter = g.LevelCounter + 1
+	g.UI.PB.LevelCounter = g.UI.PB.LevelCounter + 1
 	g.MenuRoll = time.Now()
 }
 
@@ -127,6 +127,7 @@ func (g *Game) Update() error {
 										g.MS[j-1].Damage(bullet.Damage)
 										remBull = true
 										if g.MS[j-1].Health <= 0 {
+											g.UI.PB.ScoreCounter += g.MS[j-1].Points
 											g.MS[j-1] = nil
 										}
 									}
@@ -249,7 +250,6 @@ func (g *Game) Update() error {
 						if g.GM.CurrentRoom.WayToNextLevel != nil {
 							g.GM.CurrentRoom.WayToNextLevel.WNLPlayer.Update(float32(1.0 / 60.0))
 						}
-						//opening chest
 
 						//entering next level
 						if g.GM.CurrentRoom.ItemsOnFloor != nil {
@@ -284,6 +284,7 @@ func (g *Game) Update() error {
 								g.GM.CurrentRoom.ItemsOnFloor = nil
 							}
 						}
+						//opening chest
 						if g.GM.CurrentRoom.Chest != nil && (g.GM.CurrentRoom.Chest.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
 							g.GM.CurrentRoom.ItemsOnFloor = append(g.GM.CurrentRoom.ItemsOnFloor, g.GM.CurrentRoom.Chest.Open())
 							g.MenuRoll = time.Now()
@@ -444,19 +445,22 @@ func (g *Game) Draw(screen *ebiten.Image) {
 					opHPBar := &ebiten.DrawImageOptions{}
 					opHPBar.GeoM.Translate(float64(hpbX), float64(hpbY))
 					for i := 0; i < g.MH.Health; i++ {
-						opHPBar.GeoM.Translate(float64(10), float64(0))
 						screen.DrawImage(g.UI.HpBar.Image, opHPBar)
+						opHPBar.GeoM.Translate(float64(10), float64(0))
 					}
 					//WeaponBar
 					wpbX, wpbY := g.UI.WpBar.GetWpbStartCoordinate()
 					text.Draw(screen, g.UI.WpBar.GetAmmo(g.MH.GetCurrentWeapon().GetAmmo()), g.UI.WpBar.AmmoFont, wpbX, wpbY, color.White)
 
-					// Level Bar
+					// Progress Bar
 
-					lbx, lby := g.UI.LB.GetCoordinates()
-					text.Draw(screen, g.UI.LB.Magic(g.LevelCounter), g.UI.LB.Font, lbx, lby, color.White)
-
+					lvlx, lvly := g.UI.PB.GetLevelCoordinates()
+					text.Draw(screen, g.UI.PB.GetLevel(), g.UI.PB.Font, lvlx, lvly, color.White)
+					scrx, scry := g.UI.PB.GetScoreCoordinates()
+					text.Draw(screen, g.UI.PB.GetScore(), g.UI.PB.Font, scrx, scry, color.White)
+					// weapon bar
 					text.Draw(screen, g.UI.WpBar.GetAmmo(g.MH.GetCurrentWeapon().GetAmmo()), g.UI.WpBar.AmmoFont, wpbX, wpbY, color.White)
+					//enemies bar
 					for _, monster := range g.MS {
 						if monster != nil {
 							optionsForMonster := &ebiten.DrawImageOptions{}
@@ -510,7 +514,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 					subGoNextLevel := g.AllM.VS.GoToNextLevelButtonImg.SubImage(image.Rect(g.AllM.VS.GoToNextLevelButtonPlayer.CurrentFrameCoords()))
 					screen.DrawImage(subGoNextLevel.(*ebiten.Image), opForGoNextLevelButton)
 
-					text.Draw(screen, fmt.Sprintf("You've reached level %d", g.LevelCounter+1), g.AllM.VS.Font, stX+10, stY, color.White)
+					text.Draw(screen, fmt.Sprintf("You've reached level %d", g.UI.PB.LevelCounter+1), g.AllM.VS.Font, stX+10, stY, color.White)
 
 				}
 			} else {

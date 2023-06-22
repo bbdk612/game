@@ -9,18 +9,25 @@ import (
 )
 
 type ProgressBar struct {
-	Font         font.Face
-	x, y         int
-	LevelCounter int
-	ScoreCounter int
+	Font           font.Face
+	LevelX, LevelY int
+	ScoreX, ScoreY int
+	LevelCounter   int
+	ScoreCounter   int
 }
 
-func (pb *ProgressBar) Magic() string {
-	return fmt.Sprintf("Level %d Score %6d", pb.LevelCounter, pb.ScoreCounter)
+func (pb *ProgressBar) GetLevel() string {
+	return fmt.Sprintf("Level %d", pb.LevelCounter)
+}
+func (pb *ProgressBar) GetScore() string {
+	return fmt.Sprintf("Score %06d", pb.ScoreCounter)
 }
 
-func (pb *ProgressBar) GetCoordinates() (int, int) {
-	return pb.x, pb.y
+func (pb *ProgressBar) GetLevelCoordinates() (int, int) {
+	return pb.LevelX, pb.LevelY
+}
+func (pb *ProgressBar) GetScoreCoordinates() (int, int) {
+	return pb.ScoreX, pb.ScoreY
 }
 
 func InitProgressBar() (*ProgressBar, error) {
@@ -43,8 +50,10 @@ func InitProgressBar() (*ProgressBar, error) {
 
 	pb := &ProgressBar{
 		Font:         font,
-		x:            200,
-		y:            14,
+		LevelX:       200,
+		LevelY:       13,
+		ScoreX:       5,
+		ScoreY:       253,
 		LevelCounter: 1,
 		ScoreCounter: 0,
 	}

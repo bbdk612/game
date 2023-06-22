@@ -1,11 +1,11 @@
 {
   "BulletSprite": "./assets/bullet.json",
   "ImagePath": "./assets/startWeapon.png",
-  "CurrentAmmo": 30,
-  "MaxAmmo": 30,
+  "CurrentAmmo": 6,
+  "MaxAmmo": 6,
   "NumberOfBullets": 3,
   "DurationMS": "800ms",
   "WeaponType": "shotgun",
   "SpreadAngle": 0.3490658503988659,
-  "Damage": 15
+  "Damage": 25
 }

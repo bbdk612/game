@@ -50,7 +50,7 @@ func InitWeaponBar(imagePath string) (*WeaponBar, error) {
 
 	wpB := &WeaponBar{
 		startX:   176,
-		startY:   250,
+		startY:   253,
 		Image:    weaponBarImage,
 		AmmoFont: font,
 	}

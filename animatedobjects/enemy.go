@@ -21,6 +21,7 @@ type Monster struct {
 	Route     []Vector
 	Weapon    *weapons.Weapon
 	Health    int
+	Points    int
 }
 
 type Vector struct {
@@ -165,7 +166,7 @@ func distance(x1, x2, y1, y2 float64) float64 {
 	return dist
 }
 
-func InitMonsters(health int, tilesize int, tilecoordinate int, xCount int) (*Monster, error) {
+func InitMonsters(health int, tilesize int, tilecoordinate int, xCount int, sprite string, points int) (*Monster, error) {
 
 	var x float64 = float64((tilecoordinate % xCount) * tilesize)
 	var y float64 = float64((tilecoordinate / xCount) * tilesize)
@@ -175,7 +176,7 @@ func InitMonsters(health int, tilesize int, tilecoordinate int, xCount int) (*Mo
 		SeeMH:    false,
 		Step:     2,
 		Position: Vector{x: x, y: y},
-		Sprite:   goaseprite.Open("./assets/Enemy.json"),
+		Sprite:   goaseprite.Open(sprite),
 		Route: []Vector{
 			{x: float64(rand.Intn(208-32) + 32), y: float64(rand.Intn(208-32) + 32)},
 			{x: float64(rand.Intn(208-32) + 32), y: float64(rand.Intn(208-32) + 32)},
@@ -184,6 +185,7 @@ func InitMonsters(health int, tilesize int, tilecoordinate int, xCount int) (*Mo
 		},
 		Weapon: weapon,
 		Health: health,
+		Points: points,
 	}
 	monster.AsePlayer = monster.Sprite.CreatePlayer()
 

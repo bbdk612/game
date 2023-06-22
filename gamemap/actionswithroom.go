@@ -49,17 +49,35 @@ func SetCurrentRoom(CurrentRoom *GameRoom) (*GameRoom, *RoomData, []int, []*anim
 	return CurrentRoom, RD, CurrentRoomTiles, ListOfMonsters
 }
 
-func SpawnMonsters(RD *RoomData) []*animatedobjects.Monster {
+func SpawnMonsters(RD *RoomData, EnemyType string) []*animatedobjects.Monster {
 	ListOfMonsters := [](*animatedobjects.Monster){}
 	ListOfMonsters = nil
-	for i := 0; i < RD.NumberOfMonsters; i++ {
-		ms, er := animatedobjects.InitMonsters(2, 16, RD.MonsterStartTiles[i], 16)
+	switch EnemyType {
+	case "CommonEnemy":
+		for i := 0; i < RD.NumberOfMonsters; i++ {
+			ms, er := animatedobjects.InitMonsters(2, 16, RD.MonsterStartTiles[i], 16, "./assets/Enemy.json")
+			if er != nil {
+				log.Fatal(er)
+			}
+			ms.AsePlayer.Play("left")
+			ListOfMonsters = append(ListOfMonsters, ms)
+		}
+	case "Boss":
+		ms, er := animatedobjects.InitMonsters(2, 16, RD.MonsterStartTiles[i], 16, "./assets/Boss.png")
 		if er != nil {
 			log.Fatal(er)
 		}
 		ms.AsePlayer.Play("left")
 		ListOfMonsters = append(ListOfMonsters, ms)
 	}
+	// for i := 0; i < RD.NumberOfMonsters; i++ {
+	// 	ms, er := animatedobjects.InitMonsters(2, 16, RD.MonsterStartTiles[i], 16, "./assets/Enemy.json", )
+	// 	if er != nil {
+	// 		log.Fatal(er)
+	// 	}
+	// 	ms.AsePlayer.Play("left")
+	// 	ListOfMonsters = append(ListOfMonsters, ms)
+	// }
 	return ListOfMonsters
 }
 

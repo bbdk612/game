@@ -42,7 +42,7 @@ func (ds *DeathScreen) DeathScreenReturnToMMGame(mm *MainMenu) {
 	mm.InMainMenu = true
 	ds.InDeathScreen = false
 }
-func (ds *DeathScreen) GetDathScreenStartCoordinate() (int, int) {
+func (ds *DeathScreen) GetDeathScreenStartCoordinate() (int, int) {
 	extX := ds.ReturnToMMbuttonX
 	extY := ds.ReturnToMMbuttonY
 	return extX, extY

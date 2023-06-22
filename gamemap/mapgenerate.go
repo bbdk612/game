@@ -12,6 +12,7 @@ type GameRoom struct {
 	RoomID           int
 	RoomIsCleaned    bool
 	Chest            *animatedobjects.Chest
+	WayToNextLevel   *animatedobjects.WayToNextlevel
 	LeftDestination  *GameRoom
 	UpDestination    *GameRoom
 	RightDestination *GameRoom

@@ -8,6 +8,15 @@ import (
 	"os"
 )
 
+type RoomData struct {
+	Data                 []int
+	Id                   int
+	NumberOfMonsters     int
+	MonsterStartTiles    []int
+	WeHaveChest          bool
+	WeHaveWayToNextLevel bool
+}
+
 func SetCurrentRoom(CurrentRoom *GameRoom) (*GameRoom, *RoomData, []int, []*animatedobjects.Monster) {
 	RD := JsonFileDecodeCurrentRoom(CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 	CurrentRoomTiles := RD.GetCurrentRoomTileMap()
@@ -20,6 +29,13 @@ func SetCurrentRoom(CurrentRoom *GameRoom) (*GameRoom, *RoomData, []int, []*anim
 		}
 		CurrentRoom.Chest = ch
 	}
+	if RD.WeHaveWayToNextLevel {
+		wnl, err := animatedobjects.InitNewWayToNextLevel("./assets/chest.json", 135)
+		if err != nil {
+			log.Fatal(err)
+		}
+		CurrentRoom.WayToNextLevel = wnl
+	}
 	if !(CurrentRoom.RoomIsCleaned) {
 		if RD.NumberOfMonsters > 0 {
 			ListOfMonsters = SpawnMonsters(RD)
@@ -29,14 +45,6 @@ func SetCurrentRoom(CurrentRoom *GameRoom) (*GameRoom, *RoomData, []int, []*anim
 		}
 	}
 	return CurrentRoom, RD, CurrentRoomTiles, ListOfMonsters
-}
-
-type RoomData struct {
-	Data              []int
-	Id                int
-	NumberOfMonsters  int
-	MonsterStartTiles []int
-	WeHaveChest       bool
 }
 
 func SpawnMonsters(RD *RoomData) []*animatedobjects.Monster {

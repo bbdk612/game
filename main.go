@@ -141,6 +141,7 @@ func (g *Game) Update() error {
 							g.MH.AsePlayer.Play("walk")
 							if g.MH.GetTileCoor()%16 == 0 {
 								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("left")
+								g.Bullets = [](*weapons.Bullet){}
 								g.MH.SetTileCoor(g.MH.GetTileCoor() + 14)
 							} else {
 								g.MH.Move("left", g.GM.RD.GetCurrentRoomTileMap(), Coordinates)
@@ -150,6 +151,7 @@ func (g *Game) Update() error {
 							g.MH.AsePlayer.Play("walk")
 							if (g.MH.GetTileCoor()+1)%16 == 0 {
 								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("right")
+								g.Bullets = [](*weapons.Bullet){}
 								g.MH.SetTileCoor(g.MH.GetTileCoor() - 14)
 							} else {
 								g.MH.Move("right", g.GM.RD.GetCurrentRoomTileMap(), Coordinates)
@@ -159,6 +161,7 @@ func (g *Game) Update() error {
 							g.MH.AsePlayer.Play("walk")
 							if _, y := g.MH.GetCoordinates(); y == 0 {
 								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("top")
+								g.Bullets = [](*weapons.Bullet){}
 								x, _ := g.MH.GetCoordinates()
 								g.MH.SetCoordinates(x, 224)
 							} else {
@@ -169,6 +172,7 @@ func (g *Game) Update() error {
 							g.MH.AsePlayer.Play("walk")
 							if (g.MH.GetTileCoor() > 240) && (g.MH.GetTileCoor() < 256) {
 								g.GM.CurrentRoom, g.GM.RD, g.GM.CurrentRoomTiles, g.MS = g.GM.CurrentRoom.ChangeCurrentRoom("down")
+								g.Bullets = [](*weapons.Bullet){}
 								x, _ := g.MH.GetCoordinates()
 								g.MH.SetCoordinates(x, 16)
 							} else {
@@ -216,10 +220,13 @@ func (g *Game) Update() error {
 					if ebiten.IsKeyPressed(ebiten.KeyK) {
 						g.MH.Health = 0
 					}
+					if !(g.GM.CurrentRoom.Chest == nil) {
+						//fmt.Println("Chest good update: ", g.GM.CurrentRoom.Chest)
+						g.GM.CurrentRoom.Chest.ChestPlayer.Update(1 / 60)
+					}
 					if !(g.GM.CurrentRoom.Chest == nil) && (g.GM.CurrentRoom.Chest.InActiveZone(g.MH.GetCoordinates())) && (ebiten.IsKeyPressed(ebiten.KeyE)) {
 						g.GM.CurrentRoom.Chest.Open()
 					}
-
 				}
 			} else {
 				currTime := time.Now()
@@ -360,6 +367,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 						screen.DrawImage(monster.Weapon.Image, opForMonstWeap)
 					}
 				}
+				if !(g.GM.CurrentRoom.Chest == nil) {
+					chestX, chestY := g.GM.CurrentRoom.Chest.GetCoordinates()
+					optionsForChest := &ebiten.DrawImageOptions{}
+
+					optionsForChest.GeoM.Translate(float64(chestX), float64(chestY))
+					subChest := g.GM.CurrentRoom.Chest.ChestImage.SubImage(image.Rect(g.GM.CurrentRoom.Chest.ChestPlayer.CurrentFrameCoords()))
+					screen.DrawImage(subChest.(*ebiten.Image), optionsForChest)
+				}
 			} else {
 				//DeathScreen
 				stX, stY := g.DS.GetDathScreenStartCoordinate()
@@ -420,14 +435,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				}
 				mmY = mmY - 9
 			}
-		}
-		if !(g.GM.CurrentRoom.Chest == nil) {
-			chestX, chestY := g.GM.CurrentRoom.Chest.GetCoordinates()
-			optionsForChest := &ebiten.DrawImageOptions{}
-
-			optionsForChest.GeoM.Translate(float64(chestX), float64(chestY))
-			subChest := g.GM.CurrentRoom.Chest.ChestImage.SubImage(image.Rect(g.GM.CurrentRoom.Chest.ChestPlayer.CurrentFrameCoords()))
-			screen.DrawImage(subChest.(*ebiten.Image), optionsForChest)
 		}
 	} else {
 		//Main menu

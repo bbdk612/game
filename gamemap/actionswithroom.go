@@ -19,11 +19,10 @@ func SetCurrentRoom(CurrentRoom *GameRoom) (*GameRoom, *RoomData, []int, []*anim
 			log.Fatal(err)
 		}
 		CurrentRoom.Chest = ch
-		fmt.Println("Chest good: ", CurrentRoom.Chest)
 	}
 	if !(CurrentRoom.RoomIsCleaned) {
 		if RD.NumberOfMonsters > 0 {
-			//ListOfMonsters = SpawnMonsters(RD)
+			ListOfMonsters = SpawnMonsters(RD)
 			CurrentRoomTiles = CurrentRoom.ChangeDoorsState(CurrentRoomTiles, 4)
 		} else {
 			CurrentRoom.RoomIsCleaned = true

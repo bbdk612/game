@@ -1,6 +1,7 @@
 package animatedobjects
 
 import (
+	"fmt"
 	"log"
 	"math"
 	"math/rand"
@@ -33,6 +34,7 @@ func (ch *Chest) randomItem() string {
 
 func (ch *Chest) Open() *items.Item {
 	if !ch.Opened {
+		fmt.Println("Chest good open: ", ch)
 		ch.Opened = true
 		ch.ChestPlayer.Play("open")
 		ch.ChestPlayer.OnLoop = func() {
@@ -44,9 +46,9 @@ func (ch *Chest) Open() *items.Item {
 		case "heal":
 			jsonPath = "./items/smallHeal.json"
 		case "gun":
-			jsonPath = "./weapons/assets/gun.json"
+			jsonPath = "./assets/gun.json"
 		case "shotgun":
-			jsonPath = "./weapons/assets/shotgun.json"
+			jsonPath = "./assets/shotgun.json"
 		}
 
 		spawnX, spawnY := ch.spawnCoordinates()

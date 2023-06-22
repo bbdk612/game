@@ -22,7 +22,7 @@ func SetCurrentRoom(CurrentRoom *GameRoom) (*GameRoom, *RoomData, []int, []*anim
 	CurrentRoomTiles := RD.GetCurrentRoomTileMap()
 	CurrentRoomTiles = CurrentRoom.DeleteDoors(CurrentRoomTiles)
 	ListOfMonsters := [](*animatedobjects.Monster){}
-	if RD.WeHaveChest {
+	if RD.WeHaveChest && CurrentRoom.Chest == nil {
 		ch, err := animatedobjects.InitNewChest("./assets/chest.json", 135)
 		if err != nil {
 			log.Fatal(err)
@@ -30,7 +30,7 @@ func SetCurrentRoom(CurrentRoom *GameRoom) (*GameRoom, *RoomData, []int, []*anim
 		ch.ChestPlayer.Play("wait")
 		CurrentRoom.Chest = ch
 	}
-	if RD.WeHaveWayToNextLevel {
+	if RD.WeHaveWayToNextLevel && CurrentRoom.WayToNextLevel == nil {
 		wnl, err := animatedobjects.InitNewWayToNextLevel("./assets/chest.json", 135)
 		if err != nil {
 			log.Fatal(err)

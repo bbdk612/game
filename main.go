@@ -35,7 +35,7 @@ type Game struct {
 func (g *Game) startGame() {
 	g.AllM.MM.MenuStartGame()
 	//generate map
-	g.GM.CurrentRoom, g.GM.MiniMapPlan, g.GM.RoomList = g.GM.CurrentRoom.GenerateMap(12, 1, 1, 2)
+	g.GM.CurrentRoom, g.GM.MiniMapPlan, g.GM.RoomList = g.GM.CurrentRoom.GenerateMap(12, 1, 0, 2)
 	//set start room
 	g.GM.RD = gamemap.JsonFileDecodeCurrentRoom(g.GM.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 	g.GM.CurrentRoomTiles = g.GM.RD.GetCurrentRoomTileMap()
@@ -62,7 +62,7 @@ func (g *Game) startGame() {
 
 func (g *Game) GenerateNextLevel() {
 	//generate map
-	g.GM.CurrentRoom, g.GM.MiniMapPlan, g.GM.RoomList = g.GM.CurrentRoom.GenerateMap(12, 1, 1, 2)
+	g.GM.CurrentRoom, g.GM.MiniMapPlan, g.GM.RoomList = g.GM.CurrentRoom.GenerateMap(12, 1, 0, 2)
 	//set start room
 	g.GM.RD = gamemap.JsonFileDecodeCurrentRoom(g.GM.CurrentRoom.RoomID, "./gamemap/assets/roomlist.json")
 	g.GM.CurrentRoomTiles = g.GM.RD.GetCurrentRoomTileMap()
@@ -609,6 +609,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 	} else {
 		//Main menu
+		optionsForBack := &ebiten.DrawImageOptions{}
+		optionsForBack.GeoM.Translate(0, 0)
+		screen.DrawImage(g.AllM.MM.MainImage, optionsForBack)
+
 		stX, stY, extX, extY := g.AllM.MM.GetMainMStartCoordinate()
 		opForStartButton := &ebiten.DrawImageOptions{}
 		opForExitButton := &ebiten.DrawImageOptions{}

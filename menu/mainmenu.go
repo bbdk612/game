@@ -1,6 +1,7 @@
 package menu
 
 import (
+	"image"
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -20,6 +21,7 @@ type MainMenu struct {
 	ExitButtonFile    *goaseprite.File
 	ExitButtonPlayer  *goaseprite.Player
 	ExitButtonImg     *ebiten.Image
+	MainImage         *ebiten.Image
 }
 
 func InitMenu(startbuttonJSONPath, exitbuttonJSONPath string) (*MainMenu, error) {
@@ -53,6 +55,19 @@ func InitMenu(startbuttonJSONPath, exitbuttonJSONPath string) (*MainMenu, error)
 	}
 
 	mainM.ExitButtonImg = exitimg
+
+	imagefile, err := os.Open("./assets/back.png")
+	if err != nil {
+		return nil, err
+	}
+
+	imagedecoded, _, err := image.Decode(imagefile)
+	if err != nil {
+		return nil, err
+	}
+
+	mainM.MainImage = ebiten.NewImageFromImage(imagedecoded)
+
 	return mainM, nil
 }
 
